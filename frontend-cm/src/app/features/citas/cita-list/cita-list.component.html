@@ -1,0 +1,98 @@
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h2 class="text-upeu-primary">
+      Gestión de citas médicas
+    </h2>
+
+    <a routerLink="/citas/nuevo" class="btn btn-nuevo">
+      <i class="bi bi-plus-circle me-1"></i>
+      Nueva cita
+    </a>
+
+  </div>
+
+  <div class="table-responsive">
+
+    <table class="table table-hover shadow-sm align-middle">
+
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Médico</th>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Motivo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (c of citas; track c.idCita) {
+
+          <tr>
+
+            <td>{{ c.paciente }}</td>
+
+            <td>{{ c.medico || 'Sin asignar' }}</td>
+
+            <td>{{ c.fechaCita }}</td>
+
+            <td>{{ c.horaCita }}</td>
+
+            <td>{{ c.motivoConsulta }}</td>
+
+            <td>
+              <span class="estado-badge"
+                    [ngClass]="'estado-' + c.estado?.toLowerCase()">
+                {{ c.estado }}
+              </span>
+            </td>
+
+            <td>
+
+              <a
+                [routerLink]="['/citas/editar', c.idCita]"
+                class="btn btn-sm btn-editar me-2">
+                <i class="bi bi-pencil-square me-1"></i>
+                Editar
+              </a>
+
+              @if (c.estado !== 'ATENDIDO' &&
+                   c.estado !== 'ANULADO' &&
+                   c.estado !== 'INASISTENCIA' &&
+                   c.estado !== 'DERIVADO') {
+
+                <button
+                  (click)="anular(c.idCita!)"
+                  class="btn btn-sm btn-eliminar">
+                  <i class="bi bi-x-circle me-1"></i>
+                  Anular
+                </button>
+
+              }
+
+            </td>
+
+          </tr>
+
+        } @empty {
+
+          <tr>
+            <td colspan="7" class="text-center py-4">
+              No hay citas registradas.
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

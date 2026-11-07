@@ -1,0 +1,436 @@
+
+<div class="portal">
+
+  <main class="contenedor">
+
+    <section class="bienvenida">
+      <p class="eyebrow">ATENCIÓN MÉDICA</p>
+      <h2>Reserva tu cita en pocos pasos</h2>
+      <p>
+        Elige tu médico, consulta los horarios disponibles
+        y programa tu atención.
+      </p>
+    </section>
+
+    <!-- PESTAÑAS -->
+    <nav class="pestanas" aria-label="Opciones del portal">
+      <button
+        type="button"
+        [class.activa]="pestana === 'registrar'"
+        (click)="cambiarPestana('registrar')">
+        Registrar cita
+      </button>
+
+      <button
+        type="button"
+        [class.activa]="pestana === 'mis-citas'"
+        (click)="cambiarPestana('mis-citas')">
+        Mis citas
+      </button>
+    </nav>
+
+    <!-- MENSAJES -->
+    <div class="alerta error" *ngIf="error" role="alert">
+      {{ error }}
+    </div>
+
+    <div class="alerta exito" *ngIf="mensaje" role="status">
+      {{ mensaje }}
+    </div>
+
+    <!-- IDENTIFICACIÓN -->
+    <section class="tarjeta identificacion">
+
+      <div class="titulo-seccion">
+        <span class="numero">1</span>
+        <div>
+          <h3>Identificación del paciente</h3>
+          <p>Ingresa tu DNI para continuar.</p>
+        </div>
+      </div>
+
+      <div class="busqueda">
+
+        <div class="campo">
+          <label for="dni-paciente">
+            DNI del paciente
+          </label>
+
+          <input
+            id="dni-paciente"
+            type="text"
+            [(ngModel)]="dni"
+            maxlength="8"
+            inputmode="numeric"
+            placeholder="Ej. 12345678"
+            (keyup.enter)="buscarPaciente()">
+        </div>
+
+        <button
+          type="button"
+          class="btn-principal"
+          [disabled]="cargando"
+          (click)="buscarPaciente()">
+          {{ cargando ? 'Buscando...' : 'Buscar paciente' }}
+        </button>
+
+      </div>
+
+      <div class="paciente-encontrado" *ngIf="paciente">
+        <span class="avatar">✓</span>
+
+        <div>
+          <strong>
+            {{ paciente.nombres }} {{ paciente.apellidos }}
+          </strong>
+          <p>DNI: {{ paciente.dni }}</p>
+        </div>
+
+        <span class="estado-ok">Encontrado</span>
+      </div>
+
+    </section>
+
+    <!-- REGISTRAR CITA -->
+    <ng-container *ngIf="pestana === 'registrar' && paciente">
+
+      <section class="tarjeta reserva">
+
+        <div class="titulo-seccion">
+          <span class="numero">2</span>
+          <div>
+            <h3>Elige tu médico y horario</h3>
+            <p>
+              Selecciona un profesional y una hora disponible.
+            </p>
+          </div>
+        </div>
+
+        <p class="sin-datos" *ngIf="cargandoMedicos">
+          Cargando médicos...
+        </p>
+
+        <p
+          class="sin-datos"
+          *ngIf="!cargandoMedicos && medicos.length === 0">
+          No hay médicos registrados.
+        </p>
+
+        <div class="agenda-medicos" *ngIf="medicos.length">
+
+          <div
+            class="agenda-medico"
+            *ngFor="let medico of medicos">
+
+            <!-- LADO IZQUIERDO: MÉDICO -->
+            <div class="perfil-medico">
+
+              <div class="perfil-superior">
+
+                <div class="medico-avatar" aria-hidden="true">
+                  ⚕
+                </div>
+
+                <div class="perfil-datos">
+                  <span class="especialidad">
+                    {{ medico.especialidad }}
+                  </span>
+
+                  <h4>
+                    Médico CMP {{ medico.codigoCol }}
+                  </h4>
+
+                  <span class="turno">
+                    {{ obtenerTurnoMedico(medico.idEmpleado) }}
+                  </span>
+                </div>
+
+              </div>
+
+              <div class="modalidad">
+                <span class="punto"></span>
+                Atención presencial
+              </div>
+
+              <button
+                type="button"
+                class="btn-elegir"
+                [class.elegido]="medicoSeleccionado?.idEmpleado === medico.idEmpleado"
+                (click)="seleccionarMedico(medico)"
+                [disabled]="guardando">
+
+                {{
+                  medicoSeleccionado?.idEmpleado === medico.idEmpleado
+                    ? '✓ Médico seleccionado'
+                    : 'Ver fechas y horarios'
+                }}
+
+              </button>
+
+            </div>
+
+            <!-- LADO DERECHO: AGENDA -->
+            <div
+              class="agenda-horarios"
+              *ngIf="medicoSeleccionado?.idEmpleado === medico.idEmpleado; else agendaPendiente">
+
+              <div
+                class="sin-datos"
+                *ngIf="cargandoHorarios">
+                Consultando disponibilidad...
+              </div>
+
+              <ng-container *ngIf="!cargandoHorarios">
+
+                <ng-container
+                  *ngIf="diasDisponibles.length; else sinDisponibilidad">
+
+                  <div class="fechas-cabecera">
+
+                    <div>
+                      <strong>Fechas disponibles</strong>
+                      <small>
+                        Próximos {{ horizonteDias }} días
+                      </small>
+                    </div>
+
+                    <div class="flechas">
+
+                      <button
+                        type="button"
+                        aria-label="Fechas anteriores"
+                        (click)="moverDias(-1)"
+                        [disabled]="!puedeRetroceder">
+                        ‹
+                      </button>
+
+                      <button
+                        type="button"
+                        aria-label="Fechas siguientes"
+                        (click)="moverDias(1)"
+                        [disabled]="!puedeAvanzar">
+                        ›
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                  <!-- FECHAS -->
+                  <div class="fechas-grid">
+
+                    <button
+                      type="button"
+                      class="fecha-btn"
+                      *ngFor="let dia of diasVisibles"
+                      [class.activa]="fechaSeleccionada === dia.fecha"
+                      (click)="seleccionarFecha(dia.fecha)">
+
+                      <span>{{ dia.dia }}</span>
+                      <strong>{{ dia.numero }}</strong>
+                      <small>{{ dia.mes }}</small>
+
+                    </button>
+
+                  </div>
+
+                  <!-- HORAS -->
+                  <div class="horarios-panel">
+
+                    <div class="horarios-titulo">
+                      Horas disponibles
+                      <span>Intervalos de 15 minutos</span>
+                    </div>
+
+                    <div class="horas-grid">
+
+                      <button
+                        type="button"
+                        class="hora-btn"
+                        *ngFor="let hora of horasDisponibles"
+                        [class.activa]="horaSeleccionada === hora"
+                        (click)="horaSeleccionada = hora">
+                        {{ hora }}
+                      </button>
+
+                    </div>
+
+                  </div>
+
+                </ng-container>
+
+                <ng-template #sinDisponibilidad>
+                  <div class="sin-datos">
+                    No hay horas libres en los próximos
+                    {{ horizonteDias }} días para este médico.
+                  </div>
+                </ng-template>
+
+              </ng-container>
+
+            </div>
+
+            <!-- MÉDICO NO SELECCIONADO -->
+            <ng-template #agendaPendiente>
+
+              <div class="agenda-invitacion">
+                <div class="calendario-icono">▦</div>
+
+                <strong>
+                  Consulta sus fechas y horarios
+                </strong>
+
+                <p>
+                  Selecciona este médico para ver sus
+                  horas disponibles.
+                </p>
+              </div>
+
+            </ng-template>
+
+          </div>
+
+        </div>
+
+      </section>
+
+      <!-- CONFIRMAR RESERVA -->
+      <section
+        class="tarjeta confirmacion"
+        *ngIf="medicoSeleccionado && horaSeleccionada">
+
+        <div class="titulo-seccion">
+          <span class="numero">3</span>
+          <div>
+            <h3>Confirma tu reserva</h3>
+            <p>
+              Revisa los datos y describe el motivo de tu consulta.
+            </p>
+          </div>
+        </div>
+
+        <div class="resumen">
+
+          <div>
+            <span>Paciente</span>
+            <strong>
+              {{ paciente.nombres }} {{ paciente.apellidos }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Médico</span>
+            <strong>
+              {{ medicoSeleccionado.especialidad }}
+              · CMP {{ medicoSeleccionado.codigoCol }}
+            </strong>
+          </div>
+
+          <div>
+            <span>Fecha</span>
+            <strong>{{ fechaSeleccionada }}</strong>
+          </div>
+
+          <div>
+            <span>Hora</span>
+            <strong>{{ horaSeleccionada }}</strong>
+          </div>
+
+        </div>
+
+        <div class="campo motivo">
+          <label for="motivo-consulta">
+            Motivo de consulta
+          </label>
+
+          <textarea
+            id="motivo-consulta"
+            rows="3"
+            [(ngModel)]="motivoConsulta"
+            placeholder="Describe brevemente el motivo de tu consulta">
+          </textarea>
+        </div>
+
+        <button
+          type="button"
+          class="btn-principal confirmar"
+          [disabled]="guardando || cargandoHorarios"
+          (click)="confirmarCita()">
+
+          {{
+            guardando
+              ? 'Registrando cita...'
+              : 'Confirmar cita médica'
+          }}
+
+        </button>
+
+      </section>
+
+    </ng-container>
+
+    <!-- MIS CITAS -->
+    <section
+      class="tarjeta"
+      *ngIf="pestana === 'mis-citas' && paciente">
+
+      <div class="titulo-seccion">
+        <span class="numero">✓</span>
+        <div>
+          <h3>Mis citas médicas</h3>
+          <p>
+            Consulta las citas registradas a tu nombre.
+          </p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="btn-secundario"
+        [disabled]="cargando"
+        (click)="consultarMisCitas()">
+
+        {{
+          cargando
+            ? 'Actualizando...'
+            : 'Actualizar listado'
+        }}
+
+      </button>
+
+      <div class="citas-lista">
+
+        <div
+          class="cita-item"
+          *ngFor="let cita of misCitas">
+
+          <div class="fecha-cita">
+            <strong>
+              {{ cita.fechaCita | date:'dd/MM/yyyy' }}
+            </strong>
+            <span>{{ cita.horaCita }}</span>
+          </div>
+
+          <div class="detalle-cita">
+            <h4>
+              {{ cita.medico || 'Médico por confirmar' }}
+            </h4>
+            <p>{{ cita.motivoConsulta }}</p>
+          </div>
+
+          
+        </div>
+
+      </div>
+
+      <div
+        class="sin-datos"
+        *ngIf="!cargando && misCitas.length === 0">
+        No tienes citas registradas.
+      </div>
+
+    </section>
+
+  </main>
+
+</div>

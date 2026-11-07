@@ -1,0 +1,15 @@
+﻿# Angular
+frontend-cm/node_modules/
+frontend-cm/.angular/
+
+# Spring Boot
+centro-medico/target/
+
+# IntelliJ
+centro-medico/.idea/
+
+# VS Code
+.vscode/
+
+# Logs
+*.log

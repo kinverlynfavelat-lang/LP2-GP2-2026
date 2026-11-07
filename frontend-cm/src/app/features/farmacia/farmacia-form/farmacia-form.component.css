@@ -1,0 +1,63 @@
+
+.titulo-pagina {
+  color: #075779;
+  font-weight: 700;
+  font-size: 26px;
+}
+
+.card {
+  border-radius: 13px;
+  overflow: hidden;
+}
+
+.card-header {
+  background: #eaf4f8;
+  border-bottom: 1px solid #d9e9f1;
+  padding: 19px 23px;
+}
+
+.card-header h5 {
+  color: #075779;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.form-label {
+  color: #34485b;
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.form-control {
+  border: 1px solid #dce5ec;
+  border-radius: 9px;
+  padding: 11px 14px;
+  font-size: 14px;
+}
+
+.form-control:focus {
+  border-color: #075779;
+  box-shadow: 0 0 0 3px rgba(7,87,121,.1);
+}
+
+.btn-guardar {
+  background: #075779;
+  border: 1px solid #075779;
+  color: white;
+  border-radius: 9px;
+  padding: 10px 19px;
+  font-weight: 600;
+}
+
+.btn-guardar:hover {
+  background: #06445f;
+  color: white;
+}
+
+.btn-guardar:disabled {
+  opacity: .65;
+}

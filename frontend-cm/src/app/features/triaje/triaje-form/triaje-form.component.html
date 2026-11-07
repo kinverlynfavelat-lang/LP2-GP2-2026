@@ -1,0 +1,287 @@
+
+<div class="container-fluid triaje-container py-4">
+
+  <!-- ENCABEZADO -->
+  <div class="page-header mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="header-icon">
+          <i class="bi bi-heart-pulse"></i>
+        </span>
+        <h2 class="titulo-pagina mb-0">Evaluación de triaje</h2>
+      </div>
+      <p class="text-muted mb-0">
+        Registro y evaluación inicial de signos vitales del paciente.
+      </p>
+    </div>
+
+    <button class="btn btn-volver"
+            type="button"
+            (click)="cancelar()"
+            [disabled]="guardando">
+      <i class="bi bi-arrow-left me-2"></i>
+      Volver al listado
+    </button>
+  </div>
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando" class="loading-container">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-3">Cargando información del paciente...</p>
+  </div>
+
+  <div *ngIf="!cargando && cita">
+
+    <!-- INFORMACIÓN DEL PACIENTE -->
+    <div class="section-card mb-4">
+
+      <div class="section-header">
+        <div class="section-icon icon-paciente">
+          <i class="bi bi-person-vcard"></i>
+        </div>
+        <div>
+          <h5>Información del paciente</h5>
+          <p>Datos generales de la atención médica</p>
+        </div>
+        <span class="estado-pendiente ms-auto">
+          <i class="bi bi-clock me-1"></i>
+          Pendiente
+        </span>
+      </div>
+
+      <div class="section-body">
+
+        <div class="patient-highlight">
+          <div class="patient-avatar">
+            <i class="bi bi-person-fill"></i>
+          </div>
+          <div>
+            <small>Paciente</small>
+            <h5>{{ cita.paciente || 'No registrado' }}</h5>
+          </div>
+        </div>
+
+        <div class="row g-4 mt-2">
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-item">
+              <span><i class="bi bi-calendar3"></i> Fecha de atención</span>
+              <strong>{{ cita.fechaCita | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-item">
+              <span><i class="bi bi-clock"></i> Hora</span>
+              <strong>{{ cita.horaCita }}</strong>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-lg-4">
+            <div class="data-item">
+              <span><i class="bi bi-person-badge"></i> Médico asignado</span>
+              <strong>{{ cita.medico || 'No registrado' }}</strong>
+            </div>
+          </div>
+
+          <div class="col-12">
+            <div class="motivo-consulta">
+              <span><i class="bi bi-chat-left-text me-2"></i>Motivo de consulta</span>
+              <p>{{ cita.motivoConsulta || 'Sin información registrada' }}</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- SIGNOS VITALES -->
+    <div class="section-card mb-4">
+
+      <div class="section-header">
+        <div class="section-icon icon-signos">
+          <i class="bi bi-heart-pulse"></i>
+        </div>
+        <div>
+          <h5>Signos vitales</h5>
+          <p>Registro de parámetros fisiológicos del paciente</p>
+        </div>
+      </div>
+
+      <div class="section-body">
+
+        <div class="info-message">
+          <i class="bi bi-info-circle"></i>
+          <span>
+            Registra las mediciones que puedan realizarse.
+            Los campos pueden dejarse vacíos si la condición del paciente
+            no permite obtener los valores.
+          </span>
+        </div>
+
+        <div class="row g-3 mt-2">
+
+          <div class="col-md-6 col-xl-3">
+            <div class="measurement-card">
+              <div class="measurement-icon temperatura">
+                <i class="bi bi-thermometer-half"></i>
+              </div>
+              <label>Temperatura</label>
+              <div class="input-with-unit">
+                <input type="number"
+                       class="form-control"
+                       [(ngModel)]="temperatura"
+                       name="temperatura"
+                       min="0.1"
+                       step="0.1"
+                       placeholder="36.5">
+                <span>°C</span>
+              </div>
+              <small>Temperatura corporal</small>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="measurement-card">
+              <div class="measurement-icon presion">
+                <i class="bi bi-activity"></i>
+              </div>
+              <label>Presión arterial</label>
+              <div class="input-with-unit">
+                <input type="number"
+                       class="form-control"
+                       [(ngModel)]="presion"
+                       name="presion"
+                       min="0.1"
+                       step="0.1"
+                       placeholder="120">
+                <span>mmHg</span>
+              </div>
+              <small>Presión arterial</small>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="measurement-card">
+              <div class="measurement-icon cardiaca">
+                <i class="bi bi-heart-pulse"></i>
+              </div>
+              <label>Frecuencia cardíaca</label>
+              <div class="input-with-unit">
+                <input type="number"
+                       class="form-control"
+                       [(ngModel)]="frecuenciaCardiaca"
+                       name="frecuenciaCardiaca"
+                       min="0.1"
+                       step="1"
+                       placeholder="80">
+                <span>lpm</span>
+              </div>
+              <small>Latidos por minuto</small>
+            </div>
+          </div>
+
+          <div class="col-md-6 col-xl-3">
+            <div class="measurement-card">
+              <div class="measurement-icon respiratoria">
+                <i class="bi bi-lungs"></i>
+              </div>
+              <label>Frecuencia respiratoria</label>
+              <div class="input-with-unit">
+                <input type="number"
+                       class="form-control"
+                       [(ngModel)]="frecuenciaRespiratoria"
+                       name="frecuenciaRespiratoria"
+                       min="0.1"
+                       step="1"
+                       placeholder="18">
+                <span>rpm</span>
+              </div>
+              <small>Respiraciones por minuto</small>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- MEDIDAS ANTROPOMÉTRICAS -->
+    <div class="section-card mb-4">
+
+      <div class="section-header">
+        <div class="section-icon icon-medidas">
+          <i class="bi bi-rulers"></i>
+        </div>
+        <div>
+          <h5>Medidas antropométricas</h5>
+          <p>Registro complementario del paciente</p>
+        </div>
+        <span class="opcional-badge ms-auto">Opcional</span>
+      </div>
+
+      <div class="section-body">
+        <div class="row g-3">
+
+          <div class="col-md-6">
+            <label class="form-label">Peso corporal</label>
+            <div class="input-with-unit">
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="peso"
+                     name="peso"
+                     min="0.1"
+                     step="0.01"
+                     placeholder="Ej. 65.50">
+              <span>kg</span>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Talla</label>
+            <div class="input-with-unit">
+              <input type="number"
+                     class="form-control"
+                     [(ngModel)]="talla"
+                     name="talla"
+                     min="0.1"
+                     step="0.01"
+                     placeholder="Ej. 1.70">
+              <span>m</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ACCIONES -->
+    <div class="actions-container">
+
+      <button class="btn btn-cancelar"
+              type="button"
+              (click)="cancelar()"
+              [disabled]="guardando">
+        Cancelar
+      </button>
+
+      <button class="btn btn-guardar"
+              type="button"
+              (click)="guardarTriaje()"
+              [disabled]="guardando">
+
+        <span *ngIf="guardando"
+              class="spinner-border spinner-border-sm me-2">
+        </span>
+
+        <i *ngIf="!guardando"
+           class="bi bi-check-circle me-2">
+        </i>
+
+        {{ guardando ? 'Guardando...' : 'Guardar evaluación' }}
+      </button>
+
+    </div>
+
+  </div>
+</div>

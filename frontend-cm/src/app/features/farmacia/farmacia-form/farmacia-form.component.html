@@ -1,0 +1,127 @@
+
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="titulo-pagina mb-1">
+        <i class="bi bi-capsule-pill me-2"></i>
+        {{ idMedicamento === null ? 'Nuevo medicamento' : 'Editar medicamento' }}
+      </h2>
+      <p class="text-muted mb-0">
+        Información general del inventario de farmacia.
+      </p>
+    </div>
+
+    <button class="btn btn-outline-secondary"
+            (click)="cancelar()">
+      <i class="bi bi-arrow-left me-2"></i>
+      Volver
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+  </div>
+
+  <div *ngIf="!cargando" class="card border-0 shadow-sm">
+
+    <div class="card-header">
+      <h5 class="mb-0">
+        <i class="bi bi-clipboard2-plus me-2"></i>
+        Datos del medicamento
+      </h5>
+    </div>
+
+    <div class="card-body">
+      <form (ngSubmit)="guardar()" #formMedicamento="ngForm">
+
+        <div class="row g-4">
+
+          <div class="col-md-8">
+            <label class="form-label">Nombre del medicamento *</label>
+            <input class="form-control"
+                   type="text"
+                   maxlength="100"
+                   required
+                   name="nombre"
+                   [(ngModel)]="medicamento.nombre"
+                   placeholder="Nombre del medicamento">
+          </div>
+
+          <div class="col-md-4">
+            <label class="form-label">Precio (S/) *</label>
+            <input class="form-control"
+                   type="number"
+                   min="0"
+                   step="0.01"
+                   required
+                   name="precio"
+                   [(ngModel)]="medicamento.precio">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Descripción</label>
+            <textarea class="form-control"
+                      rows="3"
+                      maxlength="100"
+                      name="descripcion"
+                      [(ngModel)]="medicamento.descripcion"
+                      placeholder="Descripción del medicamento"></textarea>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Stock inicial *</label>
+            <input class="form-control"
+                   type="number"
+                   min="0"
+                   step="1"
+                   required
+                   name="stock"
+                   [(ngModel)]="medicamento.stock"
+                   [disabled]="idMedicamento !== null">
+
+            <small *ngIf="idMedicamento !== null"
+                   class="text-muted">
+              Para modificar existencias utiliza los botones
+              de ingreso o descuento del inventario.
+            </small>
+          </div>
+
+          <div class="col-md-6">
+            <label class="form-label">Estado *</label>
+            <input class="form-control"
+                   type="text"
+                   maxlength="20"
+                   required
+                   name="estado"
+                   [(ngModel)]="medicamento.estado"
+                   placeholder="ACTIVO/INACTIVO">
+            <small class="text-muted">
+              
+            </small>
+          </div>
+
+        </div>
+
+        <div class="d-flex justify-content-end flex-wrap gap-2 mt-4 pt-3 border-top">
+
+          <button type="button"
+                  class="btn btn-outline-secondary"
+                  (click)="cancelar()">
+            Cancelar
+          </button>
+
+          <button type="submit"
+                  class="btn btn-guardar"
+                  [disabled]="guardando || formMedicamento.invalid">
+
+            <i class="bi bi-check-circle me-2"></i>
+            {{ guardando ? 'Guardando...' : 'Guardar medicamento' }}
+          </button>
+
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>

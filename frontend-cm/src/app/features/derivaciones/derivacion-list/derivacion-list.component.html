@@ -1,0 +1,401 @@
+<div class="container-fluid py-4">
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <h2 class="titulo-pagina mb-1">
+                Derivaciones Médicas
+            </h2>
+
+            <p class="text-muted mb-0">
+                Administra las derivaciones de pacientes hacia otros centros de atención.
+            </p>
+        </div>
+
+        <button type="button" class="btn btn-primary" (click)="nuevaDerivacion()">
+            + Nueva derivación
+        </button>
+    </div>
+
+    <!-- MENSAJES -->
+    <div class="alert alert-danger" *ngIf="error">
+        {{ error }}
+    </div>
+
+    <div class="alert alert-success" *ngIf="mensaje">
+        {{ mensaje }}
+    </div>
+
+    <!-- TARJETAS DE RESUMEN -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-4">
+            <div class="card tarjeta-resumen h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Total de derivaciones
+                    </p>
+
+                    <h3 class="mb-0">
+                        {{ totalDerivaciones }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card tarjeta-resumen h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Centros de destino
+                    </p>
+
+                    <h3 class="mb-0">
+                        {{ totalCentrosDestino }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card tarjeta-resumen h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-2">
+                        Citas con derivaciones
+                    </p>
+
+                    <h3 class="mb-0">
+                        {{ totalCitasDerivadas }}
+                    </h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- TABLA DE DERIVACIONES -->
+    <div class="card tarjeta-tabla">
+
+        <div class="card-header bg-white">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+                <h5 class="mb-0">
+                    Listado de derivaciones
+                </h5>
+
+                <div class="filtros">
+
+                    <!-- BUSCADOR -->
+                    <input type="text" class="form-control" placeholder="Buscar derivación..." [(ngModel)]="busqueda"
+                        (ngModelChange)="filtrarDerivaciones()">
+
+                    <!-- FILTRO POR ESTADO -->
+                    <select class="form-select" [(ngModel)]="filtroEstado" (ngModelChange)="filtrarDerivaciones()">
+
+                        <option value="">
+                            Todos los estados
+                        </option>
+
+                        <option *ngFor="let estado of estadosDisponibles" [value]="estado">
+                            {{ estado }}
+                        </option>
+
+                    </select>
+
+                    <!-- ACTUALIZAR -->
+                    <button type="button" class="btn btn-outline-secondary" [disabled]="cargando"
+                        (click)="cargarDerivaciones()">
+                        Actualizar
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-0">
+
+            <!-- CARGANDO -->
+            <div class="text-center p-5" *ngIf="cargando">
+
+                <div class="spinner-border text-primary mb-3" role="status">
+                </div>
+
+                <p class="text-muted mb-0">
+                    Cargando derivaciones...
+                </p>
+            </div>
+
+            <!-- TABLA -->
+            <div class="table-responsive" *ngIf="!cargando">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead>
+                        <tr>
+                            <th>N.º</th>
+                            <th>Fecha</th>
+                            <th>Cita</th>
+                            <th>Motivo</th>
+                            <th>Centro de destino</th>
+                            <th>Responsable</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr *ngFor="let derivacion of derivacionesFiltradas">
+
+                            <!-- ID -->
+                            <td>
+                                <strong>
+                                    #{{ derivacion.idDerivacion }}
+                                </strong>
+                            </td>
+
+                            <!-- FECHA -->
+                            <td>
+                                {{ formatearFecha(derivacion.fecha) }}
+                            </td>
+
+                            <!-- CITA -->
+                            <td>
+                                <span class="codigo-cita">
+                                    #{{ derivacion.idCita }}
+                                </span>
+                            </td>
+
+                            <!-- MOTIVO -->
+                            <td>
+                                <span class="texto-tabla">
+                                    {{ derivacion.motivo }}
+                                </span>
+                            </td>
+
+                            <!-- CENTRO -->
+                            <td>
+                                {{ derivacion.centroDestino }}
+                            </td>
+
+                            <!-- RESPONSABLE -->
+                            <td>
+                                {{ derivacion.responsable }}
+                            </td>
+
+                            <!-- ESTADO -->
+
+                            <!-- ESTADO DE DERIVACIÓN -->
+                            <td>
+                                <span class="badge-estado" [ngClass]="{
+      'estado-pendiente': derivacion.estado === 'PENDIENTE',
+      'estado-completada': derivacion.estado === 'REALIZADA',
+      'estado-cancelada': derivacion.estado === 'CANCELADA'
+    }">
+
+                                    {{ derivacion.estado }}
+
+                                </span>
+                            </td>
+
+
+                            <!-- ACCIONES -->
+                            <td>
+                                <div class="acciones">
+
+                                    <button type="button" class="btn-accion ver" title="Ver derivación"
+                                        (click)="verDerivacion(derivacion)">
+                                        Ver
+                                    </button>
+
+                                    <button type="button" class="btn-accion editar" title="Editar derivación"
+                                        (click)="editarDerivacion(derivacion.idDerivacion)">
+                                        Editar
+                                    </button>
+
+                                    <button type="button" class="btn-accion eliminar" title="Eliminar derivación"
+                                        (click)="solicitarEliminar(derivacion)">
+                                        Eliminar
+                                    </button>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                        <!-- SIN RESULTADOS -->
+                        <tr *ngIf="derivacionesFiltradas.length === 0">
+                            <td colspan="8" class="text-center py-5">
+
+                                <div class="sin-resultados">
+                                    <h6>No se encontraron derivaciones</h6>
+
+                                    <p class="mb-0">
+                                        No hay registros que coincidan con los filtros seleccionados.
+                                    </p>
+                                </div>
+
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL: DETALLE DE DERIVACIÓN -->
+    <div class="modal-fondo" *ngIf="derivacionSeleccionada">
+
+        <div class="modal-contenido">
+
+            <div class="modal-cabecera">
+
+                <div>
+                    <h4>
+                        Detalle de derivación
+                    </h4>
+
+                    <p class="mb-0">
+                        Registro #{{ derivacionSeleccionada.idDerivacion }}
+                    </p>
+                </div>
+
+                <button type="button" class="cerrar" (click)="cerrarDetalle()">
+                    ×
+                </button>
+
+            </div>
+
+            <div class="modal-cuerpo">
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+                        <div class="dato-detalle">
+                            <span>N.º de derivación</span>
+                            <strong>
+                                #{{ derivacionSeleccionada.idDerivacion }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dato-detalle">
+                            <span>Cita médica</span>
+                            <strong>
+                                #{{ derivacionSeleccionada.idCita }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dato-detalle">
+                            <span>Fecha de derivación</span>
+                            <strong>
+                                {{ formatearFecha(derivacionSeleccionada.fecha) }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="dato-detalle">
+                            <span>Estado</span>
+                            <strong>
+                                {{ derivacionSeleccionada.estado }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="dato-detalle">
+                            <span>Centro de destino</span>
+                            <strong>
+                                {{ derivacionSeleccionada.centroDestino }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="dato-detalle">
+                            <span>Responsable</span>
+                            <strong>
+                                {{ derivacionSeleccionada.responsable }}
+                            </strong>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <div class="dato-detalle">
+                            <span>Motivo de la derivación</span>
+                            <p class="mb-0">
+                                {{ derivacionSeleccionada.motivo }}
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-pie">
+
+                <button type="button" class="btn btn-outline-secondary" (click)="cerrarDetalle()">
+                    Cerrar
+                </button>
+
+                <button type="button" class="btn btn-primary"
+                    (click)="editarDerivacion(derivacionSeleccionada.idDerivacion)">
+                    Editar derivación
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL: ELIMINAR DERIVACIÓN -->
+    <div class="modal-fondo" *ngIf="derivacionEliminar">
+
+        <div class="modal-contenido modal-pequeno">
+
+            <div class="modal-cabecera">
+                <h4>Eliminar derivación</h4>
+            </div>
+
+            <div class="modal-cuerpo">
+
+                <p>
+                    ¿Estás seguro de eliminar la derivación
+                    <strong>
+                        #{{ derivacionEliminar.idDerivacion }}
+                    </strong>?
+                </p>
+
+                <p class="text-danger mb-0">
+                    Esta acción no se puede deshacer.
+                </p>
+
+            </div>
+
+            <div class="modal-pie">
+
+                <button type="button" class="btn btn-outline-secondary" [disabled]="eliminando"
+                    (click)="cancelarEliminar()">
+                    Cancelar
+                </button>
+
+                <button type="button" class="btn btn-danger" [disabled]="eliminando" (click)="confirmarEliminar()">
+
+                    {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>

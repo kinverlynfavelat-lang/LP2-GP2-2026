@@ -1,0 +1,283 @@
+
+:host {
+  display: block;
+  --color-principal: #075779;
+  --color-secundario: #eaf4f8;
+}
+
+/* TÍTULO */
+
+.titulo-pagina {
+  color: #075779;
+  font-size: 27px;
+  font-weight: 700;
+}
+
+/* BOTONES PRINCIPALES */
+
+.btn-primary {
+  background-color: #075779;
+  border-color: #075779;
+  font-weight: 600;
+  border-radius: 8px;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #064560;
+  border-color: #064560;
+}
+
+.btn-outline-secondary {
+  border-radius: 8px;
+}
+
+/* TARJETAS DE RESUMEN */
+
+.tarjeta-resumen {
+  border: 1px solid #e0edf3;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px rgba(7, 87, 121, 0.05);
+}
+
+.tarjeta-resumen .card-body {
+  padding: 23px;
+}
+
+.tarjeta-resumen h3 {
+  color: #075779;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+/* TABLA */
+
+.tarjeta-tabla {
+  border: 1px solid #e0edf3;
+  border-radius: 13px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(7, 87, 121, 0.05);
+}
+
+.tarjeta-tabla .card-header {
+  padding: 20px;
+  border-bottom: 1px solid #e4edf2;
+}
+
+.tarjeta-tabla .card-header h5 {
+  color: #075779;
+  font-weight: 700;
+}
+
+.tarjeta-tabla .form-control {
+  min-width: 260px;
+  border-radius: 8px;
+  border-color: #d1e2ea;
+}
+
+.tarjeta-tabla .form-control:focus {
+  border-color: #258db7;
+  box-shadow: 0 0 0 3px rgba(37, 141, 183, 0.12);
+}
+
+.table {
+  font-size: 14px;
+}
+
+.table thead th {
+  background: #eaf4f8;
+  color: #075779;
+  font-weight: 700;
+  padding: 15px;
+  border-bottom: 1px solid #d5e6ee;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  padding: 15px;
+  vertical-align: middle;
+  color: #385769;
+}
+
+.table tbody tr:hover td {
+  background: #f6fafc;
+}
+
+/* MEDICAMENTOS */
+
+.badge-medicamentos {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 31px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #eaf4f8;
+  color: #075779;
+  font-weight: 700;
+}
+
+/* BOTONES DE ACCIONES */
+
+.acciones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.btn-accion {
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn-accion.ver {
+  background: #eaf4f8;
+  color: #075779;
+}
+
+.btn-accion.ver:hover {
+  background: #d3eaf4;
+}
+
+.btn-accion.imprimir {
+  background: #edf2ff;
+  color: #3b5ba8;
+}
+
+.btn-accion.imprimir:hover {
+  background: #dce5ff;
+}
+
+.btn-accion.editar {
+  background: #fff5df;
+  color: #966400;
+}
+
+.btn-accion.editar:hover {
+  background: #ffe9b5;
+}
+
+.btn-accion.eliminar {
+  background: #fff0f0;
+  color: #ba3333;
+}
+
+.btn-accion.eliminar:hover {
+  background: #ffdddd;
+}
+
+/* MODALES */
+
+.modal-fondo {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(14, 36, 49, 0.58);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-contenido {
+  width: 100%;
+  max-width: 780px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
+}
+
+.modal-pequeno {
+  max-width: 480px;
+}
+
+.modal-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0edf3;
+}
+
+.modal-cabecera h4 {
+  margin: 0;
+  color: #075779;
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.cerrar {
+  border: 0;
+  background: transparent;
+  color: #7d94a0;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.cerrar:hover {
+  color: #075779;
+}
+
+.modal-cuerpo {
+  padding: 24px;
+  color: #385769;
+  font-size: 14px;
+}
+
+.modal-cuerpo p {
+  margin-bottom: 12px;
+}
+
+.modal-cuerpo h5 {
+  color: #075779;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.modal-pie {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 17px 24px;
+  border-top: 1px solid #e0edf3;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .titulo-pagina {
+    font-size: 23px;
+  }
+
+  .tarjeta-tabla .card-header {
+    align-items: stretch !important;
+  }
+
+  .tarjeta-tabla .card-header .d-flex {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .tarjeta-tabla .form-control {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .modal-contenido {
+    max-height: 95vh;
+  }
+
+  .modal-cabecera,
+  .modal-cuerpo,
+  .modal-pie {
+    padding: 16px;
+  }
+}

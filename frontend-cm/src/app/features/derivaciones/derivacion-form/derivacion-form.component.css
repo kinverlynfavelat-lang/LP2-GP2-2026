@@ -1,0 +1,281 @@
+
+:host {
+  display: block;
+  --color-principal: #075779;
+  --color-hover: #064560;
+  --color-suave: #eaf4f8;
+  --color-borde: #dce9ef;
+  --color-texto: #344f60;
+}
+
+/* ENCABEZADO */
+
+.titulo-pagina {
+  color: var(--color-principal);
+  font-size: 27px;
+  font-weight: 700;
+}
+
+/* TARJETAS */
+
+.tarjeta-formulario {
+  background: #ffffff;
+  border: 1px solid var(--color-borde);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(7, 87, 121, 0.05);
+}
+
+.tarjeta-formulario .card-header {
+  background: #ffffff;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.tarjeta-formulario .card-body {
+  padding: 25px;
+}
+
+/* ENCABEZADOS DE SECCIÓN */
+
+.encabezado-seccion {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.numero-seccion {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  background: var(--color-suave);
+  color: var(--color-principal);
+  border-radius: 10px;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.encabezado-seccion h5 {
+  color: var(--color-principal);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.encabezado-seccion p {
+  color: #8094a0;
+  font-size: 13px;
+}
+
+/* FORMULARIOS */
+
+.form-label {
+  color: var(--color-texto);
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.obligatorio {
+  color: #dc3545;
+}
+
+.form-control,
+.form-select {
+  min-height: 43px;
+  border: 1px solid #d4e2e9;
+  border-radius: 9px;
+  color: var(--color-texto);
+  font-size: 14px;
+  background-color: #ffffff;
+}
+
+textarea.form-control {
+  min-height: 115px;
+  resize: vertical;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #258db7;
+  box-shadow: 0 0 0 3px rgba(37, 141, 183, 0.12);
+}
+
+.form-text {
+  display: block;
+  margin-top: 7px;
+  font-size: 12px;
+}
+
+/* INFORMACIÓN DE LA CITA */
+
+.informacion-cita {
+  padding: 22px;
+  background: #f5fafc;
+  border: 1px solid #dcebf1;
+  border-radius: 12px;
+}
+
+.dato-cita {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.etiqueta-dato {
+  color: #7a909c;
+  font-size: 12px;
+}
+
+.dato-cita strong {
+  color: #26485a;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.dato-clinico {
+  height: 100%;
+  padding: 16px;
+  background: #ffffff;
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+}
+
+.dato-clinico label {
+  display: block;
+  color: var(--color-principal);
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.dato-clinico p {
+  color: #405d6d;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 0;
+  white-space: pre-line;
+}
+
+.sin-seleccion {
+  padding: 20px;
+  text-align: center;
+  color: #78919e;
+  background: #f7fafc;
+  border: 1px dashed #cbdfe9;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* RESUMEN */
+
+.resumen-derivacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.resumen-derivacion > div {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 16px;
+  background: #f5fafc;
+  border: 1px solid #e0edf3;
+  border-radius: 10px;
+}
+
+.resumen-derivacion span {
+  color: #7c919e;
+  font-size: 12px;
+}
+
+.resumen-derivacion strong {
+  color: var(--color-principal);
+  font-size: 15px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* NOTA INFORMATIVA */
+
+.nota-informativa {
+  padding: 14px 16px;
+  background: #fff9e9;
+  border: 1px solid #f2e4b6;
+  border-radius: 9px;
+  color: #86691e;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* BOTONES */
+
+.acciones-formulario {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-bottom: 25px;
+}
+
+.btn-primary {
+  background: var(--color-principal);
+  border-color: var(--color-principal);
+  border-radius: 9px;
+  padding: 11px 22px;
+  font-weight: 600;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background: var(--color-hover);
+  border-color: var(--color-hover);
+}
+
+.btn-primary:disabled {
+  background: #86a7b6;
+  border-color: #86a7b6;
+}
+
+.btn-outline-secondary {
+  border-radius: 9px;
+  padding: 10px 20px;
+  font-weight: 600;
+}
+
+.spinner-border.text-primary {
+  color: var(--color-principal) !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .titulo-pagina {
+    font-size: 23px;
+  }
+
+  .tarjeta-formulario .card-header,
+  .tarjeta-formulario .card-body {
+    padding: 17px;
+  }
+
+  .informacion-cita {
+    padding: 16px;
+  }
+
+  .resumen-derivacion {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .acciones-formulario {
+    flex-direction: column-reverse;
+  }
+
+  .acciones-formulario .btn {
+    width: 100%;
+  }
+}

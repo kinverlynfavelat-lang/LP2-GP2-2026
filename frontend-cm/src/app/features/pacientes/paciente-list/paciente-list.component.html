@@ -1,0 +1,118 @@
+
+<div class="container mt-4">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <h2 class="text-upeu-primary">
+      Gestión de pacientes
+    </h2>
+
+    <a routerLink="/pacientes/nuevo" class="btn btn-nuevo">
+      <i class="bi bi-plus-circle me-1"></i>
+      Nuevo paciente
+    </a>
+
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="search-container mb-3">
+
+    <i class="bi bi-search search-icon"></i>
+
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Buscar por DNI, nombres o apellidos..."
+      [(ngModel)]="busqueda"
+      (input)="filtrarPacientes()">
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-responsive">
+
+    <table class="table table-hover shadow-sm align-middle">
+
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Paciente</th>
+          <th>Tipo de paciente</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (p of pacientesFiltrados; track p.idPersona) {
+
+          <tr>
+
+            <td>{{ p.dni }}</td>
+
+            <td>{{ p.nombres }} {{ p.apellidos }}</td>
+
+            <td>{{ p.tipoPaciente }}</td>
+
+            <td>{{ p.correo }}</td>
+
+            <td>{{ p.telefono }}</td>
+
+            <td>
+              <span class="estado-badge"
+                    [ngClass]="p.estado === 'ACTIVO' ? 'estado-activo' : 'estado-inactivo'">
+                {{ p.estado }}
+              </span>
+            </td>
+
+            <td>
+
+              <a
+                [routerLink]="['/pacientes/editar', p.idPersona]"
+                class="btn btn-sm btn-editar me-2">
+
+                <i class="bi bi-pencil-square me-1"></i>
+                Editar
+
+              </a>
+
+              <button
+                (click)="eliminar(p.idPersona!)"
+                class="btn btn-sm btn-eliminar">
+
+                <i class="bi bi-trash me-1"></i>
+                Eliminar
+
+              </button>
+
+            </td>
+
+          </tr>
+
+        } @empty {
+
+          <tr>
+            <td colspan="7" class="text-center py-4">
+
+              @if (busqueda) {
+                No se encontraron pacientes con "{{ busqueda }}".
+              } @else {
+                No hay pacientes registrados.
+              }
+
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

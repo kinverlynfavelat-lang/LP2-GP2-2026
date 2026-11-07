@@ -1,0 +1,166 @@
+
+<div class="container mt-4 mb-5">
+
+  <div class="card medico-card shadow-sm">
+
+    <!-- ENCABEZADO -->
+    <div class="card-header medico-header">
+
+      <h4>
+        <i class="bi bi-person-badge me-2"></i>
+        {{ id ? 'Editar médico' : 'Nuevo médico' }}
+      </h4>
+
+      <p>
+        Registra y administra la información profesional del médico.
+      </p>
+
+    </div>
+
+    <div class="card-body p-4">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <!-- DATOS DEL MÉDICO -->
+        <div class="form-section-title">
+          <i class="bi bi-person-vcard me-2"></i>
+          Información profesional
+        </div>
+
+        <div class="row">
+
+          <!-- EMPLEADO -->
+          <div class="col-md-12 mb-3">
+
+            <label class="form-label">
+              Seleccionar empleado *
+            </label>
+
+            <select
+              formControlName="idEmpleado"
+              class="form-select">
+
+              <option value="">
+                Seleccione un empleado
+              </option>
+
+              @for (e of empleados; track e.idPersona) {
+
+                <option [value]="e.idPersona">
+                  {{ e.dni }} -
+                  {{ e.nombres }} {{ e.apellidos }}
+                </option>
+
+              }
+
+            </select>
+
+            @if (
+              form.get('idEmpleado')?.touched &&
+              form.get('idEmpleado')?.invalid
+            ) {
+              <small class="text-danger">
+                Debe seleccionar un empleado.
+              </small>
+            }
+
+            @if (empleados.length === 0 && !id) {
+              <small class="text-muted">
+                No hay empleados disponibles para registrar como médicos.
+              </small>
+            }
+
+            @if (id) {
+              <small class="text-muted">
+                El empleado asociado no se puede cambiar durante la edición.
+              </small>
+            }
+
+          </div>
+
+          <!-- ESPECIALIDAD -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Especialidad médica *
+            </label>
+
+            <input
+              type="text"
+              formControlName="especialidad"
+              class="form-control"
+              placeholder="Ej. Medicina general">
+
+            @if (
+              form.get('especialidad')?.touched &&
+              form.get('especialidad')?.invalid
+            ) {
+              <small class="text-danger">
+                La especialidad es obligatoria.
+              </small>
+            }
+
+          </div>
+
+          <!-- COLEGIATURA -->
+          <div class="col-md-6 mb-3">
+
+            <label class="form-label">
+              Código de colegiatura *
+            </label>
+
+            <input
+              type="text"
+              formControlName="codigoCol"
+              class="form-control"
+              placeholder="Ingrese código de colegiatura">
+
+            @if (
+              form.get('codigoCol')?.touched &&
+              form.get('codigoCol')?.invalid
+            ) {
+              <small class="text-danger">
+                El código de colegiatura es obligatorio.
+              </small>
+            }
+
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions mt-4">
+
+          <button
+            type="submit"
+            class="btn btn-guardar"
+            [disabled]="form.invalid">
+
+            <i class="bi bi-save me-1"></i>
+
+            {{ id ? 'Actualizar médico' : 'Guardar médico' }}
+
+          </button>
+
+          <a
+            routerLink="/medicos"
+            class="btn btn-cancelar">
+
+            <i class="bi bi-x-circle me-1"></i>
+            Cancelar
+
+          </a>
+
+        </div>
+
+        <p class="form-note mt-3">
+          * Los campos marcados son obligatorios.
+        </p>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

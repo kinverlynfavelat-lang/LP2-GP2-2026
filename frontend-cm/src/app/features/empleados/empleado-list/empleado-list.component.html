@@ -1,0 +1,116 @@
+
+<div class="container mt-4">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+      <h2>Gestión de empleados</h2>
+      <p class="subtitulo">
+        Consulta y administra la información del personal.
+      </p>
+    </div>
+
+    <a routerLink="/empleados/nuevo" class="btn btn-nuevo">
+      <i class="bi bi-plus-circle me-1"></i>
+      Nuevo empleado
+    </a>
+
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="search-container mb-3">
+
+    <i class="bi bi-search search-icon"></i>
+
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Buscar por DNI, nombres o apellidos..."
+      [(ngModel)]="busqueda"
+      (input)="filtrarEmpleados()">
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-responsive">
+
+    <table class="table table-hover shadow-sm align-middle">
+
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Empleado</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Fecha de ingreso</th>
+          <th>Sueldo</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (e of empleadosFiltrados; track e.idPersona) {
+
+          <tr>
+
+            <td>{{ e.dni }}</td>
+
+            <td>{{ e.nombres }} {{ e.apellidos }}</td>
+
+            <td>{{ e.correo }}</td>
+
+            <td>{{ e.telefono }}</td>
+
+            <td>{{ e.fechaIngreso | date:'dd/MM/yyyy' }}</td>
+
+            <td>{{ e.sueldo | currency:'PEN':'symbol':'1.2-2' }}</td>
+
+            <td>
+              <span
+                class="estado-badge"
+                [ngClass]="e.estado === 'ACTIVO'
+                  ? 'estado-activo'
+                  : 'estado-inactivo'">
+                {{ e.estado }}
+              </span>
+            </td>
+
+            <td>
+              <a
+                [routerLink]="['/empleados/editar', e.idPersona]"
+                class="btn btn-sm btn-editar">
+
+                <i class="bi bi-pencil-square me-1"></i>
+                Editar
+
+              </a>
+            </td>
+
+          </tr>
+
+        } @empty {
+
+          <tr>
+            <td colspan="8" class="text-center py-4">
+
+              @if (busqueda) {
+                No se encontraron empleados con "{{ busqueda }}".
+              } @else {
+                No hay empleados registrados.
+              }
+
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

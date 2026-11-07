@@ -1,0 +1,168 @@
+
+<div class="container mt-4">
+
+  <div class="mb-4">
+    <h2>{{ id ? 'Editar horario médico' : 'Nuevo horario médico' }}</h2>
+    <p class="text-muted">
+      Registra y administra la disponibilidad del médico.
+    </p>
+  </div>
+
+  <div class="card shadow-sm">
+
+    <div class="card-body p-4">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <div class="row g-3">
+
+          <div class="col-md-12">
+
+            <label class="form-label">
+              Médico <span class="text-danger">*</span>
+            </label>
+
+            <select class="form-select" formControlName="idMedico">
+
+              <option value="">Seleccione un médico</option>
+
+              @for (medico of medicos; track medico.idMedico) {
+                <option [value]="medico.idMedico">
+                  {{ medico.nombre }} - {{ medico.especialidad }}
+                </option>
+              }
+
+            </select>
+
+            @if (form.get('idMedico')?.touched &&
+                 form.get('idMedico')?.invalid) {
+              <small class="text-danger">
+                Seleccione un médico.
+              </small>
+            }
+
+          </div>
+
+          <!-- Día -->
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Día de la semana <span class="text-danger">*</span>
+            </label>
+
+            <select class="form-select" formControlName="diaSemana">
+
+              <option value="">Seleccione un día</option>
+
+              @for (dia of diasSemana; track dia.valor) {
+                <option [value]="dia.valor">
+                  {{ dia.nombre }}
+                </option>
+              }
+
+            </select>
+
+            @if (form.get('diaSemana')?.touched &&
+                 form.get('diaSemana')?.invalid) {
+              <small class="text-danger">
+                Seleccione un día.
+              </small>
+            }
+
+          </div>
+
+          <!-- Estado -->
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Estado <span class="text-danger">*</span>
+            </label>
+
+            <select class="form-select" formControlName="estado">
+
+              @for (estado of estados; track estado.valor) {
+                <option [value]="estado.valor">
+                  {{ estado.nombre }}
+                </option>
+              }
+
+            </select>
+
+          </div>
+
+          <!-- Hora inicio -->
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Hora de inicio <span class="text-danger">*</span>
+            </label>
+
+            <input
+              type="time"
+              class="form-control"
+              formControlName="horaInicio">
+
+            @if (form.get('horaInicio')?.touched &&
+                 form.get('horaInicio')?.invalid) {
+              <small class="text-danger">
+                Ingrese la hora de inicio.
+              </small>
+            }
+
+          </div>
+
+          <!-- Hora fin -->
+          <div class="col-md-6">
+
+            <label class="form-label">
+              Hora de fin <span class="text-danger">*</span>
+            </label>
+
+            <input
+              type="time"
+              class="form-control"
+              formControlName="horaFin">
+
+            @if (form.get('horaFin')?.touched &&
+                 form.get('horaFin')?.invalid) {
+              <small class="text-danger">
+                Ingrese la hora de fin.
+              </small>
+            }
+
+            @if (form.get('horaInicio')?.value &&
+                 form.get('horaFin')?.value &&
+                 !validarHoras()) {
+              <small class="text-danger">
+                La hora de inicio debe ser anterior a la hora de fin.
+              </small>
+            }
+
+          </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <div class="d-flex justify-content-end gap-2">
+
+          <a
+            routerLink="/horarios-medicos"
+            class="btn btn-cancelar">
+            Cancelar
+          </a>
+
+          <button type="submit" class="btn btn-guardar">
+            <i class="bi bi-save me-1"></i>
+            {{ id ? 'Actualizar horario' : 'Guardar horario' }}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</div>

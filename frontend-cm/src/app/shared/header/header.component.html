@@ -1,0 +1,126 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-upeu-primary">
+    <div class="container-fluid px-4">
+
+        <!-- LOGO -->
+        <a class="navbar-brand d-flex align-items-center" routerLink="/home">
+            <i class="bi bi-heart-pulse-fill me-2 fs-3"></i>
+            <span class="fw-bold">UPeU Salud</span>
+        </a>
+
+        <!-- BOTÓN RESPONSIVE -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCentroMedico">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- MENÚ -->
+        <div class="collapse navbar-collapse" id="navbarCentroMedico">
+
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <!-- INICIO -->
+                <li class="nav-item">
+                    <a class="nav-link" routerLink="/home" routerLinkActive="active-link"
+                        [routerLinkActiveOptions]="{exact:true}">
+                        <i class="bi bi-house-door me-1"></i>
+                        Inicio
+                    </a>
+                </li>
+
+                <!-- MENÚ DESPLEGABLE -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <i class="bi bi-grid me-1"></i>
+                        Gestión
+                    </a>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item" routerLink="/pacientes">
+                                <i class="bi bi-people me-2"></i>
+                                Pacientes
+                            </a>
+                        </li>
+                        <a class="dropdown-item" routerLink="/portal-paciente">
+                            <i class="bi bi-calendar-check me-2"></i>
+                            Portal del Paciente
+                        </a>
+                        <li>
+                            <a class="dropdown-item" routerLink="/citas">
+                                <i class="bi bi-calendar-check me-2"></i>
+                                Citas médicas
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" routerLink="/triaje">
+                                <i class="bi bi-heart-pulse me-2"></i>
+                                Triaje
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" routerLink="/atencion">
+                                <i class="bi bi-clipboard2-pulse me-2"></i>
+                                Atención médica
+                            </a>
+                        </li>
+                       
+                        <a class="dropdown-item" routerLink="/derivaciones">
+                            <i class="bi bi-arrow-left-right me-2"></i>
+                            Derivaciones Médicas
+                        </a>
+                        <li>
+                            <a class="dropdown-item" routerLink="/farmacia">
+                                <i class="bi bi-capsule-pill me-2"></i>
+                                Farmacia
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" routerLink="/empleados">
+                                <i class="bi bi-person-workspace me-2"></i>
+                                Empleados
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" routerLink="/medicos">
+                                <i class="bi bi-person-badge me-2"></i>
+                                Médicos
+                            </a>
+                        </li>
+
+                        <a class="dropdown-item" routerLink="/horarios-medicos">
+                            <i class="bi bi-calendar-week me-2"></i>
+                            Horarios médicos
+                        </a>
+
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <a class="dropdown-item" routerLink="/recetas">
+                            <i class="bi bi-file-earmark-medical"></i>
+                            <span>Recetas Médicas</span>
+                        </a>
+
+                        <li>
+                            <a class="dropdown-item" routerLink="/pagos">
+                                <i class="bi bi-cash-coin me-2"></i>
+                                Pagos
+                            </a>
+                        </li>
+
+                    </ul>
+                </li>
+
+            </ul>
+
+            <!-- IDENTIFICACIÓN -->
+            <div class="d-flex align-items-center system-info">
+                <i class="bi bi-hospital me-2"></i>
+                <span>Centro Médico Universitario</span>
+            </div>
+
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,138 @@
+
+<div class="container mt-4">
+
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+      <h2>Gestión de horarios médicos</h2>
+      <p class="text-muted mb-0">
+        Administra la disponibilidad de los médicos.
+      </p>
+    </div>
+
+    <a
+      routerLink="/horarios-medicos/nuevo"
+      class="btn btn-nuevo">
+      <i class="bi bi-plus-circle me-1"></i>
+      Nuevo horario
+    </a>
+
+  </div>
+
+  <!-- Seleccionar médico -->
+  <div class="card shadow-sm mb-4">
+
+    <div class="card-body">
+
+      <label class="form-label fw-bold">
+        Seleccionar médico
+      </label>
+
+      <select
+        class="form-select"
+        [value]="medicoSeleccionado ?? ''"
+        (change)="cambiarMedico($event)">
+
+        <option value="">Seleccione un médico</option>
+
+        @for (medico of medicos; track medico.idMedico) {
+          <option [value]="medico.idMedico">
+            {{ medico.nombre }} - {{ medico.especialidad }}
+          </option>
+        }
+
+      </select>
+
+    </div>
+
+  </div>
+
+  <!-- Tabla -->
+  <div class="card shadow-sm">
+
+    <div class="card-body">
+
+      <h5 class="mb-3">Horarios registrados</h5>
+
+      <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+          <thead>
+            <tr>
+              <th>Día</th>
+              <th>Hora de inicio</th>
+              <th>Hora de fin</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @if (cargando) {
+
+              <tr>
+                <td colspan="5" class="text-center py-4">
+                  Cargando horarios...
+                </td>
+              </tr>
+
+            } @else {
+
+              @for (h of horarios; track h.idHorario) {
+
+                <tr>
+
+                  <td class="fw-semibold">
+                    {{ obtenerDia(h.diaSemana) }}
+                  </td>
+
+                  <td>{{ h.horaInicio }}</td>
+
+                  <td>{{ h.horaFin }}</td>
+
+                  <td>
+                    <span
+                      class="estado"
+                      [class.activo]="h.estado === 'ACTIVO'"
+                      [class.inactivo]="h.estado === 'INACTIVO'">
+                      {{ obtenerEstado(h.estado) }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <a
+                      [routerLink]="['/horarios-medicos/editar', h.idHorario]"
+                      class="btn btn-sm btn-editar">
+                      <i class="bi bi-pencil-square me-1"></i>
+                      Editar
+                    </a>
+                  </td>
+
+                </tr>
+
+              } @empty {
+
+                <tr>
+                  <td colspan="5" class="text-center py-4 text-muted">
+                    No hay horarios registrados para este médico.
+                  </td>
+                </tr>
+
+              }
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

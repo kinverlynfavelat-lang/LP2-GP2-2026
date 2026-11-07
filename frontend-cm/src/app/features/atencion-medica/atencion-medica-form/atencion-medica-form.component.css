@@ -1,0 +1,237 @@
+
+/* FORMULARIO DE ATENCIÓN MÉDICA */
+
+:host {
+  display: block;
+  --azul: #075779;
+  --azul-oscuro: #06445f;
+  --celeste: #eaf4f8;
+  --verde: #198754;
+}
+
+.container {
+  max-width: 1300px;
+}
+
+/* TÍTULO */
+
+.titulo-pagina {
+  color: #075779;
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+.titulo-pagina i {
+  color: #1685ac;
+}
+
+/* TARJETAS */
+
+.card {
+  border-radius: 15px;
+  overflow: hidden;
+  background: white;
+  border: 1px solid #e7edf2 !important;
+  box-shadow: 0 5px 20px rgba(7, 87, 121, .055) !important;
+}
+
+.card-header {
+  background: #edf6fa;
+  border-bottom: 1px solid #dceaf1;
+  padding: 19px 23px;
+}
+
+.card-header h5 {
+  color: #075779;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-header h5 i {
+  color: #1685ac;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* DATOS DEL PACIENTE */
+
+.card-body label {
+  display: block;
+  color: #7a8999;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 7px;
+}
+
+.card-body p {
+  color: #263b4e;
+  font-size: 14px;
+  font-weight: 550;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* SIGNOS VITALES */
+
+.vital-box {
+  background: linear-gradient(
+    180deg,
+    #f3f9fc 0%,
+    #ffffff 100%
+  );
+  border: 1px solid #deebf2;
+  border-radius: 12px;
+  padding: 21px 10px;
+  text-align: center;
+  height: 100%;
+  transition: all .2s ease;
+}
+
+.vital-box:hover {
+  border-color: #91c6de;
+  box-shadow: 0 5px 15px rgba(7, 87, 121, .07);
+  transform: translateY(-2px);
+}
+
+.vital-box small {
+  display: block;
+  font-size: 11px;
+  color: #73869a;
+  font-weight: 600;
+  margin-bottom: 11px;
+}
+
+.vital-box strong {
+  display: block;
+  color: #075779;
+  font-size: 25px;
+  font-weight: 750;
+  margin-bottom: 4px;
+}
+
+.vital-box span {
+  color: #8496a6;
+  font-size: 11px;
+}
+
+/* COLORES DIFERENCIADOS EN SIGNOS */
+
+.vital-box:nth-child(1) {
+  border-top: 3px solid #e38b65;
+}
+
+/* CAMPOS DE EVALUACIÓN */
+
+.form-label {
+  color: #34485b !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  margin-bottom: 9px !important;
+}
+
+.form-control {
+  border: 1px solid #dce5ec;
+  background: #fbfdfe;
+  border-radius: 9px;
+  font-size: 14px;
+  color: #263b4e;
+  padding: 13px 15px;
+  transition: .2s ease;
+}
+
+.form-control:focus {
+  background: white;
+  border-color: #1685ac;
+  box-shadow: 0 0 0 3px rgba(22, 133, 172, .10);
+}
+
+.form-control::placeholder {
+  color: #a1adba;
+}
+
+textarea.form-control {
+  min-height: 95px;
+  resize: vertical;
+}
+
+/* BOTÓN VOLVER */
+
+.btn-outline-secondary {
+  background: #ffffff;
+  border: 1px solid #d5e0e8;
+  color: #566879;
+  border-radius: 9px;
+  font-weight: 600;
+  padding: 10px 17px;
+}
+
+.btn-outline-secondary:hover {
+  background: #edf4f7;
+  color: #075779;
+  border-color: #b6d3e1;
+}
+
+/* GUARDAR BORRADOR */
+
+.btn-outline-primary {
+  background: #eaf4f8;
+  border: 1px solid #b5d8e8;
+  color: #075779;
+  font-weight: 650;
+  border-radius: 9px;
+  padding: 11px 19px;
+}
+
+.btn-outline-primary:hover {
+  background: #075779;
+  border-color: #075779;
+  color: #ffffff;
+}
+
+/* FINALIZAR ATENCIÓN */
+
+.btn-finalizar {
+  background: #198754;
+  border: 1px solid #198754;
+  color: white;
+  font-weight: 650;
+  font-size: 13px;
+  border-radius: 9px;
+  padding: 11px 20px;
+  transition: .2s ease;
+}
+
+.btn-finalizar:hover {
+  background: #146c43;
+  border-color: #146c43;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(25, 135, 84, .17);
+}
+
+.btn:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .card-header {
+    padding: 16px;
+  }
+
+  .card-body {
+    padding: 17px;
+  }
+
+  .vital-box {
+    padding: 16px 8px;
+  }
+}

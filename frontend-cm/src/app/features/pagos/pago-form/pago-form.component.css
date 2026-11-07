@@ -1,0 +1,373 @@
+
+/* CONTENEDOR */
+.pago-container {
+  max-width: 1500px;
+}
+
+/* ENCABEZADO */
+.titulo-pagina {
+  font-size: 27px;
+  font-weight: 700;
+  color: #263445;
+}
+
+.encabezado-pago {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.icono-titulo {
+  width: 43px;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e7f1f6;
+  color: #075779;
+  border-radius: 11px;
+  font-size: 21px;
+}
+
+/* TARJETAS */
+.pago-card,
+.resumen-pago {
+  border: 1px solid #e9edf2;
+  border-radius: 13px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 3px 14px rgba(35, 55, 75, 0.05);
+}
+
+.card-header {
+  background: #ffffff;
+  padding: 19px 22px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.card-header h5 {
+  color: #263445;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-header small {
+  color: #8793a1;
+  font-size: 12px;
+}
+
+.card-body {
+  padding: 24px;
+}
+
+.seccion-icono {
+  width: 39px;
+  height: 39px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eaf3f7;
+  color: #075779;
+  border-radius: 9px;
+  font-size: 19px;
+}
+
+/* DATOS DEL PACIENTE */
+.dato-label {
+  display: block;
+  color: #84909e;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 7px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.dato-valor {
+  color: #263445;
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.dato-valor i {
+  color: #075779;
+}
+
+/* FORMULARIO */
+.form-label {
+  color: #354457;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.obligatorio {
+  color: #dc3545;
+}
+
+.campo-pago {
+  min-height: 45px;
+  border: 1px solid #dfe5eb;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #344256;
+  padding: 10px 13px;
+}
+
+.campo-pago:focus {
+  border-color: #075779;
+  box-shadow: 0 0 0 3px rgba(7, 87, 121, 0.10);
+}
+
+/* PAGO CUBIERTO */
+.fondo-completo {
+  text-align: center;
+  background: #f0f9f4;
+  border: 1px solid #d4eddd;
+  border-radius: 11px;
+  padding: 28px 20px;
+  color: #276b45;
+}
+
+.fondo-check {
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 15px;
+  border-radius: 50%;
+  background: #d8f0e1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.fondo-completo h5 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.fondo-completo p {
+  font-size: 13px;
+  color: #557664;
+}
+
+.fondo-completo strong {
+  font-size: 13px;
+}
+
+/* ALERTA */
+.alerta-pago {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px;
+  background: #eff6fb;
+  color: #285c7b;
+  border: 1px solid #d9eaf5;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.alerta-pago i {
+  font-size: 17px;
+}
+
+/* RESUMEN FINANCIERO */
+.resumen-pago {
+  position: sticky;
+  top: 20px;
+}
+
+.resumen-header {
+  background: #075779;
+  color: #ffffff;
+  padding: 19px 22px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.costo-principal span {
+  color: #84909e;
+  font-size: 13px;
+}
+
+.costo-principal h2 {
+  color: #263445;
+  font-size: 30px;
+  font-weight: 750;
+  margin-top: 7px;
+  margin-bottom: 0;
+}
+
+.separador {
+  height: 1px;
+  background: #edf0f3;
+  margin: 22px 0;
+}
+
+/* FILAS */
+.fila-resumen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 19px;
+  color: #657385;
+  font-size: 13px;
+}
+
+.fila-resumen strong {
+  color: #263445;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.fila-resumen.descuento {
+  color: #26834d;
+}
+
+.fila-resumen.descuento strong {
+  color: #26834d;
+}
+
+/* TOTAL */
+.total-pagar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.total-pagar span {
+  display: block;
+  font-weight: 700;
+  font-size: 13px;
+  color: #263445;
+}
+
+.total-pagar small {
+  display: block;
+  margin-top: 5px;
+  color: #84909e;
+  font-size: 11px;
+}
+
+.total-pagar h2 {
+  color: #075779;
+  font-size: 26px;
+  font-weight: 750;
+  white-space: nowrap;
+}
+
+.total-pagar h2.total-cubierto {
+  color: #21864e;
+}
+
+/* ESTADO */
+.estado-pago {
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.estado-pendiente {
+  background: #fff7e9;
+  color: #a66b0b;
+}
+
+.estado-cubierto {
+  background: #edf8f1;
+  color: #21864e;
+}
+
+/* NOTA */
+.nota-pago {
+  margin-top: 19px;
+  margin-bottom: 20px;
+  padding: 12px;
+  border-radius: 8px;
+  background: #f5f7f9;
+  color: #718092;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+/* BOTONES */
+.btn-confirmar {
+  background: #075779;
+  border: 1px solid #075779;
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.btn-confirmar:hover {
+  background: #06445f;
+  border-color: #06445f;
+  color: #ffffff;
+}
+
+.btn-confirmar:disabled {
+  opacity: 0.65;
+}
+
+.btn-cancelar {
+  background: #ffffff;
+  color: #647386;
+  border: 1px solid #dfe5eb;
+  border-radius: 8px;
+  padding: 11px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-cancelar:hover {
+  background: #f3f5f7;
+}
+
+/* SEGURIDAD */
+.seguridad-pago {
+  text-align: center;
+  color: #8995a3;
+  font-size: 11px;
+}
+
+/* CARGANDO */
+.cargando-pago {
+  text-align: center;
+  padding: 55px 20px;
+}
+
+.cargando-pago p {
+  color: #84909e;
+  margin-top: 12px;
+  font-size: 13px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+  .resumen-pago {
+    position: static;
+  }
+}
+
+@media (max-width: 576px) {
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .card-body {
+    padding: 18px;
+  }
+
+  .total-pagar h2 {
+    font-size: 22px;
+  }
+}

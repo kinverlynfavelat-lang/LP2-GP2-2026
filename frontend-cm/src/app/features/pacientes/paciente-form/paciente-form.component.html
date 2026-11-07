@@ -1,0 +1,203 @@
+
+<div class="container mt-4">
+
+  <div class="card shadow-sm">
+
+    <div class="card-header">
+      <h4>
+        {{ id ? 'Editar paciente' : 'Registrar nuevo paciente' }}
+      </h4>
+      <p class="mb-0">
+        Complete la información del paciente.
+      </p>
+    </div>
+
+    <div class="card-body">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <!-- DATOS PERSONALES -->
+        <h5 class="form-section">Datos personales</h5>
+
+        <div class="row">
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">DNI *</label>
+            <input type="text"
+                   formControlName="dni"
+                   class="form-control"
+                   maxlength="8"
+                   placeholder="Ingrese DNI">
+
+            @if (form.get('dni')?.touched && form.get('dni')?.invalid) {
+              <small class="text-danger">
+                El DNI es obligatorio y debe tener 8 dígitos.
+              </small>
+            }
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Nombres *</label>
+            <input type="text"
+                   formControlName="nombres"
+                   class="form-control"
+                   placeholder="Ingrese nombres">
+
+            @if (form.get('nombres')?.touched && form.get('nombres')?.invalid) {
+              <small class="text-danger">
+                Ingrese los nombres (máximo 20 caracteres).
+              </small>
+            }
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Apellidos *</label>
+            <input type="text"
+                   formControlName="apellidos"
+                   class="form-control"
+                   placeholder="Ingrese apellidos">
+
+            @if (form.get('apellidos')?.touched && form.get('apellidos')?.invalid) {
+              <small class="text-danger">
+                Ingrese los apellidos (máximo 20 caracteres).
+              </small>
+            }
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Fecha de nacimiento *</label>
+            <input type="date"
+                   formControlName="fechaNacimiento"
+                   class="form-control">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Estado civil *</label>
+            <select formControlName="estadoCivil" class="form-select">
+              <option value="">Seleccione</option>
+              <option value="SOLTERO">Soltero</option>
+              <option value="CASADO">Casado</option>
+              <option value="VIUDO">Viudo</option>
+              <option value="DIVORCIADO">Divorciado</option>
+              <option value="CONVIVIENTE">Conviviente</option>
+            </select>
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Estado</label>
+            <select formControlName="estado" class="form-select">
+              <option value="ACTIVO">Activo</option>
+              <option value="INACTIVO">Inactivo</option>
+              <option value="SUSPENDIDO">Suspendido</option>
+              <option value="CESADO">Cesado</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- CONTACTO -->
+        <h5 class="form-section">Información de contacto</h5>
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Correo electrónico *</label>
+            <input type="email"
+                   formControlName="correo"
+                   class="form-control"
+                   placeholder="correo@ejemplo.com">
+
+            @if (form.get('correo')?.touched && form.get('correo')?.invalid) {
+              <small class="text-danger">
+                Ingrese un correo válido.
+              </small>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Teléfono *</label>
+            <input type="text"
+                   formControlName="telefono"
+                   class="form-control"
+                   placeholder="Ingrese teléfono">
+          </div>
+
+          <div class="col-12 mb-3">
+            <label class="form-label">Dirección</label>
+            <input type="text"
+                   formControlName="direccion"
+                   class="form-control"
+                   placeholder="Ingrese dirección">
+          </div>
+
+        </div>
+
+        <!-- INFORMACIÓN DEL PACIENTE -->
+        <h5 class="form-section">Información del paciente</h5>
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Tipo de paciente *</label>
+            <select formControlName="tipoPaciente" class="form-select">
+              <option value="">Seleccione tipo</option>
+              <option value="ESTUDIANTE">Estudiante</option>
+              <option value="DOCENTE">Docente</option>
+              <option value="ADMINISTRATIVO">Administrativo</option>
+              <option value="EXTERNO">Externo</option>
+            </select>
+          </div>
+
+          @if (form.get('tipoPaciente')?.value === 'ESTUDIANTE') {
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Código universitario *</label>
+              <input type="text"
+                     formControlName="codigoUniversitario"
+                     class="form-control"
+                     placeholder="Ingrese código universitario">
+            </div>
+
+            <div class="col-md-6 mb-3">
+              <label class="form-label">Matrícula vigente *</label>
+              <select formControlName="matriculaVigente" class="form-select">
+                <option value="">Seleccione</option>
+                <option value="SI">Sí</option>
+                <option value="NO">No</option>
+              </select>
+            </div>
+
+          }
+
+          <div class="col-12 mb-3">
+            <label class="form-label">Alergias</label>
+            <textarea formControlName="alergias"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Indique si presenta alguna alergia">
+            </textarea>
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-end gap-2 mt-4">
+
+          <a routerLink="/pacientes" class="btn btn-cancelar">
+            Cancelar
+          </a>
+
+          <button type="submit"
+                  class="btn btn-guardar"
+                  [disabled]="form.invalid">
+            <i class="bi bi-save me-1"></i>
+            {{ id ? 'Actualizar paciente' : 'Guardar paciente' }}
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>

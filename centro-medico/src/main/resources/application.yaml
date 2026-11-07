@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: centro-medico
+  datasource:
+    url: jdbc:oracle:thin:@localhost:1521/XE
+    username: CENTRO_MEDICO
+    password: admin123
+    driver-class-name: oracle.jdbc.OracleDriver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.OracleDialect
+        format_sql : true
+
+server:
+  servlet:
+    context-path: /centro-medico
+  port: 8080

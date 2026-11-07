@@ -1,0 +1,165 @@
+
+/* LISTADO DE ATENCIÓN MÉDICA */
+
+:host {
+  display: block;
+  --azul: #075779;
+  --azul-oscuro: #06445f;
+  --celeste: #eaf4f8;
+  --borde: #e2eaf0;
+}
+
+.container {
+  max-width: 1350px;
+}
+
+/* ENCABEZADO */
+
+.titulo-pagina {
+  color: #075779;
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: -0.5px;
+}
+
+.titulo-pagina i {
+  color: #1685ac;
+}
+
+.text-muted {
+  color: #718096 !important;
+}
+
+/* TARJETA PRINCIPAL */
+
+.card {
+  border-radius: 15px;
+  overflow: hidden;
+  background: #ffffff;
+  box-shadow: 0 5px 22px rgba(7, 87, 121, .07) !important;
+}
+
+.card-header {
+  background: #ffffff !important;
+  border-bottom: 1px solid #e7edf2;
+  padding: 20px 23px !important;
+}
+
+.card-header h5 {
+  color: #075779;
+  font-size: 17px;
+  font-weight: 700;
+}
+
+/* CONTADOR */
+
+.card-header .badge {
+  background: #e1f2fa !important;
+  color: #075779;
+  font-size: 12px;
+  padding: 7px 11px;
+  border-radius: 8px;
+}
+
+/* TABLA */
+
+.table {
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background: #edf6fa;
+  color: #075779;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 17px 15px;
+  border-bottom: 1px solid #dbeaf1;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  color: #344457;
+  font-size: 13px;
+  padding: 19px 15px;
+  border-bottom: 1px solid #edf1f5;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover td {
+  background: #f5fafc;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.table tbody td.fw-semibold {
+  color: #183c51;
+  font-weight: 700 !important;
+}
+
+/* ESTADO PENDIENTE */
+
+.table .badge.bg-warning {
+  background: #fff1d6 !important;
+  color: #a96b12 !important;
+  border: 1px solid #f6dfac;
+  font-size: 11px;
+  font-weight: 650;
+  padding: 7px 11px;
+  border-radius: 20px;
+}
+
+/* BOTÓN ATENDER */
+
+.btn-atender {
+  background: #075779;
+  border: 1px solid #075779;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 10px 17px;
+  border-radius: 9px;
+  transition: all .2s ease;
+  white-space: nowrap;
+}
+
+.btn-atender:hover {
+  background: #06445f;
+  border-color: #06445f;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(7, 87, 121, .18);
+}
+
+/* BOTÓN ACTUALIZAR */
+
+.btn-outline-primary {
+  border-color: #b7d6e5;
+  background: #ffffff;
+  color: #075779;
+  border-radius: 9px;
+  font-weight: 600;
+  padding: 10px 17px;
+}
+
+.btn-outline-primary:hover {
+  background: #075779;
+  border-color: #075779;
+  color: white;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .card-header {
+    padding: 16px !important;
+  }
+
+  .table tbody td {
+    padding: 13px;
+  }
+}

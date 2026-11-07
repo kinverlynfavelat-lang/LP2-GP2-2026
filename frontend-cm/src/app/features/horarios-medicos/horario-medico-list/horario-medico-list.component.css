@@ -1,0 +1,116 @@
+
+/* CONTENEDOR */
+.container {
+  max-width: 1450px;
+  padding-top: 15px;
+}
+
+/* TITULO */
+h2 {
+  color: #075477;
+  font-size: 27px;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+/* TARJETAS */
+.card {
+  border: 1px solid #dceaf2;
+  border-radius: 10px;
+}
+
+/* BOTON NUEVO */
+.btn-nuevo {
+  background-color: #075477;
+  color: white;
+  border: 1px solid #075477;
+  padding: 10px 17px;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.btn-nuevo:hover {
+  background-color: #329BC2;
+  border-color: #329BC2;
+  color: white;
+}
+
+/* SELECTOR */
+.form-select {
+  border: 1px solid #c9dce8;
+  padding: 11px;
+}
+
+.form-select:focus {
+  border-color: #329BC2;
+  box-shadow: 0 0 0 0.2rem rgba(50, 155, 194, 0.15);
+}
+
+/* TABLA */
+.table {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #E5F4FC;
+  color: #075477;
+  font-weight: 700;
+  padding: 15px 12px;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  color: #334e68;
+  padding: 14px 12px;
+}
+
+/* EDITAR */
+.btn-editar {
+  background-color: #329BC2;
+  color: white;
+  border: 1px solid #329BC2;
+  font-weight: 600;
+}
+
+.btn-editar:hover {
+  background-color: #075477;
+  color: white;
+}
+
+/* ESTADOS */
+.estado {
+  display: inline-block;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.estado.activo {
+  background-color: #e1f5eb;
+  color: #16834a;
+}
+
+.estado.inactivo {
+  background-color: #fce8e8;
+  color: #bd3b45;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+
+  .container {
+    padding: 12px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .btn-nuevo {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+
+}

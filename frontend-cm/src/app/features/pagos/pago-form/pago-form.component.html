@@ -1,0 +1,334 @@
+
+<div class="container-fluid pago-container py-4">
+
+  <!-- ENCABEZADO -->
+  <div class="encabezado-pago mb-4">
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="icono-titulo">
+          <i class="bi bi-wallet2"></i>
+        </span>
+        <h2 class="titulo-pagina mb-0">Procesar pago</h2>
+      </div>
+      <p class="text-muted mb-0">
+        Gestión del cobro y aplicación del fondo universitario.
+      </p>
+    </div>
+  </div>
+
+  <!-- CARGANDO -->
+  <div *ngIf="cargando && !paciente" class="cargando-pago">
+    <div class="spinner-border text-primary"></div>
+    <p>Consultando información de la cita...</p>
+  </div>
+
+  <div *ngIf="!cargando || paciente" class="row g-4">
+
+    <!-- COLUMNA IZQUIERDA -->
+    <div class="col-lg-7">
+
+      <!-- INFORMACIÓN DEL PACIENTE -->
+      <div class="card pago-card mb-4">
+
+        <div class="card-header">
+          <div class="d-flex align-items-center gap-2">
+            <span class="seccion-icono">
+              <i class="bi bi-person-vcard"></i>
+            </span>
+            <div>
+              <h5 class="mb-0">Información del paciente</h5>
+              <small>Datos de la atención médica</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+
+          <div class="row g-4">
+
+            <div class="col-md-6">
+              <label class="dato-label">Paciente</label>
+              <div class="dato-valor">
+                <i class="bi bi-person me-2"></i>
+                {{ paciente || 'No disponible' }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="dato-label">Tipo de paciente</label>
+              <div class="dato-valor">
+                <i class="bi bi-card-checklist me-2"></i>
+                {{ tipoPaciente || 'No registrado' }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="dato-label">Fecha de atención</label>
+              <div class="dato-valor">
+                <i class="bi bi-calendar3 me-2"></i>
+                {{ fechaCita | date:'dd/MM/yyyy' }}
+              </div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="dato-label">Hora de atención</label>
+              <div class="dato-valor">
+                <i class="bi bi-clock me-2"></i>
+                {{ horaCita }}
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- DATOS DEL PAGO -->
+      <div class="card pago-card">
+
+        <div class="card-header">
+          <div class="d-flex align-items-center gap-2">
+            <span class="seccion-icono">
+              <i class="bi bi-credit-card"></i>
+            </span>
+            <div>
+              <h5 class="mb-0">Datos del pago</h5>
+              <small>Información del cobro en caja</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+
+          <!-- ATENCIÓN CUBIERTA -->
+          <div *ngIf="montoPagar === 0" class="fondo-completo">
+
+            <div class="fondo-check">
+              <i class="bi bi-check-lg"></i>
+            </div>
+
+            <h5>¡Atención cubierta completamente!</h5>
+
+            <p class="mb-2">
+              El fondo universitario cubre el costo total de la atención.
+            </p>
+
+            <strong>
+              No es necesario realizar ningún pago en caja.
+            </strong>
+
+          </div>
+
+          <!-- PAGO PARCIAL O TOTAL -->
+          <div *ngIf="montoPagar > 0">
+
+            <div class="alerta-pago mb-4">
+              <i class="bi bi-info-circle-fill"></i>
+              <span>
+                El paciente debe completar el importe restante en caja.
+              </span>
+            </div>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Fecha de pago <span class="obligatorio">*</span>
+              </label>
+
+              <input
+                type="date"
+                class="form-control campo-pago"
+                [(ngModel)]="fecha"
+                name="fecha"
+                required>
+
+            </div>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Motivo del pago <span class="obligatorio">*</span>
+              </label>
+
+              <input
+                type="text"
+                class="form-control campo-pago"
+                [(ngModel)]="motivoPago"
+                name="motivoPago"
+                maxlength="100"
+                placeholder="Ej. Pago de atención médica"
+                required>
+
+            </div>
+
+            <div class="mb-2">
+
+              <label class="form-label">
+                Medio de pago <span class="obligatorio">*</span>
+              </label>
+
+              <select
+                class="form-select campo-pago"
+                [(ngModel)]="medioPago"
+                name="medioPago"
+                required>
+
+                <option value="">
+                  Seleccione un medio de pago
+                </option>
+
+                <option value="EFECTIVO">Efectivo</option>
+                <option value="YAPE">Yape</option>
+
+              </select>
+
+            </div>
+
+            <small class="text-muted">
+              <i class="bi bi-shield-check me-1"></i>
+              Complete los datos para registrar el importe pendiente.
+            </small>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- COLUMNA DERECHA -->
+    <div class="col-lg-5">
+
+      <div class="card resumen-pago">
+
+        <div class="resumen-header">
+          <i class="bi bi-receipt me-2"></i>
+          Resumen financiero
+        </div>
+
+        <div class="card-body">
+
+          <!-- COSTO TOTAL -->
+          <div class="costo-principal">
+            <span>Costo de atención</span>
+            <h2>S/ {{ montoTotal | number:'1.2-2' }}</h2>
+          </div>
+
+          <div class="separador"></div>
+
+          <!-- FONDO DISPONIBLE -->
+          <div class="fila-resumen">
+            <span>
+              <i class="bi bi-wallet me-2"></i>
+              Fondo disponible
+            </span>
+            <strong>
+              S/ {{ saldoFondo | number:'1.2-2' }}
+            </strong>
+          </div>
+
+          <!-- DESCUENTO -->
+          <div class="fila-resumen descuento">
+            <span>
+              <i class="bi bi-mortarboard me-2"></i>
+              Descuento universitario
+            </span>
+            <strong>
+              - S/ {{ descuentoFondo | number:'1.2-2' }}
+            </strong>
+          </div>
+
+          <div class="separador"></div>
+
+          <!-- TOTAL -->
+          <div class="total-pagar">
+            <div>
+              <span>Total pendiente en caja</span>
+              <small>
+                {{ montoPagar === 0
+                  ? 'Cubierto por fondo universitario'
+                  : 'Importe que debe pagar el paciente' }}
+              </small>
+            </div>
+
+            <h2 [class.total-cubierto]="montoPagar === 0">
+              S/ {{ montoPagar | number:'1.2-2' }}
+            </h2>
+          </div>
+
+          <!-- ESTADO -->
+          <div
+            class="estado-pago"
+            [ngClass]="montoPagar === 0
+              ? 'estado-cubierto'
+              : 'estado-pendiente'">
+
+            <i
+              class="bi me-2"
+              [ngClass]="montoPagar === 0
+                ? 'bi-check-circle-fill'
+                : 'bi-clock-history'">
+            </i>
+
+            {{ montoPagar === 0
+              ? 'Atención cubierta'
+              : 'Pendiente de pago en caja' }}
+
+          </div>
+
+          <!-- INFORMACIÓN -->
+          <div class="nota-pago">
+            <i class="bi bi-info-circle me-2"></i>
+            El descuento del fondo y el cambio de estado de la cita
+            se realizarán al confirmar la operación.
+          </div>
+
+          <!-- BOTÓN CONFIRMAR -->
+          <button
+            type="button"
+            class="btn btn-confirmar w-100"
+            (click)="guardar()"
+            [disabled]="cargando">
+
+            <span
+              *ngIf="cargando"
+              class="spinner-border spinner-border-sm me-2">
+            </span>
+
+            <i
+              *ngIf="!cargando"
+              class="bi bi-check-circle me-2">
+            </i>
+
+            {{ montoPagar === 0
+              ? 'Confirmar aplicación del fondo'
+              : 'Confirmar pago' }}
+
+          </button>
+
+          <!-- CANCELAR -->
+          <button
+            type="button"
+            class="btn btn-cancelar w-100 mt-2"
+            (click)="cancelar()"
+            [disabled]="cargando">
+
+            <i class="bi bi-arrow-left me-2"></i>
+            Regresar
+
+          </button>
+
+        </div>
+
+      </div>
+
+      <div class="seguridad-pago mt-3">
+        <i class="bi bi-lock-fill me-2"></i>
+        Operación procesada mediante el sistema del centro médico.
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,59 @@
+
+
+:root {
+  --color-primario: #07577A;
+  --color-secundario: #43A6CC;
+  --color-acento: #43A6CC;
+
+  --color-celeste: #E8F5FB;
+  --color-fondo-claro: #F6FAFC;
+  --color-blanco: #FFFFFF;
+
+  --color-texto-oscuro: #263E4D;
+  --color-texto-secundario: #526B7A;
+  --color-borde: #DCEAF1;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-fondo-claro);
+  color: var(--color-texto-oscuro);
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.bg-upeu-primary {
+  background-color: var(--color-primario) !important;
+}
+
+.text-upeu-accent {
+  color: var(--color-acento) !important;
+}
+
+.bg-upeu-primary {
+  background-color: var(--color-primario) !important;
+}
+
+.text-upeu-primary {
+  color: var(--color-primario) !important;
+}
+
+.text-upeu-accent {
+  color: var(--color-acento) !important;
+}
+
+.btn-upeu {
+  background-color: var(--color-primario);
+  border-color: var(--color-primario);
+  color: var(--color-blanco);
+}
+
+.btn-upeu:hover {
+  background-color: var(--color-secundario);
+  color: var(--color-blanco);
+}

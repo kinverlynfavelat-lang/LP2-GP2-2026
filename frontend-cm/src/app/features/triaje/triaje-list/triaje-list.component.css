@@ -1,0 +1,260 @@
+
+.titulo-pagina {
+  color: #263445;
+  font-weight: 700;
+}
+
+.btn-actualizar {
+  background: #075779;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+}
+
+.btn-actualizar:hover {
+  background: #06445f;
+  color: white;
+}
+
+.resumen-card,
+.listado-card,
+.formulario-card {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+.resumen-card .card-body {
+  position: relative;
+  padding: 22px;
+}
+
+.resumen-card p {
+  color: #778394;
+  font-size: 13px;
+  margin: 12px 0 5px;
+}
+
+.resumen-card h3 {
+  color: #263445;
+  font-weight: 700;
+}
+
+.resumen-icono {
+  width: 42px;
+  height: 42px;
+  background: #e6f1f8;
+  color: #075779;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+
+.icono-verde {
+  background: #e5f5ed;
+  color: #168451;
+}
+
+.icono-naranja {
+  background: #fff1df;
+  color: #d88727;
+}
+
+.estado-activo {
+  color: #168451 !important;
+  font-size: 22px;
+}
+
+.listado-header,
+.formulario-header {
+  padding: 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  border-bottom: 1px solid #edf0f3;
+}
+
+.listado-header h5,
+.formulario-header h5 {
+  color: #263445;
+  font-weight: 700;
+}
+
+.buscador {
+  position: relative;
+  width: 330px;
+  max-width: 100%;
+}
+
+.buscador i {
+  position: absolute;
+  left: 13px;
+  top: 12px;
+  color: #8994a3;
+  z-index: 2;
+}
+
+.buscador input {
+  padding-left: 38px;
+  border-radius: 8px;
+}
+
+.tabla-triaje thead th {
+  background: #f5f7fa;
+  color: #657184;
+  font-size: 11px;
+  padding: 16px;
+  white-space: nowrap;
+}
+
+.tabla-triaje tbody td {
+  padding: 16px;
+  font-size: 13px;
+}
+
+.paciente-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  height: 36px;
+  width: 36px;
+  background: #e9f2f8;
+  color: #075779;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 17px;
+}
+
+.estado-badge {
+  background: #e6f1fa;
+  color: #075779;
+  padding: 6px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.btn-registrar {
+  background: #075779;
+  color: white;
+  border-radius: 7px;
+  font-size: 12px;
+}
+
+.btn-registrar:hover {
+  background: #06445f;
+  color: white;
+}
+
+.estado-tabla {
+  text-align: center;
+  padding: 45px !important;
+  color: #778394;
+}
+
+.estado-tabla p {
+  margin-top: 10px;
+}
+
+.formulario-header {
+  background: #fafbfd;
+}
+
+.formulario-header p {
+  color: #778394;
+  font-size: 13px;
+}
+
+.btn-cerrar {
+  border: 1px solid #e0e5eb;
+  color: #657184;
+  border-radius: 8px;
+}
+
+.subtitulo-formulario {
+  color: #075779;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.form-label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #445166;
+}
+
+.form-control {
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.form-control:focus {
+  border-color: #075779;
+  box-shadow: 0 0 0 0.15rem rgba(7, 87, 121, 0.12);
+}
+
+.emergencia-panel {
+  background: #fff9f5;
+  border: 1px solid #f5dfd0;
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.emergencia-panel h6 {
+  color: #b45327;
+  font-weight: 700;
+}
+
+.btn-derivar {
+  background: #b94b35;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.btn-derivar:hover {
+  background: #963b29;
+  color: white;
+}
+
+.btn-guardar {
+  background: #075779;
+  color: white;
+  border-radius: 8px;
+  padding: 10px 16px;
+}
+
+.btn-guardar:hover {
+  background: #06445f;
+  color: white;
+}
+
+.btn-guardar:disabled,
+.btn-derivar:disabled {
+  opacity: 0.6;
+}
+
+@media (max-width: 768px) {
+  .buscador {
+    width: 100%;
+  }
+
+  .listado-header {
+    align-items: stretch;
+  }
+
+  .btn-guardar,
+  .btn-derivar {
+    width: 100%;
+  }
+}

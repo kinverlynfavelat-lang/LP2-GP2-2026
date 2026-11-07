@@ -1,0 +1,107 @@
+
+<div class="container mt-4">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+
+    <div>
+      <h2>Gestión de médicos</h2>
+      <p class="subtitulo">
+        Consulta y administra la información del personal médico.
+      </p>
+    </div>
+
+    <a routerLink="/medicos/nuevo" class="btn btn-nuevo">
+      <i class="bi bi-plus-circle me-1"></i>
+      Nuevo médico
+    </a>
+
+  </div>
+
+  <!-- BUSCADOR -->
+  <div class="search-container mb-3">
+
+    <i class="bi bi-search search-icon"></i>
+
+    <input
+      type="text"
+      class="form-control search-input"
+      placeholder="Buscar por DNI, nombre, especialidad o colegiatura..."
+      [(ngModel)]="busqueda"
+      (input)="filtrarMedicos()">
+
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-responsive">
+
+    <table class="table table-hover shadow-sm align-middle">
+
+      <thead>
+        <tr>
+          <th>DNI</th>
+          <th>Médico</th>
+          <th>Especialidad</th>
+          <th>Colegiatura</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (m of medicosFiltrados; track m.idEmpleado) {
+
+          <tr>
+
+            <td>{{ m.dni }}</td>
+
+            <td>{{ m.nombres }} {{ m.apellidos }}</td>
+
+            <td>{{ m.especialidad }}</td>
+
+            <td>{{ m.codigoCol }}</td>
+
+            <td>{{ m.correo }}</td>
+
+            <td>{{ m.telefono }}</td>
+
+            <td>
+
+              <a
+                [routerLink]="['/medicos/editar', m.idEmpleado]"
+                class="btn btn-sm btn-editar">
+
+                <i class="bi bi-pencil-square me-1"></i>
+                Editar
+
+              </a>
+
+            </td>
+
+          </tr>
+
+        } @empty {
+
+          <tr>
+            <td colspan="7" class="text-center py-4">
+
+              @if (busqueda) {
+                No se encontraron médicos con "{{ busqueda }}".
+              } @else {
+                No hay médicos registrados.
+              }
+
+            </td>
+          </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+</div>

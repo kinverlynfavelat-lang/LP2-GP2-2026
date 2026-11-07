@@ -1,0 +1,93 @@
+
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center
+              flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="titulo-pagina mb-1">
+        <i class="bi bi-clipboard2-pulse me-2"></i>
+        Atención médica
+      </h2>
+      <p class="text-muted mb-0">
+        Pacientes pendientes de atención médica.
+      </p>
+    </div>
+
+    <button class="btn btn-outline-primary"
+            (click)="cargarCitas()"
+            [disabled]="cargando">
+      <i class="bi bi-arrow-clockwise me-1"></i>
+      Actualizar
+    </button>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-white py-3">
+      <h5 class="mb-0">
+        <i class="bi bi-people me-2"></i>
+        Pacientes por atender
+        <span class="badge bg-primary ms-2">
+          {{ citas.length }}
+        </span>
+      </h5>
+    </div>
+
+    <div class="card-body p-0">
+
+      <div *ngIf="cargando" class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="mt-2 text-muted">Cargando pacientes...</p>
+      </div>
+
+      <div *ngIf="!cargando && citas.length === 0"
+           class="text-center py-5 text-muted">
+        <i class="bi bi-clipboard-check fs-1"></i>
+        <p class="mt-2 mb-0">
+          No hay pacientes pendientes de atención.
+        </p>
+      </div>
+
+      <div *ngIf="!cargando && citas.length > 0"
+           class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>Paciente</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Médico</th>
+              <th>Motivo de consulta</th>
+              <th>Estado</th>
+              <th class="text-center">Acción</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let cita of citas">
+              <td class="fw-semibold">
+                {{ cita.paciente || 'No registrado' }}
+              </td>
+              <td>{{ cita.fechaCita | date:'dd/MM/yyyy' }}</td>
+              <td>{{ cita.horaCita }}</td>
+              <td>{{ cita.medico || 'No asignado' }}</td>
+              <td>{{ cita.motivoConsulta }}</td>
+              <td>
+                <span class="badge bg-warning text-dark">
+                  Pendiente
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn btn-sm btn-atender"
+                        (click)="atender(cita)">
+                  <i class="bi bi-clipboard2-check me-1"></i>
+                  Atender
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>

@@ -1,0 +1,311 @@
+
+<div class="container mt-4 mb-5">
+
+  <!-- ENCABEZADO -->
+  <div class="mb-4">
+    <h2 class="titulo-pagina">
+      {{ id ? 'Editar cita médica' : 'Registrar nueva cita' }}
+    </h2>
+    <p class="text-muted">
+      Administra la programación de las citas médicas y sus derivaciones.
+    </p>
+  </div>
+
+  <div class="card shadow-sm border-0">
+
+    <div class="card-header encabezado-form text-white">
+      <h5 class="mb-0">
+        <i class="bi bi-calendar2-plus me-2"></i>
+        Información de la cita
+      </h5>
+    </div>
+
+    <div class="card-body p-4">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <!-- DATOS DE ATENCIÓN -->
+        <h6 class="seccion-titulo mb-3">
+          <i class="bi bi-people me-2"></i>
+          Datos de atención
+        </h6>
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Paciente *</label>
+
+            <select formControlName="idPersona" class="form-select">
+              <option value="">Seleccione un paciente</option>
+
+              @for (p of pacientes; track p.idPersona) {
+                <option [value]="p.idPersona">
+                  {{ p.dni }} - {{ p.nombres }} {{ p.apellidos }}
+                </option>
+              }
+            </select>
+
+            @if (form.get('idPersona')?.touched && form.get('idPersona')?.invalid) {
+              <small class="text-danger">Seleccione un paciente.</small>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Médico *</label>
+
+            <select formControlName="idMedico" class="form-select">
+              <option value="">Seleccione un médico</option>
+
+              @for (m of medicos; track m.idEmpleado) {
+                <option [value]="m.idEmpleado">
+                  {{ m.nombres }} {{ m.apellidos }} - {{ m.especialidad }}
+                </option>
+              }
+            </select>
+
+            @if (form.get('idMedico')?.touched && form.get('idMedico')?.invalid) {
+              <small class="text-danger">Seleccione un médico.</small>
+            }
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Empleado de triaje</label>
+
+            <select formControlName="idEmpleado" class="form-select">
+              <option value="">Pendiente de asignación</option>
+
+              @for (e of empleados; track e.idPersona) {
+                <option [value]="e.idPersona">
+                  {{ e.nombres }} {{ e.apellidos }}
+                </option>
+              }
+            </select>
+
+            <small class="text-muted">
+              Puede asignarse posteriormente.
+            </small>
+          </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- PROGRAMACIÓN -->
+        <h6 class="seccion-titulo mb-3">
+          <i class="bi bi-calendar-event me-2"></i>
+          Programación
+        </h6>
+
+        <div class="row">
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Fecha de cita *</label>
+
+            <input
+              type="date"
+              formControlName="fechaCita"
+              class="form-control">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Hora de cita *</label>
+
+            <input
+              type="time"
+              formControlName="horaCita"
+              class="form-control">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Notificación *</label>
+
+            <select formControlName="notificacion" class="form-select">
+              <option value="S">Sí</option>
+              <option value="N">No</option>
+            </select>
+          </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- MOTIVO -->
+        <h6 class="seccion-titulo mb-3">
+          <i class="bi bi-clipboard2-pulse me-2"></i>
+          Motivo de consulta
+        </h6>
+
+        <div class="mb-4">
+          <label class="form-label">Descripción *</label>
+
+          <textarea
+            formControlName="motivoConsulta"
+            class="form-control"
+            rows="3"
+            maxlength="100"
+            placeholder="Describa brevemente el motivo de la consulta">
+          </textarea>
+
+          @if (form.get('motivoConsulta')?.touched && form.get('motivoConsulta')?.invalid) {
+            <small class="text-danger">
+              El motivo es obligatorio (máximo 100 caracteres).
+            </small>
+          }
+        </div>
+
+        <hr class="my-4">
+
+        <!-- ESTADO -->
+        <h6 class="seccion-titulo mb-3">
+          <i class="bi bi-clipboard-check me-2"></i>
+          Estado de la cita
+        </h6>
+
+        <div class="mb-4">
+
+          <label class="form-label">Seleccione el estado *</label>
+
+          <select
+            formControlName="estado"
+            class="form-select">
+
+            <option value="RECEPCION">
+              RECEPCIÓN - Atención ordinaria
+            </option>
+
+            <option value="DERIVADO">
+              DERIVADO - Traslado a otro establecimiento
+            </option>
+
+          </select>
+
+          <small class="text-muted">
+            Las citas derivadas no ingresarán al flujo ordinario de triaje.
+          </small>
+
+        </div>
+
+        <!-- DATOS DE DERIVACIÓN -->
+        @if (form.get('estado')?.value === 'DERIVADO') {
+
+          <div class="panel-derivacion p-3 mb-4">
+
+            <h6 class="seccion-titulo mb-2">
+              <i class="bi bi-hospital me-2"></i>
+              Información de la derivación
+            </h6>
+
+            <p class="text-muted small">
+              Registra el establecimiento al que será trasladado el paciente.
+            </p>
+
+            <div class="mb-3">
+
+              <label class="form-label">
+                Motivo de derivación *
+              </label>
+
+              <textarea
+                formControlName="motivoDerivacion"
+                class="form-control"
+                rows="3"
+                maxlength="200"
+                placeholder="Explique por qué se deriva al paciente">
+              </textarea>
+
+              @if (form.get('motivoDerivacion')?.touched && form.get('motivoDerivacion')?.invalid) {
+                <small class="text-danger">
+                  Ingrese el motivo de derivación.
+                </small>
+              }
+
+            </div>
+
+            <div class="row">
+
+              <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                  Centro de destino *
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="centroDestino"
+                  class="form-control"
+                  maxlength="200"
+                  placeholder="Ej. Hospital II-2 Tarapoto">
+
+                @if (form.get('centroDestino')?.touched && form.get('centroDestino')?.invalid) {
+                  <small class="text-danger">
+                    Ingrese el centro de destino.
+                  </small>
+                }
+
+              </div>
+
+              <div class="col-md-6 mb-3">
+
+                <label class="form-label">
+                  Responsable *
+                </label>
+
+                <input
+                  type="text"
+                  formControlName="responsable"
+                  class="form-control"
+                  maxlength="200"
+                  placeholder="Nombre del responsable">
+
+                @if (form.get('responsable')?.touched && form.get('responsable')?.invalid) {
+                  <small class="text-danger">
+                    Ingrese el responsable.
+                  </small>
+                }
+
+              </div>
+
+            </div>
+
+            <div class="alert alert-warning mb-0">
+              <i class="bi bi-info-circle me-2"></i>
+              La derivación quedará registrada con estado
+              <strong>PENDIENTE</strong>.
+            </div>
+
+          </div>
+
+        }
+
+        <!-- BOTONES -->
+        <div class="d-flex justify-content-end gap-2">
+
+          <a routerLink="/citas" class="btn btn-cancelar">
+            <i class="bi bi-x-circle me-1"></i>
+            Cancelar
+          </a>
+
+          <button
+            type="submit"
+            class="btn btn-guardar"
+            [disabled]="form.invalid || guardando">
+
+            <i class="bi bi-save me-1"></i>
+
+            {{
+              guardando
+                ? 'Guardando...'
+                : id
+                  ? 'Actualizar cita'
+                  : 'Registrar cita'
+            }}
+
+          </button>
+
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>

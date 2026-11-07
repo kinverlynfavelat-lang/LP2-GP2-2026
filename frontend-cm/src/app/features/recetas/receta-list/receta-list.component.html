@@ -1,0 +1,263 @@
+
+<div class="container-fluid py-4">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+    <div>
+      <h2 class="titulo-pagina mb-1">Recetas Médicas</h2>
+      <p class="text-muted mb-0">
+        Administra las recetas y medicamentos prescritos.
+      </p>
+    </div>
+
+    <button class="btn btn-primary" type="button" (click)="nuevaReceta()">
+      + Nueva receta
+    </button>
+  </div>
+
+  <!-- MENSAJES -->
+  <div class="alert alert-danger" *ngIf="error">
+    {{ error }}
+  </div>
+
+  <div class="alert alert-success" *ngIf="mensaje">
+    {{ mensaje }}
+  </div>
+
+  <!-- TARJETAS DE RESUMEN -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-md-6">
+      <div class="card tarjeta-resumen h-100">
+        <div class="card-body">
+          <p class="text-muted mb-2">Total de recetas</p>
+          <h3 class="mb-0">{{ totalRecetas }}</h3>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="card tarjeta-resumen h-100">
+        <div class="card-body">
+          <p class="text-muted mb-2">Medicamentos prescritos</p>
+          <h3 class="mb-0">{{ totalMedicamentosPrescritos }}</h3>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LISTADO -->
+  <div class="card tarjeta-tabla">
+
+    <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
+      <h5 class="mb-0">Listado de recetas</h5>
+
+      <div class="d-flex gap-2">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Buscar paciente, diagnóstico o código..."
+          [(ngModel)]="busqueda"
+          (ngModelChange)="filtrarRecetas()">
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary"
+          [disabled]="cargando"
+          (click)="cargarRecetas()">
+          Actualizar
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+
+      <div class="text-center p-4 text-muted" *ngIf="cargando">
+        Cargando recetas médicas...
+      </div>
+
+      <div class="table-responsive" *ngIf="!cargando">
+        <table class="table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th>N.º Receta</th>
+              <th>Paciente</th>
+              <th>Fecha</th>
+              <th>Diagnóstico</th>
+              <th>Medicamentos</th>
+              <th class="text-center">Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let receta of recetasFiltradas">
+              <td>
+                <strong>#{{ receta.idReceta }}</strong>
+              </td>
+
+              <td>{{ receta.paciente }}</td>
+
+              <td>{{ receta.fechaEmision | date:'dd/MM/yyyy' }}</td>
+
+              <td>{{ receta.diagnostico }}</td>
+
+              <td>
+                <span class="badge-medicamentos">
+                  {{ receta.detalles.length }}
+                </span>
+              </td>
+
+              <td>
+                <div class="acciones">
+                  <button
+                    type="button"
+                    class="btn-accion ver"
+                    title="Ver receta"
+                    (click)="verReceta(receta)">
+                    Ver
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-accion imprimir"
+                    title="Imprimir receta"
+                    (click)="imprimirReceta(receta)">
+                    Imprimir
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-accion editar"
+                    title="Editar receta"
+                    (click)="editarReceta(receta.idReceta)">
+                    Editar
+                  </button>
+
+                  <button
+                    type="button"
+                    class="btn-accion eliminar"
+                    title="Eliminar receta"
+                    (click)="solicitarEliminar(receta)">
+                    Eliminar
+                  </button>
+                </div>
+              </td>
+            </tr>
+
+            <tr *ngIf="recetasFiltradas.length === 0">
+              <td colspan="6" class="text-center text-muted py-4">
+                No se encontraron recetas médicas.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- DETALLE DE RECETA -->
+  <div class="modal-fondo" *ngIf="recetaSeleccionada">
+    <div class="modal-contenido">
+
+      <div class="modal-cabecera">
+        <h4>Detalle de receta #{{ recetaSeleccionada.idReceta }}</h4>
+
+        <button type="button" class="cerrar" (click)="cerrarDetalle()">
+          ×
+        </button>
+      </div>
+
+      <div class="modal-cuerpo">
+
+        <p><strong>Paciente:</strong> {{ recetaSeleccionada.paciente }}</p>
+        <p><strong>Edad:</strong> {{ recetaSeleccionada.edad ?? 'No registrada' }}</p>
+        <p><strong>Fecha:</strong> {{ recetaSeleccionada.fechaEmision | date:'dd/MM/yyyy' }}</p>
+        <p><strong>Diagnóstico:</strong> {{ recetaSeleccionada.diagnostico }}</p>
+        <p><strong>Tratamiento:</strong> {{ recetaSeleccionada.tratamiento }}</p>
+
+        <h5 class="mt-4">Medicamentos prescritos</h5>
+
+        <div class="table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Medicamento</th>
+                <th>Dosis</th>
+                <th>Indicaciones</th>
+                <th>Cantidad</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let detalle of recetaSeleccionada.detalles">
+                <td>{{ detalle.medicamento }}</td>
+                <td>{{ detalle.dosis }}</td>
+                <td>{{ detalle.indicaciones }}</td>
+                <td>{{ detalle.cantidad }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <div class="modal-pie">
+        <button type="button" class="btn btn-secondary" (click)="cerrarDetalle()">
+          Cerrar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="imprimirReceta(recetaSeleccionada)">
+          Imprimir receta
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CONFIRMACIÓN DE ELIMINACIÓN -->
+  <div class="modal-fondo" *ngIf="recetaEliminar">
+    <div class="modal-contenido modal-pequeno">
+
+      <div class="modal-cabecera">
+        <h4>Eliminar receta</h4>
+      </div>
+
+      <div class="modal-cuerpo">
+        <p>
+          ¿Estás seguro de eliminar la receta
+          <strong>#{{ recetaEliminar.idReceta }}</strong>
+          del paciente <strong>{{ recetaEliminar.paciente }}</strong>?
+        </p>
+
+        <p class="text-danger mb-0">
+          Esta acción eliminará también los detalles de la receta.
+        </p>
+      </div>
+
+      <div class="modal-pie">
+        <button
+          type="button"
+          class="btn btn-secondary"
+          [disabled]="eliminando"
+          (click)="cancelarEliminar()">
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="btn btn-danger"
+          [disabled]="eliminando"
+          (click)="confirmarEliminar()">
+          {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

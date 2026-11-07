@@ -1,0 +1,220 @@
+
+<div class="container py-4">
+
+  <div class="d-flex justify-content-between align-items-center
+              flex-wrap gap-3 mb-4">
+    <div>
+      <h2 class="titulo-pagina mb-1">
+        <i class="bi bi-clipboard2-pulse me-2"></i>
+        Consulta médica
+      </h2>
+      <p class="text-muted mb-0">
+        Evaluación clínica y registro de la atención.
+      </p>
+    </div>
+
+    <button class="btn btn-outline-secondary"
+            (click)="cancelar()"
+            [disabled]="guardando">
+      <i class="bi bi-arrow-left me-2"></i>
+      Volver
+    </button>
+  </div>
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border text-primary"></div>
+    <p class="mt-2 text-muted">Cargando información...</p>
+  </div>
+
+  <div *ngIf="!cargando && cita">
+
+    <!-- PACIENTE -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="bi bi-person-vcard me-2"></i>
+          Información del paciente
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label>Paciente</label>
+            <p>{{ cita.paciente || 'No registrado' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label>Médico asignado</label>
+            <p>{{ cita.medico || 'No registrado' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label>Fecha</label>
+            <p>{{ cita.fechaCita | date:'dd/MM/yyyy' }}</p>
+          </div>
+
+          <div class="col-md-6">
+            <label>Hora</label>
+            <p>{{ cita.horaCita }}</p>
+          </div>
+
+          <div class="col-12">
+            <label>Motivo de consulta</label>
+            <p>{{ cita.motivoConsulta }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRIAJE -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="bi bi-heart-pulse me-2"></i>
+          Signos vitales registrados
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>Temperatura</small>
+              <strong>{{ cita.temperatura ?? '—' }}</strong>
+              <span>°C</span>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>Presión</small>
+              <strong>{{ cita.presion ?? '—' }}</strong>
+              <span>mmHg</span>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>F. cardíaca</small>
+              <strong>{{ cita.frecuenciaCardiaca ?? '—' }}</strong>
+              <span>lpm</span>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>F. respiratoria</small>
+              <strong>{{ cita.frecuenciaRespiratoria ?? '—' }}</strong>
+              <span>rpm</span>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>Peso</small>
+              <strong>{{ cita.peso ?? '—' }}</strong>
+              <span>kg</span>
+            </div>
+          </div>
+
+          <div class="col-md-4 col-lg-2">
+            <div class="vital-box">
+              <small>Talla</small>
+              <strong>{{ cita.talla ?? '—' }}</strong>
+              <span>m</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EVALUACIÓN MÉDICA -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">
+          <i class="bi bi-journal-medical me-2"></i>
+          Evaluación médica
+        </h5>
+      </div>
+
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-12">
+            <label class="form-label">
+              Diagnóstico <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control"
+                      rows="3"
+                      [(ngModel)]="diagnostico"
+                      name="diagnostico"
+                      placeholder="Ingrese el diagnóstico médico...">
+            </textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">
+              Tratamiento <span class="text-danger">*</span>
+            </label>
+            <textarea class="form-control"
+                      rows="3"
+                      [(ngModel)]="tratamiento"
+                      name="tratamiento"
+                      placeholder="Describa el tratamiento indicado...">
+            </textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Indicaciones médicas</label>
+            <textarea class="form-control"
+                      rows="3"
+                      [(ngModel)]="indicaciones"
+                      name="indicaciones"
+                      placeholder="Recomendaciones y cuidados...">
+            </textarea>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label">Observaciones</label>
+            <textarea class="form-control"
+                      rows="3"
+                      [(ngModel)]="observaciones"
+                      name="observaciones"
+                      placeholder="Observaciones adicionales...">
+            </textarea>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES -->
+    <div class="d-flex justify-content-end flex-wrap gap-2 mb-4">
+
+      <button class="btn btn-outline-secondary"
+              (click)="cancelar()"
+              [disabled]="guardando">
+        Cancelar
+      </button>
+
+      <button class="btn btn-outline-primary"
+              (click)="guardar()"
+              [disabled]="guardando">
+        <i class="bi bi-floppy me-2"></i>
+        Guardar progreso
+      </button>
+
+      <button class="btn btn-finalizar"
+              (click)="finalizar()"
+              [disabled]="guardando">
+        <i class="bi bi-check-circle me-2"></i>
+        {{ guardando ? 'Procesando...' : 'Finalizar atención' }}
+      </button>
+
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,187 @@
+
+<div class="container mt-4 mb-5">
+
+  <div class="card empleado-card shadow-sm">
+
+    <!-- ENCABEZADO -->
+    <div class="card-header empleado-header">
+      <h4>
+        <i class="bi bi-person-workspace me-2"></i>
+        {{ id ? 'Editar empleado' : 'Nuevo empleado' }}
+      </h4>
+      <p>
+        Registra y administra la información del personal.
+      </p>
+    </div>
+
+    <div class="card-body p-4">
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+
+        <!-- DATOS PERSONALES -->
+        <div class="form-section-title">
+          <i class="bi bi-person-vcard me-2"></i>
+          Datos personales
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">DNI *</label>
+            <input
+              type="text"
+              formControlName="dni"
+              class="form-control"
+              maxlength="8"
+              placeholder="Ingrese DNI">
+
+            @if (form.get('dni')?.touched && form.get('dni')?.invalid) {
+              <small class="text-danger">Ingrese un DNI válido de 8 dígitos.</small>
+            }
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Nombres *</label>
+            <input
+              type="text"
+              formControlName="nombres"
+              class="form-control"
+              placeholder="Nombres">
+          </div>
+
+          <div class="col-md-4 mb-3">
+            <label class="form-label">Apellidos *</label>
+            <input
+              type="text"
+              formControlName="apellidos"
+              class="form-control"
+              placeholder="Apellidos">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Correo electrónico *</label>
+            <input
+              type="email"
+              formControlName="correo"
+              class="form-control"
+              placeholder="correo@ejemplo.com">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Teléfono *</label>
+            <input
+              type="text"
+              formControlName="telefono"
+              class="form-control"
+              placeholder="Teléfono">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Fecha de nacimiento *</label>
+            <input
+              type="date"
+              formControlName="fechaNacimiento"
+              class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Estado civil *</label>
+            <select formControlName="estadoCivil" class="form-select">
+              <option value="">Seleccione</option>
+              <option value="SOLTERO">Soltero</option>
+              <option value="CASADO">Casado</option>
+              <option value="VIUDO">Viudo</option>
+              <option value="DIVORCIADO">Divorciado</option>
+              <option value="CONVIVIENTE">Conviviente</option>
+            </select>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Dirección</label>
+            <input
+              type="text"
+              formControlName="direccion"
+              class="form-control"
+              placeholder="Dirección">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Alergias</label>
+            <input
+              type="text"
+              formControlName="alergias"
+              class="form-control"
+              placeholder="Alergias (opcional)">
+          </div>
+
+        </div>
+
+        <!-- DATOS LABORALES -->
+        <div class="form-section-title mt-4">
+          <i class="bi bi-briefcase me-2"></i>
+          Datos laborales
+        </div>
+
+        <div class="row">
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Fecha de ingreso *</label>
+            <input
+              type="date"
+              formControlName="fechaIngreso"
+              class="form-control">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Sueldo (S/) *</label>
+            <input
+              type="number"
+              formControlName="sueldo"
+              class="form-control"
+              min="0.01"
+              step="0.01"
+              placeholder="0.00">
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Estado *</label>
+            <select formControlName="estado" class="form-select">
+              <option value="ACTIVO">Activo</option>
+              <option value="INACTIVO">Inactivo</option>
+              <option value="SUSPENDIDO">Suspendido</option>
+              <option value="CESADO">Cesado</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- BOTONES -->
+        <div class="form-actions mt-4">
+
+          <button
+            type="submit"
+            class="btn btn-guardar"
+            [disabled]="form.invalid">
+
+            <i class="bi bi-save me-1"></i>
+            {{ id ? 'Actualizar empleado' : 'Guardar empleado' }}
+
+          </button>
+
+          <a routerLink="/empleados" class="btn btn-cancelar">
+            <i class="bi bi-x-circle me-1"></i>
+            Cancelar
+          </a>
+
+        </div>
+
+        <p class="form-note mt-3">
+          * Los campos marcados son obligatorios.
+        </p>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>

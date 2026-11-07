@@ -1,0 +1,365 @@
+<div class="container-fluid pagos-container py-4">
+
+  <!-- ENCABEZADO -->
+  <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+
+    <div>
+      <div class="d-flex align-items-center gap-2 mb-2">
+        <span class="titulo-icono">
+          <i class="bi bi-wallet2"></i>
+        </span>
+        <h2 class="titulo-pagina mb-0">Gestión de pagos</h2>
+      </div>
+
+      <p class="text-muted mb-0">
+        Administra los pagos de las citas y la cobertura del fondo universitario.
+      </p>
+    </div>
+
+    <button
+      class="btn btn-actualizar"
+      type="button"
+      (click)="actualizar()"
+      [disabled]="cargando">
+
+      <i
+        class="bi me-2"
+        [ngClass]="cargando ? 'bi-arrow-repeat' : 'bi-arrow-clockwise'">
+      </i>
+
+      {{ cargando ? 'Actualizando...' : 'Actualizar' }}
+
+    </button>
+
+  </div>
+
+  <!-- INDICADOR DE CARGA -->
+  <div *ngIf="cargando" class="text-center py-3">
+    <div class="spinner-border text-primary"></div>
+    <p class="text-muted mt-2 mb-0">
+      Cargando información de las citas...
+    </p>
+  </div>
+
+  <!-- TARJETAS DE RESUMEN -->
+  <div class="row g-3 mb-4">
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card resumen-card">
+        <div class="card-body">
+          <div class="resumen-contenido">
+            <div>
+              <span class="resumen-label">Citas pendientes</span>
+              <h3>{{ citasPendientes.length }}</h3>
+              <small>En recepción</small>
+            </div>
+            <div class="resumen-icono icono-azul">
+              <i class="bi bi-calendar2-check"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card resumen-card">
+        <div class="card-body">
+          <div class="resumen-contenido">
+            <div>
+              <span class="resumen-label">Requieren caja</span>
+              <h3>{{ obtenerCitasCaja() }}</h3>
+              <small>Pago pendiente</small>
+            </div>
+            <div class="resumen-icono icono-naranja">
+              <i class="bi bi-cash-stack"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card resumen-card">
+        <div class="card-body">
+          <div class="resumen-contenido">
+            <div>
+              <span class="resumen-label">Pendiente en caja</span>
+              <h3>S/ {{ obtenerTotalPendiente() | number:'1.2-2' }}</h3>
+              <small>Importe por cobrar</small>
+            </div>
+            <div class="resumen-icono icono-rojo">
+              <i class="bi bi-wallet"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+      <div class="card resumen-card">
+        <div class="card-body">
+          <div class="resumen-contenido">
+            <div>
+              <span class="resumen-label">Cobertura del fondo</span>
+              <h3 class="texto-verde">
+                S/ {{ obtenerTotalFondo() | number:'1.2-2' }}
+              </h3>
+              <small>Descuento estimado</small>
+            </div>
+            <div class="resumen-icono icono-verde">
+              <i class="bi bi-mortarboard"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LISTADO DE CITAS -->
+  <div class="card listado-card">
+
+    <!-- CABECERA DEL LISTADO -->
+    <div class="listado-header">
+
+      <div>
+        <h5 class="mb-1">Citas en recepción</h5>
+        <p class="text-muted mb-0">
+          Consulta el importe que corresponde pagar por cada atención.
+        </p>
+      </div>
+
+      <div class="buscador-container">
+
+        <div class="input-group buscador">
+
+          <span class="input-group-text">
+            <i class="bi bi-search"></i>
+          </span>
+
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Buscar paciente, número de cita o tipo..."
+            [(ngModel)]="busqueda"
+            (ngModelChange)="filtrarCitas()">
+
+          <button
+            *ngIf="busqueda"
+            type="button"
+            class="btn btn-limpiar"
+            (click)="limpiarBusqueda()">
+
+            <i class="bi bi-x-lg"></i>
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- INFORMACIÓN DE RESULTADOS -->
+    <div class="resultados-barra">
+
+      <span>
+        <i class="bi bi-list-ul me-2"></i>
+        {{ citasFiltradas.length }} resultados encontrados
+      </span>
+
+      <span class="costo-atencion">
+        Costo por atención:
+        <strong>S/ {{ PRECIO_CITA | number:'1.2-2' }}</strong>
+      </span>
+
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-responsive">
+
+      <table class="table tabla-pagos align-middle mb-0">
+
+        <thead>
+          <tr>
+            <th>PACIENTE</th>
+            <th>TIPO</th>
+            <th>FECHA Y HORA</th>
+            <th>FONDO DISPONIBLE</th>
+            <th>DESCUENTO</th>
+            <th>PENDIENTE</th>
+            <th class="text-center">ACCIÓN</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let cita of citasFiltradas">
+
+
+            <td>
+              <div class="paciente-info">
+                <div class="paciente-avatar">
+                  <i class="bi bi-person"></i>
+                </div>
+                <div>
+                  <strong>{{ cita.paciente }}</strong>
+                  <small>Paciente registrado</small>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <span
+                class="tipo-badge"
+                [ngClass]="cita.tipoPaciente === 'ESTUDIANTE'
+                  ? 'tipo-estudiante'
+                  : 'tipo-externo'">
+
+                {{ cita.tipoPaciente }}
+
+              </span>
+            </td>
+
+            <td>
+              <div class="fecha-info">
+                <strong>
+                  {{ cita.fechaCita | date:'dd/MM/yyyy' }}
+                </strong>
+                <small>
+                  <i class="bi bi-clock me-1"></i>
+                  {{ cita.horaCita }}
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <span class="importe-normal">
+                S/ {{ cita.saldoFondo | number:'1.2-2' }}
+              </span>
+            </td>
+
+            <td>
+              <span class="importe-descuento">
+                S/ {{ cita.descuentoFondo | number:'1.2-2' }}
+              </span>
+            </td>
+
+            <td>
+              <div class="pendiente-info">
+
+                <strong
+                  [ngClass]="cita.montoPagar > 0
+                    ? 'importe-pendiente'
+                    : 'importe-cubierto'">
+
+                  S/ {{ cita.montoPagar | number:'1.2-2' }}
+
+                </strong>
+
+                <small>
+                  {{ cita.montoPagar > 0
+                    ? 'Pago en caja'
+                    : 'Cubierto por fondo' }}
+                </small>
+
+              </div>
+            </td>
+
+            <td class="text-center">
+
+              <a
+                [routerLink]="['/pagos/registrar', cita.idCita]"
+                class="btn btn-accion"
+                [ngClass]="cita.montoPagar > 0
+                  ? 'accion-pagar'
+                  : 'accion-fondo'">
+
+                <i
+                  class="bi me-1"
+                  [ngClass]="cita.montoPagar > 0
+                    ? 'bi-cash-coin'
+                    : 'bi-check-circle'">
+                </i>
+
+                {{ cita.montoPagar > 0
+                  ? 'Procesar'
+                  : 'Aplicar fondo' }}
+
+              </a>
+
+            </td>
+
+          </tr>
+
+          <!-- CARGANDO -->
+          <tr *ngIf="cargando">
+            <td colspan="8" class="estado-tabla">
+              <div class="spinner-border text-primary"></div>
+              <p>Consultando información...</p>
+            </td>
+          </tr>
+
+          <!-- ERROR -->
+          <tr *ngIf="!cargando && errorCarga">
+            <td colspan="8" class="estado-tabla">
+
+              <i class="bi bi-exclamation-circle estado-error"></i>
+
+              <h6>No se pudo cargar la información</h6>
+
+              <p>Verifica la conexión con el servidor.</p>
+
+              <button
+                class="btn btn-outline-primary btn-sm"
+                (click)="actualizar()">
+                Reintentar
+              </button>
+
+            </td>
+          </tr>
+
+          <!-- SIN RESULTADOS -->
+          <tr *ngIf="!cargando && !errorCarga && citasFiltradas.length === 0">
+
+            <td colspan="8" class="estado-tabla">
+
+              <i class="bi bi-receipt estado-vacio"></i>
+
+              <h6>
+                {{ citasPendientes.length === 0
+                  ? 'No hay citas pendientes de recepción'
+                  : 'No se encontraron coincidencias' }}
+              </h6>
+
+              <p>
+                {{ citasPendientes.length === 0
+                  ? 'Las nuevas citas aparecerán aquí cuando ingresen a recepción.'
+                  : 'Intenta buscar con otro nombre o número de cita.' }}
+              </p>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- PIE -->
+    <div class="listado-footer">
+
+      <div>
+        <i class="bi bi-info-circle me-2"></i>
+        El descuento del fondo universitario se aplica al confirmar la operación.
+      </div>
+
+      <span>Importes expresados en soles (S/).</span>
+
+    </div>
+
+  </div>
+
+</div>
