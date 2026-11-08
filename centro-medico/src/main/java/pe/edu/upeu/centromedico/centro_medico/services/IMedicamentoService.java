@@ -21,5 +21,4 @@ public interface IMedicamentoService {
     boolean eliminar(Long id);
     Optional<MedicamentoDTO> ingresarStock(Long id, Integer cantidad);
 
-    Optional<MedicamentoDTO> descontarStock(Long id, Integer cantidad);
 }

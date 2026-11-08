@@ -1,6 +1,6 @@
 
 /* =====================================
-   FARMACIA - ESTILO UPeU SALUD
+   FARMACIA - UPeU SALUD
 ===================================== */
 
 :host {
@@ -16,27 +16,61 @@
   max-width: 1350px;
 }
 
+/* PESTAÑAS */
+
+.nav-tabs {
+  border-bottom: 1px solid var(--borde);
+  gap: 5px;
+}
+
+.nav-tabs .nav-link {
+  color: #647b8d;
+  border: 1px solid transparent;
+  border-radius: 9px 9px 0 0;
+  padding: 13px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background: transparent;
+  transition: .2s;
+}
+
+.nav-tabs .nav-link:hover {
+  color: var(--azul);
+  background: #f0f7fa;
+  border-color: transparent;
+}
+
+.nav-tabs .nav-link.active {
+  color: var(--azul);
+  background: white;
+  border-color: var(--borde) var(--borde) white;
+}
+
+.nav-tabs .nav-link i {
+  color: var(--azul-medio);
+}
+
 /* ENCABEZADO */
 
 .titulo-pagina {
-  color: #075779;
+  color: var(--azul);
   font-size: 27px;
   font-weight: 700;
 }
 
 .titulo-pagina i {
-  color: #1685ac;
+  color: var(--azul-medio);
 }
 
 .text-muted {
   color: #758697 !important;
 }
 
-/* BOTÓN NUEVO MEDICAMENTO */
+/* BOTÓN PRINCIPAL */
 
 .btn-principal {
-  background: #075779;
-  border: 1px solid #075779;
+  background: var(--azul);
+  border: 1px solid var(--azul);
   color: white;
   border-radius: 9px;
   padding: 11px 19px;
@@ -44,8 +78,8 @@
 }
 
 .btn-principal:hover {
-  background: #06445f;
-  border-color: #06445f;
+  background: var(--azul-oscuro);
+  border-color: var(--azul-oscuro);
   color: white;
 }
 
@@ -55,7 +89,8 @@
   display: flex;
   align-items: center;
   gap: 18px;
-  background: #ffffff;
+  height: 100%;
+  background: white;
   border: 1px solid #e2edf3;
   border-radius: 13px;
   padding: 23px;
@@ -64,7 +99,7 @@
 
 .resumen i {
   font-size: 29px;
-  color: #1685ac !important;
+  color: var(--azul-medio) !important;
 }
 
 .resumen small {
@@ -73,7 +108,7 @@
 }
 
 .resumen h3 {
-  color: #075779;
+  color: var(--azul);
   font-weight: 700;
   margin: 5px 0 0;
 }
@@ -81,6 +116,7 @@
 /* TARJETA INVENTARIO */
 
 .card {
+  border: 1px solid #e2edf3;
   border-radius: 14px;
   overflow: hidden;
   background: white;
@@ -94,16 +130,20 @@
 }
 
 .card-header h5 {
-  color: #075779;
+  color: var(--azul);
   font-size: 16px;
   font-weight: 700;
 }
 
 /* TABLA */
 
+.table {
+  margin-bottom: 0;
+}
+
 .table thead th {
-  background: #eaf4f8;
-  color: #075779;
+  background: var(--celeste);
+  color: var(--azul);
   font-size: 12px;
   font-weight: 700;
   padding: 16px;
@@ -122,14 +162,14 @@
 }
 
 .table tbody td.fw-semibold {
-  color: #075779;
+  color: var(--azul);
 }
 
-/* STOCK - SIN AMARILLO NI VERDE */
+/* STOCK */
 
 .table .badge {
   background: #e2f1f8 !important;
-  color: #075779 !important;
+  color: var(--azul) !important;
   border: 1px solid #c5e1ed;
   padding: 7px 12px;
   border-radius: 8px;
@@ -148,7 +188,7 @@
   border-color: #f4d7c4;
 }
 
-/* BOTONES DE ACCIÓN - PALETA AZUL */
+/* BOTONES DE ACCIÓN */
 
 .table .btn {
   width: 34px;
@@ -160,45 +200,20 @@
   transition: .2s;
 }
 
-/* INGRESAR STOCK */
-.table .btn-outline-success {
-  background: #eaf4f8;
-  border: 1px solid #b7d9e7;
-  color: #075779;
-}
-
-.table .btn-outline-success:hover {
-  background: #075779;
-  border-color: #075779;
-  color: white;
-}
-
-/* DESCONTAR STOCK */
-.table .btn-outline-warning {
-  background: #edf3fa;
-  border: 1px solid #c5d7eb;
-  color: #356b98;
-}
-
-.table .btn-outline-warning:hover {
-  background: #356b98;
-  border-color: #356b98;
-  color: white;
-}
-
-/* EDITAR */
+.table .btn-outline-success,
 .table .btn-outline-primary {
   background: #eaf4f8;
   border: 1px solid #b7d9e7;
-  color: #075779;
+  color: var(--azul);
 }
 
+.table .btn-outline-success:hover,
 .table .btn-outline-primary:hover {
-  background: #075779;
+  background: var(--azul);
+  border-color: var(--azul);
   color: white;
 }
 
-/* ELIMINAR */
 .table .btn-outline-danger {
   background: #fff2f1;
   border: 1px solid #edc7c4;
@@ -213,31 +228,31 @@
 /* BUSCADOR */
 
 .form-control {
-  border: 1px solid #dce5ec;
+  border: 1px solid var(--borde);
   border-radius: 9px;
   font-size: 14px;
   padding: 10px 13px;
 }
 
 .form-control:focus {
-  border-color: #1685ac;
+  border-color: var(--azul-medio);
   box-shadow: 0 0 0 3px rgba(22,133,172,.1);
 }
 
 .card-header .btn-outline-primary {
   background: white;
   border: 1px solid #b7d9e7;
-  color: #075779;
+  color: var(--azul);
   border-radius: 9px;
 }
 
 .card-header .btn-outline-primary:hover {
-  background: #075779;
+  background: var(--azul);
   color: white;
 }
 
 /* =====================================
-   MODAL DE STOCK
+   MODAL DE INGRESO DE STOCK
 ===================================== */
 
 .modal-stock-overlay {
@@ -260,37 +275,32 @@
   box-shadow: 0 20px 60px rgba(0,0,0,.18);
 }
 
-/* ENCABEZADO DEL MODAL */
-
-.modal-stock-header,
-.modal-stock-header.header-descontar {
+.modal-stock-header {
   display: flex;
   align-items: center;
   gap: 13px;
   padding: 22px;
-  background: #eaf4f8;
-  border-bottom: 1px solid #dce9f0;
+  background: var(--celeste);
+  border-bottom: 1px solid var(--borde);
 }
 
-.modal-stock-icon,
-.header-descontar .modal-stock-icon {
+.modal-stock-icon {
   width: 43px;
   height: 43px;
   border-radius: 11px;
   background: #d5eaf4;
-  color: #075779;
+  color: var(--azul);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 21px;
 }
 
-.modal-stock-header h5,
-.header-descontar h5 {
+.modal-stock-header h5 {
   margin: 0 0 4px;
   font-size: 17px;
   font-weight: 700;
-  color: #075779;
+  color: var(--azul);
 }
 
 .modal-stock-header p {
@@ -298,8 +308,6 @@
   font-size: 12px;
   color: #758697;
 }
-
-/* CUERPO DEL MODAL */
 
 .modal-stock-body {
   padding: 25px;
@@ -329,7 +337,7 @@
 }
 
 .medicamento-info .stock-actual {
-  color: #075779;
+  color: var(--azul);
 }
 
 .modal-stock-body .form-label {
@@ -340,16 +348,16 @@
 
 .modal-stock-body .input-group-text {
   background: #edf5f9;
-  border-color: #dce5ec;
-  color: #075779;
+  border-color: var(--borde);
+  color: var(--azul);
 }
 
 .modal-stock-body .form-control {
   padding: 12px;
-  border-color: #dce5ec;
+  border-color: var(--borde);
 }
 
-/* VISTA PREVIA DEL STOCK */
+/* VISTA PREVIA */
 
 .stock-preview {
   display: flex;
@@ -369,11 +377,11 @@
 }
 
 .stock-preview strong {
-  color: #075779;
+  color: var(--azul);
   font-size: 15px;
 }
 
-/* BOTONES DEL MODAL */
+/* BOTONES MODAL */
 
 .modal-stock-footer {
   display: flex;
@@ -391,17 +399,14 @@
   font-weight: 600;
 }
 
-.btn-confirmar-ingreso,
-.btn-confirmar-descuento {
-  background: #075779;
-  border: 1px solid #075779;
+.btn-confirmar-ingreso {
+  background: var(--azul);
+  border: 1px solid var(--azul);
   color: white;
 }
 
-.btn-confirmar-ingreso:hover,
-.btn-confirmar-descuento:hover {
-  background: #06445f;
-  border-color: #06445f;
+.btn-confirmar-ingreso:hover {
+  background: var(--azul-oscuro);
   color: white;
 }
 
@@ -426,11 +431,20 @@
     padding: 16px;
   }
 
+  .nav-tabs .nav-link {
+    padding: 10px;
+    font-size: 12px;
+  }
+
   .modal-stock-footer {
     flex-direction: column-reverse;
   }
 
   .modal-stock-footer .btn {
     width: 100%;
+  }
+
+  .medicamento-info {
+    flex-direction: column;
   }
 }

@@ -1,0 +1,274 @@
+
+/* =====================================
+   REGISTRO DE ENTREGAS
+   UPeU SALUD
+===================================== */
+
+:host {
+  display: block;
+  --azul: #075779;
+  --azul-oscuro: #06445f;
+  --azul-medio: #1685ac;
+  --celeste: #eaf4f8;
+  --borde: #dce9f0;
+}
+
+.container {
+  max-width: 1350px;
+}
+
+/* ENCABEZADO */
+
+.titulo-pagina {
+  color: var(--azul);
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.titulo-pagina i {
+  color: var(--azul-medio);
+}
+
+.text-muted {
+  color: #758697 !important;
+}
+
+/* BOTÓN PRINCIPAL */
+
+.btn-principal {
+  background: var(--azul);
+  border: 1px solid var(--azul);
+  color: white;
+  border-radius: 9px;
+  padding: 11px 19px;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.btn-principal:hover {
+  background: var(--azul-oscuro);
+  border-color: var(--azul-oscuro);
+  color: white;
+}
+
+/* TARJETAS RESUMEN */
+
+.resumen {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  height: 100%;
+  background: white;
+  border: 1px solid #e2edf3;
+  border-radius: 13px;
+  padding: 23px;
+  box-shadow: 0 4px 15px rgba(7,87,121,.05);
+  transition: .2s;
+}
+
+.resumen:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7,87,121,.09);
+}
+
+.resumen i {
+  font-size: 29px;
+  color: var(--azul-medio) !important;
+}
+
+.resumen small {
+  display: block;
+  color: #758697;
+  font-size: 12px;
+}
+
+.resumen h3 {
+  color: var(--azul);
+  font-weight: 700;
+  font-size: 26px;
+  margin: 5px 0 0;
+}
+
+/* TARJETA HISTORIAL */
+
+.card {
+  border: 1px solid #e2edf3 !important;
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 18px rgba(7,87,121,.06) !important;
+}
+
+.card-header {
+  background: white !important;
+  padding: 20px 22px;
+  border-bottom: 1px solid #e3edf2;
+}
+
+.card-header h5 {
+  color: var(--azul);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-header h5 i {
+  color: var(--azul-medio);
+}
+
+/* FILTROS */
+
+.card-header .form-control {
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  font-size: 13px;
+  padding: 11px 13px;
+  color: #34485b;
+  background-color: white;
+}
+
+.card-header .form-control::placeholder {
+  color: #8796a5;
+}
+
+.card-header .form-control:focus {
+  border-color: var(--azul-medio);
+  box-shadow: 0 0 0 3px rgba(22,133,172,.1);
+}
+
+/* BOTÓN ACTUALIZAR */
+
+.card-header .btn-outline-primary {
+  background: white;
+  border: 1px solid #b7d9e7;
+  color: var(--azul);
+  border-radius: 8px;
+  padding: 7px 13px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.card-header .btn-outline-primary:hover {
+  background: var(--azul);
+  border-color: var(--azul);
+  color: white;
+}
+
+/* BOTÓN LIMPIAR */
+
+.card-header .btn-outline-secondary {
+  background: #f4f7f9;
+  border: 1px solid #dce5ec;
+  color: #64748b;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.card-header .btn-outline-secondary:hover {
+  background: #e8eef2;
+  color: var(--azul);
+}
+
+/* TABLA */
+
+.table {
+  margin-bottom: 0;
+  white-space: nowrap;
+}
+
+.table thead th {
+  background: var(--celeste);
+  color: var(--azul);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 16px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.table tbody td {
+  padding: 16px;
+  color: #34485b;
+  font-size: 13px;
+  vertical-align: middle;
+  border-bottom: 1px solid #edf1f4;
+}
+
+.table tbody tr:hover td {
+  background: #f4f9fc;
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody td.fw-semibold {
+  color: var(--azul);
+  font-weight: 600;
+}
+
+/* IDENTIFICADORES DE RECETA Y CITA */
+
+.table tbody td:nth-child(4),
+.table tbody td:nth-child(5) {
+  color: #60788a;
+  font-weight: 600;
+}
+
+/* CANTIDAD ENTREGADA */
+
+.table .badge.bg-success {
+  background: #e2f1f8 !important;
+  color: var(--azul) !important;
+  border: 1px solid #c5e1ed;
+  padding: 7px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* CARGANDO */
+
+.spinner-border.text-primary {
+  color: var(--azul-medio) !important;
+}
+
+/* SIN RESULTADOS */
+
+.card-body > .text-center {
+  color: #758697;
+}
+
+.card-body > .text-center .bi-inbox {
+  color: #a5bdca;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .resumen {
+    padding: 17px;
+  }
+
+  .card-header {
+    padding: 15px;
+  }
+
+  .card-header h5 {
+    font-size: 14px;
+  }
+
+  .card-header .row > div {
+    width: 100%;
+  }
+
+  .table thead th,
+  .table tbody td {
+    padding: 12px;
+  }
+
+}

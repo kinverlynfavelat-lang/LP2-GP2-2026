@@ -75,14 +75,4 @@ public class MedicamentoController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
-    @PatchMapping("/{id}/descontar-stock")
-    public ResponseEntity<MedicamentoDTO> descontarStock(
-            @PathVariable Long id,
-            @RequestParam Integer cantidad) {
-
-        return medicamentoService.descontarStock(id, cantidad)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
 }

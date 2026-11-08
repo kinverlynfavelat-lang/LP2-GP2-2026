@@ -1,228 +1,285 @@
 
 <div class="container py-4">
 
-  <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
-    <div>
-      <h2 class="titulo-pagina mb-1">
+  <!-- PESTAÑAS DE FARMACIA -->
+  <ul class="nav nav-tabs mb-4">
+
+    <li class="nav-item">
+      <button
+        class="nav-link"
+        [class.active]="vistaActual === 'inventario'"
+        type="button"
+        (click)="cambiarVista('inventario')">
+
         <i class="bi bi-capsule-pill me-2"></i>
-        Farmacia
-      </h2>
-      <p class="text-muted mb-0">
-        Gestión de medicamentos e inventario.
-      </p>
-    </div>
-
-    <button class="btn btn-principal" type="button" (click)="nuevo()">
-      <i class="bi bi-plus-circle me-2"></i>
-      Nuevo medicamento
-    </button>
-  </div>
-
-  <!-- TARJETAS RESUMEN -->
-  <div class="row g-3 mb-4">
-
-    <div class="col-md-4">
-      <div class="resumen">
-        <i class="bi bi-capsule text-primary"></i>
-        <div>
-          <small>Medicamentos registrados</small>
-          <h3>{{ totalMedicamentos }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="resumen">
-        <i class="bi bi-box-seam text-success"></i>
-        <div>
-          <small>Unidades en inventario</small>
-          <h3>{{ stockTotal }}</h3>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-md-4">
-      <div class="resumen">
-        <i class="bi bi-exclamation-triangle text-warning"></i>
-        <div>
-          <small>Medicamentos con stock bajo (≤ 10)</small>
-          <h3>{{ stockBajo }}</h3>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- INVENTARIO -->
-  <div class="card border-0 shadow-sm">
-
-    <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
-
-      <h5 class="mb-0">
-        <i class="bi bi-list-ul me-2"></i>
         Inventario de medicamentos
-      </h5>
 
-      <div class="d-flex gap-2">
-        <input
-          type="text"
-          class="form-control"
-          [(ngModel)]="busqueda"
-          placeholder="Buscar medicamento...">
+      </button>
+    </li>
 
-        <button
-          class="btn btn-outline-primary"
-          type="button"
-          (click)="cargar()"
-          [disabled]="cargando">
-          <i class="bi bi-arrow-clockwise"></i>
-        </button>
+    <li class="nav-item">
+      <button
+        class="nav-link"
+        [class.active]="vistaActual === 'entregas'"
+        type="button"
+        (click)="cambiarVista('entregas')">
+
+        <i class="bi bi-clipboard-check me-2"></i>
+        Entregas de medicamentos
+
+      </button>
+    </li>
+
+  </ul>
+
+  <!-- ================================================= -->
+  <!-- VISTA 1: INVENTARIO -->
+  <!-- ================================================= -->
+
+  <div *ngIf="vistaActual === 'inventario'">
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+      <div>
+        <h2 class="titulo-pagina mb-1">
+          <i class="bi bi-capsule-pill me-2"></i>
+          Farmacia
+        </h2>
+
+        <p class="text-muted mb-0">
+          Gestión de medicamentos e inventario.
+        </p>
+      </div>
+
+      <button class="btn btn-principal" type="button" (click)="nuevo()">
+        <i class="bi bi-plus-circle me-2"></i>
+        Nuevo medicamento
+      </button>
+
+    </div>
+
+    <!-- TARJETAS RESUMEN -->
+    <div class="row g-3 mb-4">
+
+      <div class="col-md-4">
+        <div class="resumen">
+          <i class="bi bi-capsule text-primary"></i>
+          <div>
+            <small>Medicamentos registrados</small>
+            <h3>{{ totalMedicamentos }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="resumen">
+          <i class="bi bi-box-seam text-success"></i>
+          <div>
+            <small>Unidades en inventario</small>
+            <h3>{{ stockTotal }}</h3>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="resumen">
+          <i class="bi bi-exclamation-triangle text-warning"></i>
+          <div>
+            <small>Medicamentos con stock bajo (≤ 10)</small>
+            <h3>{{ stockBajo }}</h3>
+          </div>
+        </div>
       </div>
 
     </div>
 
-    <div class="card-body p-0">
+    <!-- INVENTARIO -->
+    <div class="card border-0 shadow-sm">
 
-      <div *ngIf="cargando" class="text-center py-5">
-        <div class="spinner-border text-primary"></div>
+      <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <h5 class="mb-0">
+          <i class="bi bi-list-ul me-2"></i>
+          Inventario de medicamentos
+        </h5>
+
+        <div class="d-flex gap-2">
+
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="busqueda"
+            placeholder="Buscar medicamento...">
+
+          <button
+            class="btn btn-outline-primary"
+            type="button"
+            (click)="cargar()"
+            [disabled]="cargando">
+
+            <i class="bi bi-arrow-clockwise"></i>
+
+          </button>
+
+        </div>
+
       </div>
 
-      <div
-        *ngIf="!cargando && filtrados.length === 0"
-        class="text-center py-5 text-muted">
-        No se encontraron medicamentos.
-      </div>
+      <div class="card-body p-0">
 
-      <div
-        *ngIf="!cargando && filtrados.length > 0"
-        class="table-responsive">
+        <div *ngIf="cargando" class="text-center py-5">
+          <div class="spinner-border text-primary"></div>
+        </div>
 
-        <table class="table table-hover align-middle mb-0">
+        <div
+          *ngIf="!cargando && filtrados.length === 0"
+          class="text-center py-5 text-muted">
 
-          <thead>
-            <tr>
-              <th>Medicamento</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Stock</th>
-              <th>Estado</th>
-              <th class="text-center">Acciones</th>
-            </tr>
-          </thead>
+          No se encontraron medicamentos.
 
-          <tbody>
-            <tr *ngFor="let m of filtrados">
+        </div>
 
-              <td class="fw-semibold">
-                {{ m.nombre }}
-              </td>
+        <div
+          *ngIf="!cargando && filtrados.length > 0"
+          class="table-responsive">
 
-              <td>
-                {{ m.descripcion || 'Sin descripción' }}
-              </td>
+          <table class="table table-hover align-middle mb-0">
 
-              <td>
-                S/ {{ m.precio | number:'1.2-2' }}
-              </td>
+            <thead>
+              <tr>
+                <th>Medicamento</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th class="text-center">Acciones</th>
+              </tr>
+            </thead>
 
-              <td>
-                <span
-                  class="badge"
-                  [ngClass]="m.stock === 0 ? 'bg-danger' :
-                             m.stock <= 10 ? 'bg-warning text-dark' : 'bg-success'">
-                  {{ m.stock }}
-                </span>
-              </td>
+            <tbody>
 
-              <td>
-                {{ m.estado }}
-              </td>
+              <tr *ngFor="let m of filtrados">
 
-              <td class="text-center">
-                <div class="d-flex justify-content-center flex-wrap gap-1">
+                <td class="fw-semibold">
+                  {{ m.nombre }}
+                </td>
 
-                  <!-- INGRESAR STOCK -->
-                  <button
-                    class="btn btn-sm btn-outline-success"
-                    type="button"
-                    title="Ingresar stock"
-                    [disabled]="procesando"
-                    (click)="abrirMovimiento(m, 'ingresar')">
-                    <i class="bi bi-plus-lg"></i>
-                  </button>
+                <td>
+                  {{ m.descripcion || 'Sin descripción' }}
+                </td>
 
-                  <!-- DESCONTAR STOCK -->
-                  <button
-                    class="btn btn-sm btn-outline-warning"
-                    type="button"
-                    title="Descontar stock"
-                    [disabled]="procesando"
-                    (click)="abrirMovimiento(m, 'descontar')">
-                    <i class="bi bi-dash-lg"></i>
-                  </button>
+                <td>
+                  S/ {{ m.precio | number:'1.2-2' }}
+                </td>
 
-                  <!-- EDITAR -->
-                  <button
-                    class="btn btn-sm btn-outline-primary"
-                    type="button"
-                    title="Editar"
-                    (click)="editar(m)">
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
+                <td>
+                  <span
+                    class="badge"
+                    [ngClass]="m.stock === 0 ? 'bg-danger' :
+                               m.stock <= 10 ? 'bg-warning text-dark' : 'bg-success'">
 
-                  <!-- ELIMINAR -->
-                  <button
-                    class="btn btn-sm btn-outline-danger"
-                    type="button"
-                    title="Eliminar"
-                    [disabled]="procesando"
-                    (click)="eliminar(m)">
-                    <i class="bi bi-trash"></i>
-                  </button>
+                    {{ m.stock }}
 
-                </div>
-              </td>
+                  </span>
+                </td>
 
-            </tr>
-          </tbody>
+                <td>
+                  {{ m.estado }}
+                </td>
 
-        </table>
+                <td class="text-center">
+
+                  <div class="d-flex justify-content-center flex-wrap gap-1">
+
+                    <!-- INGRESAR STOCK -->
+                    <button
+                      class="btn btn-sm btn-outline-success"
+                      type="button"
+                      title="Ingresar stock"
+                      [disabled]="procesando"
+                      (click)="abrirMovimiento(m)">
+
+                      <i class="bi bi-plus-lg"></i>
+
+                    </button>
+
+                    <!-- EDITAR -->
+                    <button
+                      class="btn btn-sm btn-outline-primary"
+                      type="button"
+                      title="Editar"
+                      (click)="editar(m)">
+
+                      <i class="bi bi-pencil-square"></i>
+
+                    </button>
+
+                    <!-- ELIMINAR -->
+                    <button
+                      class="btn btn-sm btn-outline-danger"
+                      type="button"
+                      title="Eliminar"
+                      [disabled]="procesando"
+                      (click)="eliminar(m)">
+
+                      <i class="bi bi-trash"></i>
+
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       </div>
     </div>
+
   </div>
+
+  <!-- ================================================= -->
+  <!-- VISTA 2: ENTREGAS DE MEDICAMENTOS -->
+  <!-- ================================================= -->
+
+  <div *ngIf="vistaActual === 'entregas'">
+
+    <app-detalle-medicamento-list></app-detalle-medicamento-list>
+
+  </div>
+
 </div>
 
-<!-- MODAL INGRESAR / DESCONTAR STOCK -->
+<!-- ================================================= -->
+<!-- MODAL INGRESAR STOCK -->
+<!-- ================================================= -->
+
 <div
   *ngIf="modalStockAbierto && medicamentoSeleccionado"
   class="modal-stock-overlay">
 
-  <div class="modal-stock" role="dialog" aria-modal="true"
-       aria-labelledby="tituloMovimiento">
+  <div
+    class="modal-stock"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="tituloMovimiento">
 
-    <!-- ENCABEZADO MODAL -->
-    <div
-      class="modal-stock-header"
-      [class.header-descontar]="tipoMovimiento === 'descontar'">
+    <!-- ENCABEZADO -->
+    <div class="modal-stock-header">
 
       <div class="modal-stock-icon">
-        <i
-          class="bi"
-          [ngClass]="tipoMovimiento === 'ingresar'
-            ? 'bi-box-arrow-in-down'
-            : 'bi-box-arrow-up'">
-        </i>
+        <i class="bi bi-box-arrow-in-down"></i>
       </div>
 
       <div>
-        <h5 id="tituloMovimiento">
-          {{ tipoMovimiento === 'ingresar'
-             ? 'Ingresar medicamentos'
-             : 'Descontar medicamentos' }}
-        </h5>
-        <p>Movimiento de inventario</p>
+        <h5 id="tituloMovimiento">Ingresar medicamentos</h5>
+        <p>Reabastecimiento de inventario</p>
       </div>
 
       <button
@@ -235,7 +292,7 @@
 
     </div>
 
-    <!-- CUERPO MODAL -->
+    <!-- CUERPO -->
     <div class="modal-stock-body">
 
       <div class="medicamento-info">
@@ -257,11 +314,11 @@
       </div>
 
       <label class="form-label mt-4">
-        Cantidad a
-        {{ tipoMovimiento === 'ingresar' ? 'ingresar' : 'descontar' }}
+        Cantidad a ingresar
       </label>
 
       <div class="input-group">
+
         <span class="input-group-text">
           <i class="bi bi-box-seam"></i>
         </span>
@@ -274,6 +331,7 @@
           min="1"
           step="1"
           placeholder="Ingrese la cantidad">
+
       </div>
 
       <!-- VISTA PREVIA -->
@@ -286,31 +344,15 @@
         <span>Stock resultante</span>
 
         <strong>
-          {{
-            tipoMovimiento === 'ingresar'
-              ? medicamentoSeleccionado.stock + cantidadMovimiento
-              : medicamentoSeleccionado.stock - cantidadMovimiento
-          }}
+          {{ medicamentoSeleccionado.stock + cantidadMovimiento }}
           unidades
         </strong>
 
       </div>
 
-      <!-- ALERTA STOCK INSUFICIENTE -->
-      <div
-        *ngIf="tipoMovimiento === 'descontar' &&
-               cantidadMovimiento !== null &&
-               cantidadMovimiento > medicamentoSeleccionado.stock"
-        class="alert alert-danger mt-3 mb-0 py-2 small">
-
-        <i class="bi bi-exclamation-triangle me-2"></i>
-        La cantidad supera el stock disponible.
-
-      </div>
-
     </div>
 
-    <!-- BOTONES MODAL -->
+    <!-- BOTONES -->
     <div class="modal-stock-footer">
 
       <button
@@ -318,25 +360,23 @@
         class="btn btn-outline-secondary"
         (click)="cerrarMovimiento()"
         [disabled]="procesando">
+
         Cancelar
+
       </button>
 
       <button
         type="button"
-        class="btn"
-        [ngClass]="tipoMovimiento === 'ingresar'
-          ? 'btn-confirmar-ingreso'
-          : 'btn-confirmar-descuento'"
+        class="btn btn-confirmar-ingreso"
         (click)="confirmarMovimiento()"
         [disabled]="procesando ||
                     cantidadMovimiento === null ||
                     cantidadMovimiento <= 0 ||
-                    cantidadMovimiento % 1 !== 0 ||
-                    (tipoMovimiento === 'descontar' &&
-                     cantidadMovimiento > medicamentoSeleccionado.stock)">
+                    cantidadMovimiento % 1 !== 0">
 
         <i class="bi bi-check-circle me-2"></i>
-        {{ procesando ? 'Procesando...' : 'Confirmar movimiento' }}
+
+        {{ procesando ? 'Procesando...' : 'Confirmar ingreso' }}
 
       </button>
 

@@ -8,10 +8,16 @@ import { Medicamento } from '../../../core/interfaces/medicamento.interface';
 import { MedicamentoService } from '../../../core/services/medicamento.service';
 import { AlertService } from '../../../core/services/alert.service';
 
+import { DetalleMedicamentoListComponent } from '../detalle-medicamento-list/detalle-medicamento-list.component';
+
 @Component({
   selector: 'app-farmacia-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    DetalleMedicamentoListComponent
+  ],
   templateUrl: './farmacia-list.component.html',
   styleUrl: './farmacia-list.component.css'
 })
@@ -21,15 +27,29 @@ export class FarmaciaListComponent implements OnInit {
   private alert = inject(AlertService);
   private router = inject(Router);
 
+  // PESTAÑAS
+  vistaActual: 'inventario' | 'entregas' = 'inventario';
+
   medicamentos: Medicamento[] = [];
   busqueda = '';
+
   cargando = false;
   procesando = false;
+
+  modalStockAbierto = false;
+  medicamentoSeleccionado: Medicamento | null = null;
+  cantidadMovimiento: number | null = null;
 
   ngOnInit(): void {
     this.cargar();
   }
 
+  // CAMBIAR PESTAÑA
+  cambiarVista(vista: 'inventario' | 'entregas'): void {
+    this.vistaActual = vista;
+  }
+
+  // FILTRAR MEDICAMENTOS
   get filtrados(): Medicamento[] {
     const texto = this.busqueda.trim().toLowerCase();
 
@@ -39,18 +59,22 @@ export class FarmaciaListComponent implements OnInit {
     );
   }
 
+  // TOTAL MEDICAMENTOS
   get totalMedicamentos(): number {
     return this.medicamentos.length;
   }
 
+  // STOCK TOTAL
   get stockTotal(): number {
     return this.medicamentos.reduce((s, m) => s + m.stock, 0);
   }
 
+  // STOCK BAJO
   get stockBajo(): number {
     return this.medicamentos.filter(m => m.stock <= 10).length;
   }
 
+  // LISTAR MEDICAMENTOS
   cargar(): void {
     this.cargando = true;
 
@@ -67,97 +91,92 @@ export class FarmaciaListComponent implements OnInit {
     });
   }
 
+  // NUEVO MEDICAMENTO
   nuevo(): void {
     this.router.navigate(['/farmacia/nuevo']);
   }
 
+  // EDITAR MEDICAMENTO
   editar(m: Medicamento): void {
     if (m.idMedicamento == null) return;
+
     this.router.navigate(['/farmacia/editar', m.idMedicamento]);
   }
 
-  
-abrirMovimiento(
-  medicamento: Medicamento,
-  tipo: 'ingresar' | 'descontar'
-): void {
+  // ABRIR MODAL DE INGRESO
+  abrirMovimiento(medicamento: Medicamento): void {
+    if (this.procesando) return;
 
-  if (this.procesando) return;
-
-  this.medicamentoSeleccionado = medicamento;
-  this.tipoMovimiento = tipo;
-  this.cantidadMovimiento = null;
-  this.modalStockAbierto = true;
-}
-
-cerrarMovimiento(): void {
-  if (this.procesando) return;
-
-  this.modalStockAbierto = false;
-  this.medicamentoSeleccionado = null;
-  this.cantidadMovimiento = null;
-}
-
-confirmarMovimiento(): void {
-
-  const medicamento = this.medicamentoSeleccionado;
-  const cantidad = this.cantidadMovimiento;
-
-  if (!medicamento || medicamento.idMedicamento == null || this.procesando) {
-    return;
+    this.medicamentoSeleccionado = medicamento;
+    this.cantidadMovimiento = null;
+    this.modalStockAbierto = true;
   }
 
-  if (
-    cantidad === null ||
-    !Number.isInteger(cantidad) ||
-    cantidad <= 0
-  ) {
-    this.alert.error('Ingresa una cantidad entera mayor que cero');
-    return;
+  // CERRAR MODAL
+  cerrarMovimiento(): void {
+    if (this.procesando) return;
+
+    this.modalStockAbierto = false;
+    this.medicamentoSeleccionado = null;
+    this.cantidadMovimiento = null;
   }
 
-  if (
-    this.tipoMovimiento === 'descontar' &&
-    cantidad > medicamento.stock
-  ) {
-    this.alert.error('La cantidad supera el stock disponible');
-    return;
-  }
+  // CONFIRMAR INGRESO DE STOCK
+  confirmarMovimiento(): void {
 
-  this.procesando = true;
+    const medicamento = this.medicamentoSeleccionado;
+    const cantidad = this.cantidadMovimiento;
 
-  const peticion = this.tipoMovimiento === 'ingresar'
-    ? this.service.ingresarStock(medicamento.idMedicamento, cantidad)
-    : this.service.descontarStock(medicamento.idMedicamento, cantidad);
-
-  peticion.subscribe({
-    next: () => {
-      this.procesando = false;
-      this.modalStockAbierto = false;
-      this.medicamentoSeleccionado = null;
-      this.cantidadMovimiento = null;
-
-      this.alert.success('Stock actualizado correctamente');
-      this.cargar();
-    },
-    error: err => {
-      console.error(err);
-
-      this.alert.error(
-        err.error?.message || 'No se pudo actualizar el stock'
-      );
-
-      this.procesando = false;
+    if (
+      !medicamento ||
+      medicamento.idMedicamento == null ||
+      this.procesando
+    ) {
+      return;
     }
-  });
-}
 
-  modalStockAbierto = false;
-  medicamentoSeleccionado: Medicamento | null = null;
-  tipoMovimiento: 'ingresar' | 'descontar' = 'ingresar';
-  cantidadMovimiento: number | null = null;
+    if (
+      cantidad === null ||
+      !Number.isInteger(cantidad) ||
+      cantidad <= 0
+    ) {
+      this.alert.error('Ingresa una cantidad entera mayor que cero');
+      return;
+    }
 
+    this.procesando = true;
+
+    this.service.ingresarStock(
+      medicamento.idMedicamento,
+      cantidad
+    ).subscribe({
+      next: () => {
+
+        this.procesando = false;
+        this.modalStockAbierto = false;
+        this.medicamentoSeleccionado = null;
+        this.cantidadMovimiento = null;
+
+        this.alert.success('Stock ingresado correctamente');
+
+        this.cargar();
+      },
+      error: err => {
+
+        console.error(err);
+
+        this.alert.error(
+          err.error?.message || 'No se pudo ingresar el stock'
+        );
+
+        this.procesando = false;
+      }
+    });
+  }
+
+  // ELIMINAR MEDICAMENTO
   async eliminar(m: Medicamento): Promise<void> {
+
     if (m.idMedicamento == null || this.procesando) return;
 
     const confirmado = await this.alert.confirm(
@@ -170,13 +189,20 @@ confirmarMovimiento(): void {
 
     this.service.deleteMedicamento(m.idMedicamento).subscribe({
       next: () => {
+
         this.alert.success('Medicamento eliminado');
+
         this.procesando = false;
         this.cargar();
       },
       error: err => {
+
         console.error(err);
-        this.alert.error('No se pudo eliminar. Puede tener registros relacionados.');
+
+        this.alert.error(
+          'No se pudo eliminar. Puede tener registros relacionados.'
+        );
+
         this.procesando = false;
       }
     });

@@ -21,13 +21,8 @@ export class MedicamentoService {
     return this.http.get<Medicamento>(`${this.apiUrl}/${id}`);
   }
 
-  createMedicamento(
-    medicamento: Medicamento
-  ): Observable<Medicamento> {
-    return this.http.post<Medicamento>(
-      this.apiUrl,
-      medicamento
-    );
+  createMedicamento(medicamento: Medicamento): Observable<Medicamento> {
+    return this.http.post<Medicamento>(this.apiUrl, medicamento);
   }
 
   updateMedicamento(
@@ -44,10 +39,12 @@ export class MedicamentoService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
+  // Ingresar stock por reabastecimiento
   ingresarStock(
     id: number,
     cantidad: number
   ): Observable<Medicamento> {
+
     const params = new HttpParams()
       .set('cantidad', cantidad.toString());
 
@@ -58,17 +55,4 @@ export class MedicamentoService {
     );
   }
 
-  descontarStock(
-    id: number,
-    cantidad: number
-  ): Observable<Medicamento> {
-    const params = new HttpParams()
-      .set('cantidad', cantidad.toString());
-
-    return this.http.patch<Medicamento>(
-      `${this.apiUrl}/${id}/descontar-stock`,
-      {},
-      { params }
-    );
-  }
 }

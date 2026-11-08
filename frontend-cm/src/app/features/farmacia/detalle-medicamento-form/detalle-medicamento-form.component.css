@@ -1,0 +1,320 @@
+
+/* =====================================
+   FORMULARIO DE ENTREGA DE MEDICAMENTOS
+   UPeU SALUD
+===================================== */
+
+:host {
+  display: block;
+  --azul: #075779;
+  --azul-oscuro: #06445f;
+  --azul-medio: #1685ac;
+  --celeste: #eaf4f8;
+  --borde: #dce9f0;
+}
+
+.container {
+  max-width: 1100px;
+}
+
+/* ENCABEZADO */
+
+.titulo-pagina {
+  color: var(--azul);
+  font-size: 27px;
+  font-weight: 700;
+}
+
+.titulo-pagina i {
+  color: var(--azul-medio);
+}
+
+.text-muted {
+  color: #758697 !important;
+}
+
+/* TARJETA PRINCIPAL */
+
+.card {
+  border: 1px solid #e2edf3 !important;
+  border-radius: 14px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 18px rgba(7,87,121,.06) !important;
+}
+
+.card-header {
+  background: white !important;
+  padding: 20px 23px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.card-header h5 {
+  color: var(--azul);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.card-header h5 i {
+  color: var(--azul-medio);
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* ETIQUETAS */
+
+.form-label {
+  color: #34485b;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 9px;
+}
+
+/* SELECTOR DE MEDICAMENTOS */
+
+.form-select {
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #34485b;
+  background-color: white;
+}
+
+.form-select:focus {
+  border-color: var(--azul-medio);
+  box-shadow: 0 0 0 3px rgba(22,133,172,.1);
+}
+
+/* INFORMACIÓN DEL PACIENTE Y RECETA */
+
+.dato-entrega {
+  height: 100%;
+  min-height: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+  padding: 15px 17px;
+  background: #f4f9fc;
+  border: 1px solid #e2edf3;
+  border-radius: 10px;
+  transition: .2s;
+}
+
+.dato-entrega:hover {
+  border-color: #c5e1ed;
+  background: #edf6fa;
+}
+
+.dato-entrega small {
+  color: #758697;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.dato-entrega strong {
+  color: var(--azul);
+  font-size: 14px;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* TARJETAS DE CANTIDADES */
+
+.cantidad-card {
+  height: 100%;
+  min-height: 105px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: white;
+  border: 1px solid #dce9f0;
+  border-radius: 11px;
+  box-shadow: 0 3px 12px rgba(7,87,121,.04);
+  transition: .2s;
+}
+
+.cantidad-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(7,87,121,.08);
+}
+
+.cantidad-card small {
+  color: #758697;
+  font-size: 12px;
+  text-align: center;
+}
+
+.cantidad-card h3 {
+  color: var(--azul);
+  font-size: 27px;
+  font-weight: 700;
+  margin: 8px 0 0;
+}
+
+/* INFORMACIÓN DE STOCK */
+
+.alert-light {
+  background: #edf6fa !important;
+  border: 1px solid #d6e8f1 !important;
+  color: #456779;
+  padding: 15px 18px;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.alert-light i {
+  color: var(--azul-medio);
+}
+
+.alert-light strong {
+  color: var(--azul);
+  font-weight: 700;
+}
+
+/* INPUT DE CANTIDAD */
+
+.form-control {
+  border: 1px solid var(--borde);
+  border-radius: 9px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #34485b;
+}
+
+.form-control:focus {
+  border-color: var(--azul-medio);
+  box-shadow: 0 0 0 3px rgba(22,133,172,.1);
+}
+
+.form-control::placeholder {
+  color: #9aa8b5;
+}
+
+.form-control:disabled {
+  background: #f4f7f9;
+}
+
+form .mb-4 > small {
+  display: block;
+  margin-top: 8px;
+  font-size: 11px;
+}
+
+/* ALERTAS DE VALIDACIÓN */
+
+.alert-danger {
+  background: #fff2f1;
+  border: 1px solid #f1ceca;
+  color: #a9433d;
+  border-radius: 9px;
+  padding: 12px 15px;
+  font-size: 13px;
+}
+
+/* SIN MEDICAMENTOS PENDIENTES */
+
+.alert-info {
+  background: #edf6fa;
+  border: 1px solid #d6e8f1;
+  color: var(--azul);
+  padding: 18px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+/* BOTONES */
+
+.btn-primary {
+  background: var(--azul);
+  border: 1px solid var(--azul);
+  color: white;
+  border-radius: 9px;
+  padding: 11px 19px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: .2s;
+}
+
+.btn-primary:hover {
+  background: var(--azul-oscuro);
+  border-color: var(--azul-oscuro);
+  color: white;
+}
+
+.btn-primary:disabled {
+  background: #8baab8;
+  border-color: #8baab8;
+  opacity: .7;
+}
+
+.btn-outline-secondary {
+  background: white;
+  border: 1px solid #d7e1e8;
+  color: #64748b;
+  border-radius: 9px;
+  padding: 11px 19px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.btn-outline-secondary:hover {
+  background: #f1f5f8;
+  color: var(--azul);
+  border-color: #c5d7e1;
+}
+
+/* CARGANDO */
+
+.spinner-border.text-primary {
+  color: var(--azul-medio) !important;
+}
+
+/* SEPARADOR DE BOTONES */
+
+.border-top {
+  border-color: #e6edf1 !important;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .card-body {
+    padding: 16px;
+  }
+
+  .card-header {
+    padding: 16px;
+  }
+
+  .dato-entrega {
+    min-height: 68px;
+  }
+
+  .cantidad-card {
+    min-height: 90px;
+  }
+
+  .cantidad-card h3 {
+    font-size: 23px;
+  }
+
+  form .d-flex.justify-content-end {
+    flex-direction: column-reverse;
+  }
+
+  form .d-flex.justify-content-end .btn {
+    width: 100%;
+  }
+
+}

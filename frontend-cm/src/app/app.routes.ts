@@ -26,6 +26,8 @@ import { RecetaFormComponent } from './features/recetas/receta-form/receta-form.
 import { RecetaListComponent } from './features/recetas/receta-list/receta-list.component';
 import { DerivacionListComponent } from './features/derivaciones/derivacion-list/derivacion-list.component';
 import { DerivacionFormComponent } from './features/derivaciones/derivacion-form/derivacion-form.component';
+import { DetalleMedicamentoListComponent } from './features/farmacia/detalle-medicamento-list/detalle-medicamento-list.component';
+import { DetalleMedicamentoFormComponent } from './features/farmacia/detalle-medicamento-form/detalle-medicamento-form.component';
 export const routes: Routes = [
     {
         path: '',
@@ -161,6 +163,22 @@ export const routes: Routes = [
             {
                 path: 'derivaciones/editar/:id',
                 component: DerivacionFormComponent
+            },
+            {
+                path: 'farmacia',
+                component: FarmaciaListComponent
+            },
+            {
+                path: 'farmacia/nuevo',
+                component: FarmaciaFormComponent
+            },
+            {
+                path: 'farmacia/editar/:id',
+                component: FarmaciaFormComponent
+            },
+            {
+                path: 'farmacia/entregas/nuevo',
+                component: DetalleMedicamentoFormComponent
             },
 
             {

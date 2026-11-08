@@ -89,25 +89,6 @@ public class MedicamentoServiceImpl implements IMedicamentoService {
 
     @Override
     @Transactional
-    public Optional<MedicamentoDTO> descontarStock(Long id, Integer cantidad) {
-
-        if (cantidad == null || cantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
-        }
-
-        return medicamentoRepository.findById(id).map(medicamento -> {
-
-            if (medicamento.getStock() < cantidad) {
-                throw new IllegalArgumentException("Stock insuficiente");
-            }
-
-            medicamento.setStock(medicamento.getStock() - cantidad);
-
-            return convertirADTO(medicamentoRepository.save(medicamento));
-        });
-    }
-    @Override
-    @Transactional
     public boolean eliminar(Long id) {
 
         if (medicamentoRepository.existsById(id)) {

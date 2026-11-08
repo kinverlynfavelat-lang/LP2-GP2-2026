@@ -1,0 +1,230 @@
+<div class="container py-4">
+
+    <!-- ENCABEZADO -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+
+        <div>
+            <h2 class="titulo-pagina mb-1">
+                <i class="bi bi-box-arrow-up me-2"></i>
+                Registrar entrega
+            </h2>
+
+            <p class="text-muted mb-0">
+                Registro de medicamentos prescritos y entregados al paciente.
+            </p>
+        </div>
+
+        <button class="btn btn-outline-secondary" type="button" (click)="cancelar()">
+            <i class="bi bi-arrow-left me-2"></i>
+            Volver
+        </button>
+
+    </div>
+
+    <!-- CARGANDO -->
+    <div *ngIf="cargando" class="text-center py-5">
+        <div class="spinner-border text-primary"></div>
+        <p class="text-muted mt-2">Cargando información...</p>
+    </div>
+
+    <div *ngIf="!cargando">
+
+        <!-- SIN PENDIENTES -->
+        <div *ngIf="detallesPendientes.length === 0" class="alert alert-info">
+
+            <i class="bi bi-info-circle me-2"></i>
+            No existen medicamentos pendientes de entrega.
+
+        </div>
+
+        <div *ngIf="detallesPendientes.length > 0" class="card border-0 shadow-sm">
+
+            <div class="card-header bg-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard2-pulse me-2"></i>
+                    Información de la entrega
+                </h5>
+            </div>
+
+            <div class="card-body">
+
+                <form (ngSubmit)="registrar()">
+
+                    <!-- SELECCIONAR RECETA -->
+                    <div class="mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Paciente y medicamento prescrito *
+                        </label>
+
+                        <select class="form-select" name="detalleReceta" [(ngModel)]="idDetalleRecetaSeleccionado"
+                            (ngModelChange)="cantidadEntrega = null" required>
+
+                            <option [ngValue]="null">
+                                Seleccionar medicamento pendiente
+                            </option>
+
+                            <option *ngFor="let d of detallesPendientes" [ngValue]="d.idDetalleReceta">
+
+                                {{ d.paciente }} -
+                                {{ d.medicamento }} -
+                                Receta #{{ d.idReceta }}
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- INFORMACIÓN DEL MEDICAMENTO -->
+                    <div *ngIf="detalleSeleccionado as d">
+
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Paciente</small>
+                                    <strong>{{ d.paciente }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Receta médica</small>
+                                    <strong>#{{ d.idReceta }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Cita médica</small>
+                                    <strong>#{{ d.idCita }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Medicamento</small>
+                                    <strong>{{ d.medicamento }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Dosis</small>
+                                    <strong>{{ d.dosis }}</strong>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="dato-entrega">
+                                    <small>Indicaciones</small>
+                                    <strong>{{ d.indicaciones }}</strong>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- CANTIDADES -->
+                        <div class="row g-3 mb-4">
+
+                            <div class="col-md-4">
+                                <div class="cantidad-card">
+                                    <small>Cantidad prescrita</small>
+                                    <h3>{{ d.cantidadPrescrita }}</h3>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="cantidad-card">
+                                    <small>Cantidad entregada</small>
+                                    <h3>{{ d.cantidadEntregada }}</h3>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="cantidad-card">
+                                    <small>Cantidad pendiente</small>
+                                    <h3>{{ d.cantidadPendiente }}</h3>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- STOCK -->
+                        <div class="alert alert-light border">
+
+                            <i class="bi bi-box-seam me-2"></i>
+
+                            Stock disponible:
+                            <strong>{{ d.stockDisponible }} unidades</strong>
+
+                        </div>
+
+                        <!-- CANTIDAD A ENTREGAR -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Cantidad a entregar *
+                            </label>
+
+                            <input type="number" class="form-control" name="cantidadEntrega"
+                                [(ngModel)]="cantidadEntrega" min="1" [max]="d.cantidadPendiente" step="1" required
+                                placeholder="Ingrese la cantidad">
+
+                            <small class="text-muted">
+                                No puedes entregar más de la cantidad pendiente
+                                ni superar el stock disponible.
+                            </small>
+
+                        </div>
+
+                        <!-- ALERTAS -->
+                        <div *ngIf="cantidadEntrega !== null &&
+                     cantidadEntrega > d.cantidadPendiente" class="alert alert-danger">
+
+                            La cantidad supera lo pendiente de la receta.
+
+                        </div>
+
+                        <div *ngIf="cantidadEntrega !== null &&
+                     cantidadEntrega > d.stockDisponible" class="alert alert-danger">
+
+                            No existe suficiente stock para esta entrega.
+
+                        </div>
+
+                    </div>
+
+                    <!-- BOTONES -->
+                    <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+
+                        <button type="button" class="btn btn-outline-secondary" (click)="cancelar()"
+                            [disabled]="procesando">
+                            Cancelar
+                        </button>
+
+                        <button type="submit" class="btn btn-primary" [disabled]="procesando ||
+              !detalleSeleccionado ||
+              cantidadEntrega === null ||
+              cantidadEntrega <= 0 ||
+              cantidadEntrega % 1 !== 0 ||
+              cantidadEntrega > detalleSeleccionado.cantidadPendiente ||
+              cantidadEntrega > detalleSeleccionado.stockDisponible">
+
+                            <i class="bi bi-check-circle me-2"></i>
+
+                            {{ procesando ? 'Registrando...' : 'Registrar entrega' }}
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
