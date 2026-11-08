@@ -1,13 +1,13 @@
 
 {
   "/api": {
-    "target": "http://localhost:8082/evaluacion1",
+    "target": "http://localhost:8080/centro-medico",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
   },
-  "/evaluacion1/images": {
-    "target": "http://localhost:8082",
+  "/centro-medico/images": {
+    "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true,
     "logLevel": "debug"
