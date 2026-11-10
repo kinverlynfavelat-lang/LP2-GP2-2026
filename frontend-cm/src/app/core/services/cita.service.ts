@@ -19,6 +19,11 @@ export class CitaService {
     return this.http.get<Cita[]>(this.apiUrl);
   }
 
+  // Listar última cita de cada paciente (Buscador general con GROUP BY)
+  getHistorialPacientes(): Observable<Cita[]> {
+    return this.http.get<Cita[]>(`${this.apiUrl}/historial-pacientes`);
+  }
+
   // Buscar cita por ID
   getCitaById(id: number): Observable<Cita> {
     return this.http.get<Cita>(`${this.apiUrl}/${id}`);

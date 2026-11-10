@@ -109,6 +109,21 @@ public class CitaServiceImpl implements ICitaService {
         return respuesta;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<CitaResponseDTO> listarUltimasPorPaciente() {
+        List<Cita> lista =
+                citaRepository.findUltimasCitasPorPaciente();
+
+        List<CitaResponseDTO> respuesta = new ArrayList<>();
+
+        for (Cita c : lista) {
+            respuesta.add(convertirADTO(c));
+        }
+
+        return respuesta;
+    }
+
     // ==================================
     // LISTAR CITAS POR MEDICO
     // ==================================
@@ -646,9 +661,12 @@ public class CitaServiceImpl implements ICitaService {
         String paciente = "";
         String medico = "";
         String empleadoTriaje = "";
+        Long idPersona = null;
+        String dniPaciente = "";
 
         if (c.getPersona() != null) {
-
+            idPersona = c.getPersona().getIdPersona();
+            dniPaciente = c.getPersona().getDni();
             paciente = c.getPersona().getNombres()
                     + " "
                     + c.getPersona().getApellidos();
@@ -693,7 +711,9 @@ public class CitaServiceImpl implements ICitaService {
                 c.getEstado(),
                 paciente,
                 medico,
-                empleadoTriaje
+                empleadoTriaje,
+                idPersona,
+                dniPaciente
         );
     }
 }

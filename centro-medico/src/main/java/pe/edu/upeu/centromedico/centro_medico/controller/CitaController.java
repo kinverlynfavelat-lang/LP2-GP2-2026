@@ -61,6 +61,18 @@ public class CitaController {
         );
     }
 
+    // ========================================================
+    // HISTORIAL DE PACIENTES: ÚLTIMA CITA DE CADA PACIENTE
+    // ========================================================
+
+    @GetMapping("/historial-pacientes")
+    public ResponseEntity<List<CitaResponseDTO>> listarUltimasPorPaciente() {
+
+        return ResponseEntity.ok(
+                citaService.listarUltimasPorPaciente()
+        );
+    }
+
     // ==========================
     // LISTAR CITAS POR MEDICO
     // ==========================

@@ -14,6 +14,8 @@ public interface ICitaService {
 
     List<CitaResponseDTO> listarPorPaciente(Long idPersona);
 
+    List<CitaResponseDTO> listarUltimasPorPaciente();
+
     List<CitaResponseDTO> listarPorMedico(Long idMedico);
 
     CitaResponseDTO crear(CitaDTO dto);

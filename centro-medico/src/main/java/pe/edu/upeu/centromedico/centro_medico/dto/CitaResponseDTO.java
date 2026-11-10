@@ -25,7 +25,9 @@ public record CitaResponseDTO(
         EstadoCita estado,
         String paciente,
         String medico,
-        String empleadoTriaje
+        String empleadoTriaje,
+        Long idPersona,
+        String dniPaciente
 
 ) {
 }
