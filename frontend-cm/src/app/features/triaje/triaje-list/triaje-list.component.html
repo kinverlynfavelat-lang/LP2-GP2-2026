@@ -82,6 +82,7 @@
 
                 <thead>
                     <tr>
+                        <th>ID</th>
                         <th>PACIENTE</th>
                         <th>MOTIVO DE CONSULTA</th>
                         <th>FECHA</th>
@@ -93,7 +94,9 @@
 
                 <tbody>
 
-                    <tr *ngFor="let cita of citasFiltradas">
+                    <tr *ngFor="let cita of citasFiltradas; let i = index">
+
+                        <td>{{ i + 1 }}</td>
 
                         <td>
                             <div class="paciente-info">

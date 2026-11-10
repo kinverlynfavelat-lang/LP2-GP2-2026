@@ -19,6 +19,7 @@
 
       <thead>
         <tr>
+          <th>N.º</th>
           <th>Paciente</th>
           <th>Médico</th>
           <th>Fecha</th>
@@ -31,9 +32,11 @@
 
       <tbody>
 
-        @for (c of citas; track c.idCita) {
+        @for (c of citas; track c.idCita; let i = $index) {
 
           <tr>
+
+            <td>{{ i + 1 }}</td>
 
             <td>{{ c.paciente }}</td>
 

@@ -148,6 +148,7 @@
 
             <thead>
               <tr>
+                <th>N.º</th>
                 <th>Medicamento</th>
                 <th>Descripción</th>
                 <th>Precio</th>
@@ -159,7 +160,11 @@
 
             <tbody>
 
-              <tr *ngFor="let m of filtrados">
+              <tr *ngFor="let m of filtrados; let i = index">
+
+                <td>
+                  {{ i + 1 }}
+                </td>
 
                 <td class="fw-semibold">
                   {{ m.nombre }}

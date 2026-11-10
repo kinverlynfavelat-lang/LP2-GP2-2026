@@ -52,6 +52,7 @@
         <table class="table table-hover align-middle mb-0">
           <thead>
             <tr>
+              <th>N.º</th>
               <th>Paciente</th>
               <th>Fecha</th>
               <th>Hora</th>
@@ -63,7 +64,8 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let cita of citas">
+            <tr *ngFor="let cita of citas; let i = index">
+              <td>{{ i + 1 }}</td>
               <td class="fw-semibold">
                 {{ cita.paciente || 'No registrado' }}
               </td>
