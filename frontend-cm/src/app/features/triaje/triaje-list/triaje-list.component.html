@@ -59,6 +59,26 @@
 
     </div>
 
+    <!-- BANNER DE ALERTAS CRÍTICAS (QUERY: TRIAJE CRÍTICO) -->
+    @if (citasCriticas.length > 0) {
+      <div class="alert alert-danger d-flex justify-content-between align-items-center mb-4 shadow-sm rounded-3">
+        <div class="d-flex align-items-center gap-2">
+          <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
+          <div>
+            <strong>Alerta de Triaje:</strong>
+            <span> Se detectaron {{ citasCriticas.length }} paciente(s) con signos vitales en estado crítico (Fiebre ≥ 38 °C o Presión ≥ 120 mmHg).</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          class="btn btn-sm btn-danger px-3"
+          (click)="alternarCriticas()">
+          <i class="bi" [ngClass]="mostrarSoloCriticas ? 'bi-list-ul me-1' : 'bi-funnel-fill me-1'"></i>
+          {{ mostrarSoloCriticas ? 'Ver todos los pacientes' : 'Filtrar Críticos (' + citasCriticas.length + ')' }}
+        </button>
+      </div>
+    }
+
     <!-- LISTADO -->
     <div class="card listado-card">
 
