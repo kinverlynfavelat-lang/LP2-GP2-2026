@@ -119,12 +119,29 @@
           </span>
         </div>
 
+        <!-- RESUMEN DE ALERTAS -->
+        <div class="alerta-resumen mt-3" *ngIf="totalCriticos > 0">
+          <i class="bi bi-exclamation-octagon-fill"></i>
+          <span>
+            {{ totalCriticos }} signo(s) vital(es) fuera de rango.
+            Verifica la medición y evalúa la prioridad de atención.
+          </span>
+        </div>
+
         <div class="row g-3 mt-2">
 
           <div class="col-md-6 col-xl-3">
-            <div class="measurement-card">
-              <div class="measurement-icon temperatura">
-                <i class="bi bi-thermometer-half"></i>
+            <div class="measurement-card"
+                 [ngClass]="'estado-' + (estadoTemperatura() || 'vacio')">
+              <div class="measurement-head">
+                <div class="measurement-icon temperatura">
+                  <i class="bi bi-thermometer-half"></i>
+                </div>
+                <span class="estado-chip" *ngIf="estadoTemperatura() as e">
+                  <i class="bi"
+                     [ngClass]="e === 'normal' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+                  {{ e === 'normal' ? 'Normal' : (e === 'alerta' ? 'Revisar' : 'Alerta') }}
+                </span>
               </div>
               <label>Temperatura</label>
               <div class="input-with-unit">
@@ -137,34 +154,50 @@
                        placeholder="36.5">
                 <span>°C</span>
               </div>
-              <small>Temperatura corporal</small>
+              <small class="estado-texto">{{ textoTemperatura() }}</small>
             </div>
           </div>
 
           <div class="col-md-6 col-xl-3">
-            <div class="measurement-card">
-              <div class="measurement-icon presion">
-                <i class="bi bi-activity"></i>
+            <div class="measurement-card"
+                 [ngClass]="'estado-' + (estadoPresion() || 'vacio')">
+              <div class="measurement-head">
+                <div class="measurement-icon presion">
+                  <i class="bi bi-activity"></i>
+                </div>
+                <span class="estado-chip" *ngIf="estadoPresion() as e">
+                  <i class="bi"
+                     [ngClass]="e === 'normal' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+                  {{ e === 'normal' ? 'Normal' : (e === 'alerta' ? 'Revisar' : 'Alerta') }}
+                </span>
               </div>
-              <label>Presión arterial</label>
+              <label>Presión arterial (sistólica)</label>
               <div class="input-with-unit">
                 <input type="number"
                        class="form-control"
                        [(ngModel)]="presion"
                        name="presion"
                        min="0.1"
-                       step="0.1"
+                       step="1"
                        placeholder="120">
                 <span>mmHg</span>
               </div>
-              <small>Presión arterial</small>
+              <small class="estado-texto">{{ textoPresion() }}</small>
             </div>
           </div>
 
           <div class="col-md-6 col-xl-3">
-            <div class="measurement-card">
-              <div class="measurement-icon cardiaca">
-                <i class="bi bi-heart-pulse"></i>
+            <div class="measurement-card"
+                 [ngClass]="'estado-' + (estadoFrecuenciaCardiaca() || 'vacio')">
+              <div class="measurement-head">
+                <div class="measurement-icon cardiaca">
+                  <i class="bi bi-heart-pulse"></i>
+                </div>
+                <span class="estado-chip" *ngIf="estadoFrecuenciaCardiaca() as e">
+                  <i class="bi"
+                     [ngClass]="e === 'normal' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+                  {{ e === 'normal' ? 'Normal' : (e === 'alerta' ? 'Revisar' : 'Alerta') }}
+                </span>
               </div>
               <label>Frecuencia cardíaca</label>
               <div class="input-with-unit">
@@ -177,14 +210,22 @@
                        placeholder="80">
                 <span>lpm</span>
               </div>
-              <small>Latidos por minuto</small>
+              <small class="estado-texto">{{ textoFrecuenciaCardiaca() }}</small>
             </div>
           </div>
 
           <div class="col-md-6 col-xl-3">
-            <div class="measurement-card">
-              <div class="measurement-icon respiratoria">
-                <i class="bi bi-lungs"></i>
+            <div class="measurement-card"
+                 [ngClass]="'estado-' + (estadoFrecuenciaRespiratoria() || 'vacio')">
+              <div class="measurement-head">
+                <div class="measurement-icon respiratoria">
+                  <i class="bi bi-lungs"></i>
+                </div>
+                <span class="estado-chip" *ngIf="estadoFrecuenciaRespiratoria() as e">
+                  <i class="bi"
+                     [ngClass]="e === 'normal' ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill'"></i>
+                  {{ e === 'normal' ? 'Normal' : (e === 'alerta' ? 'Revisar' : 'Alerta') }}
+                </span>
               </div>
               <label>Frecuencia respiratoria</label>
               <div class="input-with-unit">
@@ -197,11 +238,19 @@
                        placeholder="18">
                 <span>rpm</span>
               </div>
-              <small>Respiraciones por minuto</small>
+              <small class="estado-texto">{{ textoFrecuenciaRespiratoria() }}</small>
             </div>
           </div>
 
         </div>
+
+        <!-- LEYENDA -->
+        <div class="leyenda mt-3">
+          <span><i class="dot dot-normal"></i> Normal</span>
+          <span><i class="dot dot-alerta"></i> Fuera de rango leve</span>
+          <span><i class="dot dot-critico"></i> Fuera de rango</span>
+        </div>
+
       </div>
     </div>
 
@@ -222,7 +271,7 @@
       <div class="section-body">
         <div class="row g-3">
 
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="form-label">Peso corporal</label>
             <div class="input-with-unit">
               <input type="number"
@@ -236,17 +285,31 @@
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-md-4">
             <label class="form-label">Talla</label>
             <div class="input-with-unit">
               <input type="number"
                      class="form-control"
+                     [class.is-invalid]="tallaFueraDeRango()"
                      [(ngModel)]="talla"
                      name="talla"
                      min="0.1"
                      step="0.01"
                      placeholder="Ej. 1.70">
               <span>m</span>
+            </div>
+          </div>
+          
+          <!-- IMC (calculado automáticamente) -->
+          <div class="col-md-4">
+            <label class="form-label">Índice de masa corporal (IMC)</label>
+            <div class="imc-box"
+                 [ngClass]="'estado-' + (estadoImc() || 'vacio')">
+              <div class="imc-valor">
+                {{ imc !== null ? (imc | number:'1.1-1') : '--' }}
+                <small>kg/m²</small>
+              </div>
+              <div class="imc-texto">{{ textoImc() }}</div>
             </div>
           </div>
 

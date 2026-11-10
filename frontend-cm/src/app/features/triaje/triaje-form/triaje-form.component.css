@@ -494,3 +494,135 @@
   }
 
 }
+
+/* ==========================
+   ALERTAS VISUALES (signos vitales e IMC)
+   ========================== */
+.measurement-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.estado-chip {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 9px;
+  border-radius: 20px;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.measurement-card,
+.imc-box {
+  border-left-width: 4px;
+  border-left-style: solid;
+  border-left-color: #e6ebf0;
+}
+
+.measurement-card .estado-texto {
+  font-weight: 600;
+}
+
+/* Verde: normal */
+.estado-normal {
+  border-color: #b8e2c8 !important;
+  border-left-color: #2e9e5b !important;
+  background: #f3fbf6 !important;
+}
+.estado-normal .estado-chip { background: #dcf3e5; color: #1f7a45; }
+.estado-normal .estado-texto,
+.estado-normal .imc-texto { color: #1f7a45 !important; }
+.estado-normal .form-control { border-color: #9fd6b4; }
+
+/* Amarillo: fuera de rango leve */
+.estado-alerta {
+  border-color: #f2dca0 !important;
+  border-left-color: #e0a100 !important;
+  background: #fffbef !important;
+}
+.estado-alerta .estado-chip { background: #fdf0c8; color: #9a6b00; }
+.estado-alerta .estado-texto,
+.estado-alerta .imc-texto { color: #9a6b00 !important; }
+.estado-alerta .form-control { border-color: #ecc65c; }
+
+/* Rojo: fuera de rango */
+.estado-critico {
+  border-color: #f2b8b8 !important;
+  border-left-color: #d63b3b !important;
+  background: #fff4f4 !important;
+  animation: pulso-alerta 1.8s ease-in-out infinite;
+}
+.estado-critico .estado-chip { background: #fbdcdc; color: #b42323; }
+.estado-critico .estado-texto,
+.estado-critico .imc-texto { color: #b42323 !important; }
+.estado-critico .form-control { border-color: #e88a8a; color: #b42323; font-weight: 700; }
+
+@keyframes pulso-alerta {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(214, 59, 59, .0); }
+  50%      { box-shadow: 0 0 0 4px rgba(214, 59, 59, .14); }
+}
+
+/* Resumen de alertas */
+.alerta-resumen {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #fff1f1;
+  border: 1px solid #f3c4c4;
+  color: #9b2c2c;
+  padding: 12px 15px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.alerta-resumen i { font-size: 18px; color: #d63b3b; }
+
+/* Leyenda */
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 11px;
+  color: #788797;
+}
+.leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.dot-normal  { background: #2e9e5b; }
+.dot-alerta  { background: #e0a100; }
+.dot-critico { background: #d63b3b; }
+
+/* Recuadro IMC */
+.imc-box {
+  min-height: 43px;
+  border: 1px solid #dce3e9;
+  border-radius: 8px;
+  padding: 8px 13px;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  transition: .2s;
+}
+.imc-valor {
+  font-size: 20px;
+  font-weight: 700;
+  color: #263445;
+  line-height: 1;
+}
+.imc-valor small {
+  font-size: 11px;
+  font-weight: 600;
+  color: #7b8997;
+  margin-left: 3px;
+}
+.imc-texto {
+  font-size: 12px;
+  font-weight: 700;
+  color: #94a0ad;
+  text-align: right;
+}
