@@ -24,7 +24,10 @@ import pe.edu.upeu.centromedico.centro_medico.repository.HorarioMedicoRepository
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +40,8 @@ public class CitaServiceImpl implements ICitaService {
     private final MedicoRepository medicoRepository;
     private final EmpleadoRepository empleadoRepository;
     private final HorarioMedicoRepository horarioMedicoRepository;
-
+    @PersistenceContext
+    private EntityManager entityManager;
     public CitaServiceImpl(
             CitaRepository citaRepository,
             PersonaRepository personaRepository,
@@ -253,75 +257,62 @@ public class CitaServiceImpl implements ICitaService {
             cita.setEmpleado(empleado);
         }
 
-        // 6. Determinar estado y procesar fondo estudiantil
 
-        // Emergencia derivada: no se descuenta saldo
+        // 6. Determinar estado inicial
         if (dto.estado() == EstadoCita.DERIVADO) {
-
             cita.setEstado(EstadoCita.DERIVADO);
-
         } else {
-
-            BigDecimal precioAtencion = new BigDecimal("50.00");
-
-            System.out.println("========== PROCESAMIENTO DE CITA ==========");
-            System.out.println("PACIENTE: " + paciente.getIdPersona());
-            System.out.println("TIPO PACIENTE: " + paciente.getTipoPaciente());
-            System.out.println("MATRICULA: " + paciente.getMatriculaVigente());
-            System.out.println("SALDO INICIAL: " + paciente.getSaldoFondo());
-
-            // Estudiante con matrícula vigente
-            if (paciente.getTipoPaciente() == TipoPaciente.ESTUDIANTE
-                    && paciente.getMatriculaVigente() == SiNo.SI) {
-
-                BigDecimal saldo = paciente.getSaldoFondo() == null
-                        ? BigDecimal.ZERO
-                        : paciente.getSaldoFondo();
-
-                if (saldo.compareTo(BigDecimal.ZERO) < 0) {
-                    throw new RuntimeException(
-                            "El saldo del estudiante no puede ser negativo");
-                }
-
-                // Tiene saldo suficiente
-                if (saldo.compareTo(precioAtencion) >= 0) {
-
-                    BigDecimal nuevoSaldo = saldo.subtract(precioAtencion);
-
-                    paciente.setSaldoFondo(nuevoSaldo);
-
-                    personaRepository.saveAndFlush(paciente);
-
-                    // Pasa directamente a triaje
-                    cita.setEstado(EstadoCita.RECEPCION);
-
-                    System.out.println("DESCUENTO APLICADO: " + precioAtencion);
-                    System.out.println("NUEVO SALDO: " + nuevoSaldo);
-
-                } else {
-
-                    // Saldo insuficiente: queda pendiente de pago
-                    cita.setEstado(EstadoCita.RECEPCION);
-
-                    System.out.println("SALDO INSUFICIENTE: " + saldo);
-                }
-
-            } else {
-
-                // Particular o estudiante sin matrícula vigente
-                cita.setEstado(EstadoCita.RECEPCION);
-
-                System.out.println("NO CUMPLE CONDICIONES DE ESTUDIANTE");
-            }
+            cita.setEstado(EstadoCita.RECEPCION);
         }
 
-        // 7. Guardar cita
-        Cita guardada = citaRepository.save(cita);
+        // 7. Registrar la cita y obtener su ID
+        Cita guardada = citaRepository.saveAndFlush(cita);
 
-        System.out.println("ESTADO FINAL DE CITA: " + guardada.getEstado());
-        System.out.println("===========================================");
+        // 8. Descuento automatico para estudiantes
+        if (dto.estado() != EstadoCita.DERIVADO
+                && paciente.getTipoPaciente() == TipoPaciente.ESTUDIANTE
+                && paciente.getMatriculaVigente() == SiNo.SI) {
 
-        // 8. Convertir respuesta
+            StoredProcedureQuery procedimiento =
+                    entityManager.createStoredProcedureQuery(
+                            "SP_DESCONTAR_FONDO_ESTUDIANTIL");
+
+            procedimiento.registerStoredProcedureParameter(
+                    1, Long.class, ParameterMode.IN);
+
+            procedimiento.registerStoredProcedureParameter(
+                    2, BigDecimal.class, ParameterMode.OUT);
+
+            procedimiento.registerStoredProcedureParameter(
+                    3, BigDecimal.class, ParameterMode.OUT);
+
+            procedimiento.setParameter(
+                    1, guardada.getIdCita());
+
+            procedimiento.execute();
+
+            // 9. Consultar cuanto falta pagar
+            Number resultado = (Number)
+                    procedimiento.getOutputParameterValue(3);
+
+            BigDecimal montoCaja =
+                    new BigDecimal(resultado.toString());
+
+            // El estudiante no debe pasar por caja
+            if (montoCaja.compareTo(BigDecimal.ZERO) > 0) {
+                throw new IllegalStateException(
+                        "Fondo insuficiente para cubrir los S/ 50");
+            }
+
+            // 10. Cobertura completa: pasa a triaje
+            guardada.setEstado(EstadoCita.TRIAJE);
+            citaRepository.save(guardada);
+
+            // Actualizar el saldo en memoria
+            entityManager.refresh(paciente);
+        }
+
+        // 11. Devolver cita registrada
         return convertirADTO(guardada);
     }
 

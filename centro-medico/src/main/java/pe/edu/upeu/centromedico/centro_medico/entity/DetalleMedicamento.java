@@ -12,6 +12,7 @@ public class DetalleMedicamento {
     @Column(name = "id_detalle_medicamento")
     private Long idDetalleMedicamento;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_detalle_receta", nullable = false)
     private DetalleReceta detalleReceta;

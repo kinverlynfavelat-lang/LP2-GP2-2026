@@ -14,7 +14,10 @@ import pe.edu.upeu.centromedico.centro_medico.exceptions.ResourceNotFoundExcepti
 import pe.edu.upeu.centromedico.centro_medico.repository.CitaRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.PagoRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.PersonaRepository;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +28,8 @@ public class PagoServiceImpl implements IPagoService {
     private final PagoRepository pagoRepository;
     private final CitaRepository citaRepository;
     private final PersonaRepository personaRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private static final BigDecimal PRECIO_CITA =
             new BigDecimal("50.00");
@@ -72,55 +77,67 @@ public class PagoServiceImpl implements IPagoService {
     @Transactional
     public String registrarPago(PagoDTO dto) {
 
-        // 1. Buscar cita
+        // 1. Validar datos iniciales
+        if (dto == null || dto.idCita() == null) {
+            throw new IllegalArgumentException(
+                    "Debe indicar la cita");
+        }
+
+        // 2. Buscar cita
         Cita cita = citaRepository.findById(dto.idCita())
                 .orElseThrow(() ->
-                        new ResourceNotFoundException("Cita no encontrada"));
+                        new ResourceNotFoundException(
+                                "Cita no encontrada"));
 
-        // 2. Verificar que esté en recepción
+        // 3. Validar estado
         if (cita.getEstado() != EstadoCita.RECEPCION) {
             throw new IllegalStateException(
                     "La cita no está pendiente de pago");
         }
 
-        // 3. Evitar pagos duplicados
+        // 4. Evitar pagos duplicados
         if (pagoRepository.existsById(cita.getIdCita())) {
             throw new IllegalStateException(
                     "La cita ya tiene un pago registrado");
         }
 
-        // 4. Buscar persona
-        Persona persona = cita.getPersona();
-
-        if (persona == null) {
+        if (cita.getPersona() == null) {
             throw new ResourceNotFoundException(
                     "Persona no encontrada en la cita");
         }
 
-        BigDecimal descuentoFondo = BigDecimal.ZERO;
-        BigDecimal montoPagar = PRECIO_CITA;
+        // 5. Llamar al procedimiento almacenado Oracle
+        StoredProcedureQuery procedimiento =
+                entityManager.createStoredProcedureQuery(
+                        "SP_DESCONTAR_FONDO_ESTUDIANTIL");
 
-        // 5. Verificar si es estudiante con matrícula vigente
-        if (persona.getTipoPaciente() == TipoPaciente.ESTUDIANTE
-                && persona.getMatriculaVigente() == SiNo.SI) {
+        procedimiento.registerStoredProcedureParameter(
+                1, Long.class, ParameterMode.IN);
 
-            BigDecimal saldo = persona.getSaldoFondo() == null
-                    ? BigDecimal.ZERO
-                    : persona.getSaldoFondo();
+        procedimiento.registerStoredProcedureParameter(
+                2, BigDecimal.class, ParameterMode.OUT);
 
-            if (saldo.compareTo(BigDecimal.ZERO) < 0) {
-                throw new IllegalStateException(
-                        "El saldo del estudiante no puede ser negativo");
-            }
+        procedimiento.registerStoredProcedureParameter(
+                3, BigDecimal.class, ParameterMode.OUT);
 
-            // Calcular descuento del fondo
-            descuentoFondo = saldo.min(PRECIO_CITA);
+        procedimiento.setParameter(1, cita.getIdCita());
 
-            // Calcular diferencia pendiente
-            montoPagar = PRECIO_CITA.subtract(descuentoFondo);
-        }
+        procedimiento.execute();
 
-        // 6. Validar datos si necesita pagar en caja
+        // 6. Obtener descuento y monto pendiente
+        Number resultadoDescuento =
+                (Number) procedimiento.getOutputParameterValue(2);
+
+        Number resultadoCaja =
+                (Number) procedimiento.getOutputParameterValue(3);
+
+        BigDecimal descuentoFondo =
+                new BigDecimal(resultadoDescuento.toString());
+
+        BigDecimal montoPagar =
+                new BigDecimal(resultadoCaja.toString());
+
+        // 7. Registrar pago en caja si corresponde
         if (montoPagar.compareTo(BigDecimal.ZERO) > 0) {
 
             if (dto.fecha() == null
@@ -131,21 +148,6 @@ public class PagoServiceImpl implements IPagoService {
                 throw new IllegalArgumentException(
                         "Debe completar los datos del pago");
             }
-        }
-
-        // 7. Descontar el fondo universitario
-        if (descuentoFondo.compareTo(BigDecimal.ZERO) > 0) {
-
-            BigDecimal nuevoSaldo = persona.getSaldoFondo()
-                    .subtract(descuentoFondo);
-
-            persona.setSaldoFondo(nuevoSaldo);
-
-            personaRepository.save(persona);
-        }
-
-        // 8. Registrar pago solamente si existe un importe por pagar
-        if (montoPagar.compareTo(BigDecimal.ZERO) > 0) {
 
             Pago pago = new Pago();
 
@@ -158,12 +160,11 @@ public class PagoServiceImpl implements IPagoService {
             pagoRepository.save(pago);
         }
 
-        // 9. Pasar a triaje cuando esté cubierta la atención
+        // 8. Pasar a triaje
         cita.setEstado(EstadoCita.TRIAJE);
-
         citaRepository.save(cita);
 
-        // 10. Mensaje de respuesta
+        // 9. Mensaje de respuesta
         if (montoPagar.compareTo(BigDecimal.ZERO) == 0) {
 
             return "Atención cubierta completamente con el fondo universitario. "
@@ -175,6 +176,7 @@ public class PagoServiceImpl implements IPagoService {
                 + "Descuento del fondo: S/ " + descuentoFondo
                 + ". Pago en caja: S/ " + montoPagar;
     }
+
 
     private PagoDTO convertirADTO(Pago pago) {
 

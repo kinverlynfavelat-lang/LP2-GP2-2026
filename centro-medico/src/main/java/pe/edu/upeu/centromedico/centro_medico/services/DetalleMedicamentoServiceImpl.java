@@ -15,6 +15,11 @@ import pe.edu.upeu.centromedico.centro_medico.repository.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.ParameterMode;
+import jakarta.persistence.StoredProcedureQuery;
+import java.math.BigDecimal;
 
 @Service
 public class DetalleMedicamentoServiceImpl
@@ -22,17 +27,18 @@ public class DetalleMedicamentoServiceImpl
 
     private final DetalleMedicamentoRepository detalleMedicamentoRepository;
     private final DetalleRecetaRepository detalleRecetaRepository;
-    private final MedicamentoRepository medicamentoRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public DetalleMedicamentoServiceImpl(
             DetalleMedicamentoRepository detalleMedicamentoRepository,
-            DetalleRecetaRepository detalleRecetaRepository,
-            MedicamentoRepository medicamentoRepository) {
+            DetalleRecetaRepository detalleRecetaRepository) {
 
         this.detalleMedicamentoRepository = detalleMedicamentoRepository;
         this.detalleRecetaRepository = detalleRecetaRepository;
-        this.medicamentoRepository = medicamentoRepository;
     }
+
 
     // Listar todas las entregas
     @Override
@@ -55,83 +61,60 @@ public class DetalleMedicamentoServiceImpl
     }
 
     // Registrar entrega y descontar stock automáticamente
+
     @Override
     @Transactional
     public DetalleMedicamentoResponseDTO registrarEntrega(
             DetalleMedicamentoDTO dto) {
 
+        // 1. Validar datos de entrada
+        if (dto == null || dto.idDetalleReceta() == null) {
+            throw new IllegalArgumentException(
+                    "Debe indicar el detalle de receta");
+        }
+
         if (dto.cantidadEntregada() == null ||
                 dto.cantidadEntregada() <= 0) {
-
             throw new IllegalArgumentException(
                     "La cantidad entregada debe ser mayor a cero");
         }
 
-        // Buscar detalle de receta
-        DetalleReceta detalleReceta = detalleRecetaRepository
-                .findById(dto.idDetalleReceta())
-                .orElseThrow(() ->
-                        new ResourceNotFoundException(
-                                "Detalle de receta no encontrado"));
+        // 2. Llamar al procedimiento almacenado de Oracle
+        StoredProcedureQuery procedimiento =
+                entityManager.createStoredProcedureQuery(
+                        "SP_REGISTRAR_ENTREGA_MEDICAMENTO");
 
-        // Obtener medicamento prescrito
-        Medicamento medicamento = detalleReceta.getMedicamento();
+        procedimiento.registerStoredProcedureParameter(
+                1, Long.class, ParameterMode.IN);
 
-        if (medicamento == null) {
-            throw new ResourceNotFoundException(
-                    "Medicamento no encontrado");
-        }
+        procedimiento.registerStoredProcedureParameter(
+                2, Integer.class, ParameterMode.IN);
 
-        // Calcular cantidades entregadas anteriormente
-        List<DetalleMedicamento> entregasAnteriores =
-                detalleMedicamentoRepository
-                        .findByDetalleReceta_IdDetalleReceta(
-                                dto.idDetalleReceta());
+        procedimiento.registerStoredProcedureParameter(
+                3, BigDecimal.class, ParameterMode.OUT);
 
-        int cantidadEntregadaAnterior = entregasAnteriores.stream()
-                .mapToInt(d -> d.getCantidadEntregada() == null
-                        ? 0 : d.getCantidadEntregada())
-                .sum();
+        procedimiento.setParameter(1, dto.idDetalleReceta());
+        procedimiento.setParameter(2, dto.cantidadEntregada());
 
-        // Calcular cantidad pendiente
-        int cantidadPrescrita = detalleReceta.getCantidad();
+        procedimiento.execute();
 
-        int cantidadPendiente =
-                cantidadPrescrita - cantidadEntregadaAnterior;
+        // 3. Obtener el ID generado
+        Number resultado =
+                (Number) procedimiento.getOutputParameterValue(3);
 
-        if (dto.cantidadEntregada() > cantidadPendiente) {
+        Long idEntrega = resultado.longValue();
 
-            throw new IllegalArgumentException(
-                    "La cantidad entregada supera la cantidad pendiente de la receta");
-        }
+        // 4. Consultar la entrega registrada
+        DetalleMedicamento entrega =
+                detalleMedicamentoRepository.findById(idEntrega)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException(
+                                        "Entrega no encontrada"));
 
-        // Verificar stock disponible
-        if (medicamento.getStock() == null ||
-                medicamento.getStock() < dto.cantidadEntregada()) {
-
-            throw new IllegalArgumentException(
-                    "Stock insuficiente para realizar la entrega");
-        }
-
-        // Descontar stock automáticamente
-        medicamento.setStock(
-                medicamento.getStock() - dto.cantidadEntregada()
-        );
-
-        medicamentoRepository.save(medicamento);
-
-        // Registrar salida del medicamento
-        DetalleMedicamento detalle = new DetalleMedicamento();
-
-        detalle.setDetalleReceta(detalleReceta);
-        detalle.setCantidadEntregada(dto.cantidadEntregada());
-        detalle.setFechaSalida(LocalDate.now());
-
-        DetalleMedicamento guardado =
-                detalleMedicamentoRepository.save(detalle);
-
-        return convertirResponseDTO(guardado);
+        // 5. Devolver los datos al frontend
+        return convertirResponseDTO(entrega);
     }
+
 
     // Listar entregas por detalle de receta
     @Override
@@ -151,7 +134,6 @@ public class DetalleMedicamentoServiceImpl
                 .toList();
     }
 
-    // Listar salidas por fecha
     @Override
     @Transactional(readOnly = true)
     public List<DetalleMedicamentoResponseDTO> listarPorFecha(
@@ -163,7 +145,6 @@ public class DetalleMedicamentoServiceImpl
                 .map(this::convertirResponseDTO)
                 .toList();
     }
-
     // Listar salidas por periodo
     @Override
     @Transactional(readOnly = true)

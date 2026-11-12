@@ -8,7 +8,6 @@ import {
   Validators
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
 import { PersonaService } from '../../../core/services/persona.service';
 import { Persona } from '../../../core/interfaces/persona.interface';
 import { AlertService } from '../../../core/services/alert.service';
