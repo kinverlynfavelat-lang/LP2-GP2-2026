@@ -4,6 +4,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Pago } from '../interfaces/pago.interface';
+import { ResumenPago } from '../interfaces/resumen-pago.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,11 @@ export class PagoService {
   // Listar todos los pagos
   getPagos(): Observable<Pago[]> {
     return this.http.get<Pago[]>(this.apiUrl);
+  }
+
+  //Resumen de ingresos agrupados por medio de pago
+  getResumenMedioPago(): Observable<ResumenPago[]> {
+    return this.http.get<ResumenPago[]>(`${this.apiUrl}/resumen-medio-pago`);
   }
 
   // Buscar pago por ID de cita

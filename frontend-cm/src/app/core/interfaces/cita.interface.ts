@@ -23,4 +23,5 @@ export interface Cita {
   paciente?: string;
   medico?: string;
   empleadoTriaje?: string;
+  dniPaciente?: string;
 }

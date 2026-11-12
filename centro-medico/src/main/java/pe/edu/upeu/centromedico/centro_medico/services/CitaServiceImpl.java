@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 
+import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
 import pe.edu.upeu.centromedico.centro_medico.entity.Cita;
 import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
 import pe.edu.upeu.centromedico.centro_medico.entity.Medico;
@@ -109,6 +110,9 @@ public class CitaServiceImpl implements ICitaService {
         return respuesta;
     }
 
+    // ==================================
+    // LISTAR ÚLTIMA CITA POR PACIENTE
+    // ==================================
     @Override
     @Transactional(readOnly = true)
     public List<CitaResponseDTO> listarUltimasPorPaciente() {
@@ -122,6 +126,38 @@ public class CitaServiceImpl implements ICitaService {
         }
 
         return respuesta;
+    }
+
+    // ===========================================
+    // TRIAJE Citas con signos vitales críticos
+    // ===========================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<CitaResponseDTO> listarCitasCriticas(BigDecimal tempLimite, BigDecimal presionLimite) {
+
+        BigDecimal temp = (tempLimite != null) ? tempLimite : new BigDecimal("38.0");
+        BigDecimal pres = (presionLimite != null) ? presionLimite : new BigDecimal("120.0");
+
+        List<Cita> lista = citaRepository.findCitasConSignosCriticos(temp, pres);
+        List<CitaResponseDTO> respuesta = new ArrayList<>();
+
+        for (Cita c : lista) {
+            respuesta.add(convertirADTO(c));
+        }
+
+        return respuesta;
+    }
+
+    // =================================================
+    // PRODUCTIVIDAD MÉDICA Reporte de citas por médico
+    // =================================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MedicoProductividadDTO> obtenerProductividadMedicos() {
+
+        return citaRepository.obtenerProductividadMedicos();
     }
 
     // ==================================

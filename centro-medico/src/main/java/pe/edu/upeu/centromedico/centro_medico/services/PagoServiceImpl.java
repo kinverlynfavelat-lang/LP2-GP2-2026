@@ -3,6 +3,7 @@ package pe.edu.upeu.centromedico.centro_medico.services;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pe.edu.upeu.centromedico.centro_medico.dto.PagoDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.ResumenPagoDTO;
 import pe.edu.upeu.centromedico.centro_medico.entity.Cita;
 import pe.edu.upeu.centromedico.centro_medico.entity.Pago;
 import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
@@ -54,6 +55,17 @@ public class PagoServiceImpl implements IPagoService {
 
         return pagoRepository.findById(id)
                 .map(this::convertirADTO);
+    }
+
+    // ===================================================
+    // CAJA / PAGOS Reporte de ingresos por medio de pago
+    // ===================================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ResumenPagoDTO> obtenerResumenPorMedioPago() {
+
+        return pagoRepository.obtenerResumenPorMedioPago();
     }
 
     @Override

@@ -20,5 +20,5 @@ public interface IMedicamentoService {
 
     boolean eliminar(Long id);
     Optional<MedicamentoDTO> ingresarStock(Long id, Integer cantidad);
-
+    List<MedicamentoDTO> listarStockCritico(Integer stockLimite);
 }

@@ -31,6 +31,8 @@ export class FarmaciaListComponent implements OnInit {
   vistaActual: 'inventario' | 'entregas' = 'inventario';
 
   medicamentos: Medicamento[] = [];
+  medicamentosCriticos: Medicamento[] = [];
+  mostrarSoloCriticos = false;
   busqueda = '';
 
   cargando = false;
@@ -42,6 +44,16 @@ export class FarmaciaListComponent implements OnInit {
 
   ngOnInit(): void {
     this.cargar();
+    this.cargarCriticos();
+  }
+
+  cargarCriticos(): void {
+    this.service.getStockCritico(10).subscribe({
+      next: data => {
+        this.medicamentosCriticos = data;
+      },
+      error: () => {}
+    });
   }
 
   // CAMBIAR PESTAÑA
@@ -52,8 +64,9 @@ export class FarmaciaListComponent implements OnInit {
   // FILTRAR MEDICAMENTOS
   get filtrados(): Medicamento[] {
     const texto = this.busqueda.trim().toLowerCase();
+    const lista = this.mostrarSoloCriticos ? this.medicamentosCriticos : this.medicamentos;
 
-    return this.medicamentos.filter(m =>
+    return lista.filter(m =>
       m.nombre.toLowerCase().includes(texto) ||
       (m.descripcion || '').toLowerCase().includes(texto)
     );
@@ -77,6 +90,7 @@ export class FarmaciaListComponent implements OnInit {
   // LISTAR MEDICAMENTOS
   cargar(): void {
     this.cargando = true;
+    this.cargarCriticos();
 
     this.service.getMedicamentos().subscribe({
       next: data => {

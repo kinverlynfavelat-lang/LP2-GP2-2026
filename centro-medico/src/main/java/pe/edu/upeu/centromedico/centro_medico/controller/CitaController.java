@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 
+import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
 import pe.edu.upeu.centromedico.centro_medico.services.ICitaService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -70,6 +72,32 @@ public class CitaController {
 
         return ResponseEntity.ok(
                 citaService.listarUltimasPorPaciente()
+        );
+    }
+
+    // ============================================
+    // TRIAJE ALERTAS DE SIGNOS VITALES CRÍTICOS
+    // ============================================
+
+    @GetMapping("/alertas-triaje")
+    public ResponseEntity<List<CitaResponseDTO>> listarCitasCriticas(
+            @RequestParam(required = false) BigDecimal temp,
+            @RequestParam(required = false) BigDecimal presion) {
+
+        return ResponseEntity.ok(
+                citaService.listarCitasCriticas(temp, presion)
+        );
+    }
+
+    // =================================================
+    // PRODUCTIVIDAD MÉDICA: TOTAL DE CITAS POR MÉDICO
+    // =================================================
+
+    @GetMapping("/productividad-medicos")
+    public ResponseEntity<List<MedicoProductividadDTO>> obtenerProductividadMedicos() {
+
+        return ResponseEntity.ok(
+                citaService.obtenerProductividadMedicos()
         );
     }
 

@@ -8,6 +8,8 @@ import { CitaService } from '../../../core/services/cita.service';
 import { PersonaService } from '../../../core/services/persona.service';
 import { Cita } from '../../../core/interfaces/cita.interface';
 import { AlertService } from '../../../core/services/alert.service';
+import { PagoService } from '../../../core/services/pago.service';
+import { ResumenPago } from '../../../core/interfaces/resumen-pago.interface';
 
 interface PagoPendiente {
   idCita: number;
@@ -34,10 +36,12 @@ export class PagoListComponent implements OnInit {
 
   private citaService = inject(CitaService);
   private personaService = inject(PersonaService);
+  private pagoService = inject(PagoService);
   private alertService = inject(AlertService);
 
   citasPendientes: PagoPendiente[] = [];
   citasFiltradas: PagoPendiente[] = [];
+  resumenPagos: ResumenPago[] = [];
 
   busqueda = '';
 
@@ -48,6 +52,22 @@ export class PagoListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarPendientes();
+    this.cargarResumenPagos();
+  }
+
+  cargarResumenPagos(): void {
+    this.pagoService.getResumenMedioPago().subscribe({
+      next: (data) => {
+        this.resumenPagos = data;
+      },
+      error: () => {
+        // Silencioso si aún no hay pagos registrados
+      }
+    });
+  }
+
+  get totalRecaudado(): number {
+    return this.resumenPagos.reduce((acc, curr) => acc + (Number(curr.totalRecaudado) || 0), 0);
   }
 
   // Cargar citas y pacientes
@@ -243,6 +263,7 @@ export class PagoListComponent implements OnInit {
   // Actualizar información
   actualizar(): void {
     this.listarPendientes();
+    this.cargarResumenPagos();
   }
 
 }

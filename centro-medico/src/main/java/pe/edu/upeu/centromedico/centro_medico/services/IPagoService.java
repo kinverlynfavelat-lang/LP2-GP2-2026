@@ -1,6 +1,7 @@
 package pe.edu.upeu.centromedico.centro_medico.services;
 
 import pe.edu.upeu.centromedico.centro_medico.dto.PagoDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.ResumenPagoDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,5 +13,7 @@ public interface IPagoService {
     Optional<PagoDTO> buscarPorId(Long id);
 
     String registrarPago(PagoDTO dto);
+
+    List<ResumenPagoDTO> obtenerResumenPorMedioPago();
 
 }
