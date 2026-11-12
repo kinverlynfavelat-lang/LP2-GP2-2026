@@ -8,25 +8,34 @@
       Gestión de pacientes
     </h2>
 
-    <a routerLink="/pacientes/nuevo" class="btn btn-nuevo">
-      <i class="bi bi-plus-circle me-1"></i>
-      Nuevo paciente
-    </a>
+    <div class="d-flex gap-2">
+      <a routerLink="/historial-pacientes" class="btn btn-outline-primary">
+        <i class="bi bi-journal-medical me-1"></i>
+        Historial de pacientes
+      </a>
+
+      <a routerLink="/pacientes/nuevo" class="btn btn-nuevo">
+        <i class="bi bi-plus-circle me-1"></i>
+        Nuevo paciente
+      </a>
+    </div>
 
   </div>
 
   <!-- BUSCADOR -->
-  <div class="search-container mb-3">
+  <div class="d-flex justify-content-end mb-3">
+    <div class="search-container" style="width: 100%; max-width: 350px;">
 
-    <i class="bi bi-search search-icon"></i>
+      <i class="bi bi-search search-icon"></i>
 
-    <input
-      type="text"
-      class="form-control search-input"
-      placeholder="Buscar por DNI, nombres o apellidos..."
-      [(ngModel)]="busqueda"
-      (input)="filtrarPacientes()">
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Buscar por DNI, nombres o apellidos..."
+        [(ngModel)]="busqueda"
+        (input)="filtrarPacientes()">
 
+    </div>
   </div>
 
   <!-- TABLA -->
@@ -36,6 +45,7 @@
 
       <thead>
         <tr>
+          <th>N.º</th>
           <th>DNI</th>
           <th>Paciente</th>
           <th>Tipo de paciente</th>
@@ -48,9 +58,11 @@
 
       <tbody>
 
-        @for (p of pacientesFiltrados; track p.idPersona) {
+        @for (p of pacientesFiltrados; track p.idPersona; let i = $index) {
 
           <tr>
+
+            <td>{{ i + 1 }}</td>
 
             <td>{{ p.dni }}</td>
 

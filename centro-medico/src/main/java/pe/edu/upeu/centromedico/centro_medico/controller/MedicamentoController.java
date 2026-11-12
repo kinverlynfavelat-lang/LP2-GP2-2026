@@ -27,6 +27,19 @@ public class MedicamentoController {
         );
     }
 
+    // ===================================================
+    // FARMACIA ALERTA DE MEDICAMENTOS CON STOCK CRÍTICO
+    // ===================================================
+
+    @GetMapping("/stock-critico")
+    public ResponseEntity<List<MedicamentoDTO>> listarStockCritico(
+            @RequestParam(required = false, defaultValue = "10") Integer limite) {
+
+        return ResponseEntity.ok(
+                medicamentoService.listarStockCritico(limite)
+        );
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<MedicamentoDTO> obtenerMedicamento(
             @PathVariable Long id) {

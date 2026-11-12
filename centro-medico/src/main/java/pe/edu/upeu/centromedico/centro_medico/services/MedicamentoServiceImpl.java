@@ -100,6 +100,22 @@ public class MedicamentoServiceImpl implements IMedicamentoService {
         return false;
     }
 
+    // ===============================================
+    // FARMACIA Medicamentos con stock crítico o bajo
+    // ===============================================
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<MedicamentoDTO> listarStockCritico(Integer stockLimite) {
+
+        int limite = (stockLimite != null) ? stockLimite : 10;
+
+        return medicamentoRepository.findMedicamentosStockCritico(limite)
+                .stream()
+                .map(this::convertirADTO)
+                .toList();
+    }
+
     private MedicamentoDTO convertirADTO(Medicamento m) {
 
         return new MedicamentoDTO(

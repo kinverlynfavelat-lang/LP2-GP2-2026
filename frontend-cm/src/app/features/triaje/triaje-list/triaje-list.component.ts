@@ -22,6 +22,8 @@ export class TriajeListComponent implements OnInit {
 
   citas: Cita[] = [];
   citasFiltradas: Cita[] = [];
+  citasCriticas: Cita[] = [];
+  mostrarSoloCriticas = false;
 
   citaSeleccionada: Cita | null = null;
 
@@ -44,6 +46,16 @@ export class TriajeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarCitas();
+    this.cargarCriticas();
+  }
+
+  cargarCriticas(): void {
+    this.citaService.getAlertasTriaje(38.0, 120.0).subscribe({
+      next: (data) => {
+        this.citasCriticas = data;
+      },
+      error: () => {}
+    });
   }
 
   // Listar pacientes pendientes de triaje
@@ -53,6 +65,7 @@ export class TriajeListComponent implements OnInit {
 
     this.cargando = true;
     this.errorCarga = false;
+    this.cargarCriticas();
 
     this.citaService.getCitas().subscribe({
 
@@ -97,8 +110,9 @@ export class TriajeListComponent implements OnInit {
   filtrarCitas(): void {
 
     const texto = this.busqueda.trim().toLowerCase();
+    const fuente = this.mostrarSoloCriticas ? this.citasCriticas : this.citas;
 
-    this.citasFiltradas = this.citas.filter(cita => {
+    this.citasFiltradas = fuente.filter(cita => {
 
       return (
         (cita.paciente ?? '').toLowerCase().includes(texto) ||
@@ -107,6 +121,11 @@ export class TriajeListComponent implements OnInit {
 
     });
 
+  }
+
+  alternarCriticas(): void {
+    this.mostrarSoloCriticas = !this.mostrarSoloCriticas;
+    this.filtrarCitas();
   }
 
   // Seleccionar paciente

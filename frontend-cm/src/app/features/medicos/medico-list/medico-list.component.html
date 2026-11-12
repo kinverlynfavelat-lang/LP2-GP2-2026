@@ -19,7 +19,8 @@
   </div>
 
   <!-- BUSCADOR -->
-  <div class="search-container mb-3">
+  <div class="d-flex justify-content-end mb-3">
+  <div class="search-container" style="width: 100%; max-width: 350px;">
 
     <i class="bi bi-search search-icon"></i>
 
@@ -31,6 +32,7 @@
       (input)="filtrarMedicos()">
 
   </div>
+</div>
 
   <!-- TABLA -->
   <div class="table-responsive">
@@ -39,10 +41,12 @@
 
       <thead>
         <tr>
+          <th>N.º</th>
           <th>DNI</th>
           <th>Médico</th>
           <th>Especialidad</th>
           <th>Colegiatura</th>
+          <th>Citas Asignadas</th>
           <th>Correo</th>
           <th>Teléfono</th>
           <th>Acciones</th>
@@ -51,9 +55,11 @@
 
       <tbody>
 
-        @for (m of medicosFiltrados; track m.idEmpleado) {
+        @for (m of medicosFiltrados; track m.idEmpleado; let i = $index) {
 
           <tr>
+
+            <td>{{ i + 1 }}</td>
 
             <td>{{ m.dni }}</td>
 
@@ -62,6 +68,14 @@
             <td>{{ m.especialidad }}</td>
 
             <td>{{ m.codigoCol }}</td>
+
+            <td>
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 font-monospace"
+                    title="Productividad calculada con SQL GROUP BY">
+                <i class="bi bi-calendar2-check me-1"></i>
+                {{ obtenerTotalCitas(m.idEmpleado) }} cita(s)
+              </span>
+            </td>
 
             <td>{{ m.correo }}</td>
 

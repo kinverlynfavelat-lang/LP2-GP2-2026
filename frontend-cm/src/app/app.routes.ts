@@ -28,6 +28,7 @@ import { DerivacionListComponent } from './features/derivaciones/derivacion-list
 import { DerivacionFormComponent } from './features/derivaciones/derivacion-form/derivacion-form.component';
 import { DetalleMedicamentoListComponent } from './features/farmacia/detalle-medicamento-list/detalle-medicamento-list.component';
 import { DetalleMedicamentoFormComponent } from './features/farmacia/detalle-medicamento-form/detalle-medicamento-form.component';
+import { PacienteHistorialComponent } from './features/pacientes/paciente-historial/paciente-historial.component';
 export const routes: Routes = [
     {
         path: '',
@@ -42,6 +43,10 @@ export const routes: Routes = [
             {
                 path: 'pacientes',
                 component: PacienteListComponent
+            },
+            {
+                path: 'historial-pacientes',
+                component: PacienteHistorialComponent
             },
             {
                 path: 'pacientes/nuevo',

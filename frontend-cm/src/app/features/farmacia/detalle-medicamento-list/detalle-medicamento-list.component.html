@@ -148,6 +148,7 @@
 
           <thead>
             <tr>
+              <th>N.º</th>
               <th>Fecha</th>
               <th>Paciente</th>
               <th>Medicamento</th>
@@ -160,9 +161,12 @@
 
           <tbody>
 
-            <tr *ngFor="let e of filtrados">
+            <tr *ngFor="let e of filtrados; let i = index">
 
               <td>
+                {{ i + 1 }}
+              <td>
+                
                 {{ formatearFecha(e.fechaSalida) }}
               </td>
 

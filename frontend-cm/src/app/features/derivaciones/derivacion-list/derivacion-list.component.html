@@ -145,14 +145,10 @@
 
                     <tbody>
 
-                        <tr *ngFor="let derivacion of derivacionesFiltradas">
+                        <tr *ngFor="let derivacion of derivacionesFiltradas; let i = index">
 
                             <!-- ID -->
-                            <td>
-                                <strong>
-                                    #{{ derivacion.idDerivacion }}
-                                </strong>
-                            </td>
+                            <td>{{ i + 1 }}</td>
 
                             <!-- FECHA -->
                             <td>

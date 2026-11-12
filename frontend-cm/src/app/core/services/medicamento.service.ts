@@ -54,5 +54,9 @@ export class MedicamentoService {
       { params }
     );
   }
+  //Listar medicamentos con stock crítico / bajo
+  getStockCritico(limite: number = 10): Observable<Medicamento[]> {
+    return this.http.get<Medicamento[]>(`${this.apiUrl}/stock-critico?limite=${limite}`);
+  }
 
 }

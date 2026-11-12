@@ -2,7 +2,9 @@ package pe.edu.upeu.centromedico.centro_medico.services;
 
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,12 @@ public interface ICitaService {
     Optional<CitaResponseDTO> buscarPorId(Long id);
 
     List<CitaResponseDTO> listarPorPaciente(Long idPersona);
+
+    List<CitaResponseDTO> listarUltimasPorPaciente();
+
+    List<CitaResponseDTO> listarCitasCriticas(BigDecimal tempLimite, BigDecimal presionLimite);
+
+    List<MedicoProductividadDTO> obtenerProductividadMedicos();
 
     List<CitaResponseDTO> listarPorMedico(Long idMedico);
 

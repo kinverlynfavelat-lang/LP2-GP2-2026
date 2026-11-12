@@ -51,25 +51,26 @@
   <div class="card tarjeta-tabla">
 
     <div class="card-header bg-white d-flex justify-content-between align-items-center flex-wrap gap-3">
-      <h5 class="mb-0">Listado de recetas</h5>
+  <h5 class="mb-0">Listado de recetas</h5>
 
-      <div class="d-flex gap-2">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Buscar paciente, diagnóstico o código..."
-          [(ngModel)]="busqueda"
-          (ngModelChange)="filtrarRecetas()">
+  <div class="d-flex gap-2">
+    <input
+      type="text"
+      class="form-control"
+      style="width: 100%; min-width: 300px; max-width: 350px;"
+      placeholder="Buscar paciente, diagnóstico o código..."
+      [(ngModel)]="busqueda"
+      (ngModelChange)="filtrarRecetas()">
 
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          [disabled]="cargando"
-          (click)="cargarRecetas()">
-          Actualizar
-        </button>
-      </div>
+    <button
+      type="button"
+      class="btn btn-outline-secondary"
+      [disabled]="cargando"
+      (click)="cargarRecetas()">
+      Actualizar
+    </button>
     </div>
+  </div>
 
     <div class="card-body p-0">
 
@@ -81,7 +82,7 @@
         <table class="table table-hover align-middle mb-0">
           <thead>
             <tr>
-              <th>N.º Receta</th>
+              <th>N.º</th>
               <th>Paciente</th>
               <th>Fecha</th>
               <th>Diagnóstico</th>
@@ -91,10 +92,10 @@
           </thead>
 
           <tbody>
-            <tr *ngFor="let receta of recetasFiltradas">
-              <td>
-                <strong>#{{ receta.idReceta }}</strong>
-              </td>
+            <tr *ngFor="let receta of recetasFiltradas; let i = index">
+
+              
+              <td>{{ i + 1 }}</td>
 
               <td>{{ receta.paciente }}</td>
 

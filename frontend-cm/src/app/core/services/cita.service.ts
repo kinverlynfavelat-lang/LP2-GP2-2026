@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { Cita } from '../interfaces/cita.interface';
+import { MedicoProductividad } from '../interfaces/medico-productividad.interface';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,25 @@ export class CitaService {
   // Listar todas las citas
   getCitas(): Observable<Cita[]> {
     return this.http.get<Cita[]>(this.apiUrl);
+  }
+
+  // Listar última cita de cada paciente
+  getHistorialPacientes(): Observable<Cita[]> {
+    return this.http.get<Cita[]>(`${this.apiUrl}/historial-pacientes`);
+  }
+    //Listar citas con signos vitales en alerta o estado crítico
+  getAlertasTriaje(temp?: number, presion?: number): Observable<Cita[]> {
+    let url = `${this.apiUrl}/alertas-triaje`;
+    const params: string[] = [];
+    if (temp !== undefined) params.push(`temp=${temp}`);
+    if (presion !== undefined) params.push(`presion=${presion}`);
+    if (params.length > 0) url += `?${params.join('&')}`;
+    return this.http.get<Cita[]>(url);
+  }
+
+  //Productividad médica (citas atendidas/totales por médico)
+  getProductividadMedicos(): Observable<MedicoProductividad[]> {
+    return this.http.get<MedicoProductividad[]>(`${this.apiUrl}/productividad-medicos`);
   }
 
   // Buscar cita por ID

@@ -9,6 +9,7 @@ import { MedicoService } from '../../../core/services/medico.service';
 import { EmpleadoService } from '../../../core/services/empleado.service';
 import { PersonaService } from '../../../core/services/persona.service';
 import { AlertService } from '../../../core/services/alert.service';
+import { CitaService } from '../../../core/services/cita.service';
 
 interface MedicoVista {
   idEmpleado: number;
@@ -33,15 +34,31 @@ export class MedicoListComponent implements OnInit {
   private medicoService = inject(MedicoService);
   private empleadoService = inject(EmpleadoService);
   private personaService = inject(PersonaService);
+  private citaService = inject(CitaService);
   private alertService = inject(AlertService);
 
   medicos: MedicoVista[] = [];
   medicosFiltrados: MedicoVista[] = [];
+  productividadMap = new Map<number, number>();
 
   busqueda: string = '';
 
   ngOnInit(): void {
     this.listMedicos();
+    this.cargarProductividad();
+  }
+
+  cargarProductividad(): void {
+    this.citaService.getProductividadMedicos().subscribe({
+      next: (lista) => {
+        lista.forEach(p => this.productividadMap.set(p.idMedico, p.totalCitas));
+      },
+      error: () => {}
+    });
+  }
+
+  obtenerTotalCitas(idMedico: number): number {
+    return this.productividadMap.get(idMedico) || 0;
   }
 
   // Listar médicos combinando los tres servicios
