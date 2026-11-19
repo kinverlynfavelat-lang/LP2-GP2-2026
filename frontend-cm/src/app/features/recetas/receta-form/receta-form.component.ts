@@ -11,6 +11,9 @@ import {
   Router
 } from '@angular/router';
 import { forkJoin } from 'rxjs';
+import { OfflineDbService } from '../../../core/offline/db.service';
+import { NetworkService } from '../../../core/offline/network.service';
+import { OfflineOperationsService } from '../../../core/offline/offline-operations.service';
 
 interface Cita {
   idCita: number;
@@ -79,6 +82,9 @@ export class RecetaFormComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private offlineDb = inject(OfflineDbService);
+  private network = inject(NetworkService);
+  private offlineOps = inject(OfflineOperationsService);
 
   private api = '/api/v1';
 
@@ -117,11 +123,18 @@ export class RecetaFormComponent implements OnInit {
     this.cargarDatos();
   }
 
+  
+
   // CARGAR CITAS Y MEDICAMENTOS
 
   cargarDatos(): void {
     this.cargando = true;
     this.error = '';
+
+    if (!this.network.isOnline()) {
+      this.cargarDatosDesdeCache();
+      return;
+    }
 
     forkJoin({
       citas: this.http.get<Cita[]>(`${this.api}/citas`),
@@ -141,12 +154,49 @@ export class RecetaFormComponent implements OnInit {
         }
       },
       error: (err: HttpErrorResponse) => {
-        this.cargando = false;
-        this.error =
-          'No se pudieron cargar las citas o los medicamentos.';
-        console.error('Error al cargar datos:', err);
+        console.warn('Error al cargar datos de receta, usando IndexedDB:', err);
+        this.cargarDatosDesdeCache();
       }
     });
+  }
+  private async cargarDatosDesdeCache(): Promise<void> {
+    try {
+      const [citasLocales, medicamentosLocales] = await Promise.all([
+        this.offlineDb.citasLocales.toArray(),
+        this.offlineDb.medicamentos.toArray()
+      ]);
+
+      this.citas = citasLocales
+        .filter(c => c.idCita != null)
+        .map(c => ({
+          idCita: c.idCita!,
+          fechaCita: c.fechaCita,
+          horaCita: c.horaCita,
+          paciente: c.paciente || `Paciente #${c.idPersona}`,
+          medico: c.medico || '',
+          diagnostico: c.diagnostico,
+          tratamiento: c.tratamiento,
+          estado: c.estado || ''
+        }));
+
+      this.medicamentos = medicamentosLocales
+        .filter(m => m.idMedicamento != null)
+        .map(m => ({
+          idMedicamento: m.idMedicamento!,
+          nombre: m.nombre,
+          descripcion: m.descripcion,
+          stock: m.stock,
+          precio: m.precio,
+          estado: m.estado
+        }));
+
+      this.agregarMedicamento();
+      this.cargando = false;
+    } catch (err) {
+      this.cargando = false;
+      this.error = 'No se pudieron cargar las citas o medicamentos desde caché local.';
+      console.error(err);
+    }
   }
 
   // CITAS APTAS PARA EMITIR RECETA
@@ -342,33 +392,28 @@ export class RecetaFormComponent implements OnInit {
 
     this.guardando = true;
 
-    const peticion =
-      this.modoEdicion && this.idReceta !== null
-        ? this.http.put<Receta>(
-            `${this.api}/recetas/${this.idReceta}`,
-            datos
-          )
-        : this.http.post<Receta>(
-            `${this.api}/recetas`,
-            datos
-          );
+    const resumen = `Receta Cita #${datos.idCita} (${this.citaSeleccionada?.paciente || 'Paciente'}) - ${datos.detalles.length} med.`;
+    const idEditar = this.modoEdicion && this.idReceta !== null ? this.idReceta : null;
 
-    peticion.subscribe({
-      next: () => {
+    this.offlineOps.guardarReceta(datos, resumen, idEditar)
+      .then(res => {
         this.guardando = false;
-        this.router.navigate(['/recetas']);
-      },
-      error: (err: HttpErrorResponse) => {
+        if (res.offline) {
+          this.mensaje =
+            'Sin conexión: la receta se guardó en la cola local (FIFO) y se sincronizará al volver el internet.';
+          setTimeout(() => this.router.navigate(['/sincronizacion']), 1200);
+        } else {
+          this.router.navigate(['/recetas']);
+        }
+      })
+      .catch((err: HttpErrorResponse) => {
         this.guardando = false;
-
         this.error =
-          typeof err.error?.message === 'string'
+          typeof err?.error?.message === 'string'
             ? err.error.message
             : 'No se pudo guardar la receta médica.';
-
         console.error('Error al guardar receta:', err);
-      }
-    });
+      });
   }
 
   // CANCELAR
