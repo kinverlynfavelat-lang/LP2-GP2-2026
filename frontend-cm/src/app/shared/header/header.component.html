@@ -115,11 +115,49 @@
                                 Pagos
                             </a>
                         </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" routerLink="/sincronizacion">
+                                <i class="bi bi-cloud-arrow-up me-2"></i>
+                                Sincronización Offline
+                            </a>
+                        </li>
 
                     </ul>
                 </li>
 
             </ul>
+            <!-- ESTADO DE RED Y COLA OFFLINE -->
+            <div class="d-flex align-items-center gap-2 me-3">
+                <a routerLink="/sincronizacion"
+                   class="badge text-decoration-none px-2 py-2"
+                   [ngClass]="network.isOnline() ? 'bg-success' : 'bg-danger'"
+                   title="Ver estado offline y cola de sincronización">
+                    <i class="bi me-1" [ngClass]="network.isOnline() ? 'bi-wifi' : 'bi-wifi-off'"></i>
+                    {{ network.isOnline() ? 'En línea' : 'Sin conexión' }}
+                </a>
+
+                @if (sync.pendientesCount() > 0) {
+                    <a routerLink="/sincronizacion"
+                       class="badge bg-warning text-dark text-decoration-none px-2 py-2"
+                       title="Operaciones en cola esperando conexión">
+                        <i class="bi bi-cloud-upload me-1"></i>
+                        {{ sync.pendientesCount() }} pend.
+                    </a>
+                }
+
+                @if (sync.conflictosCount() > 0) {
+                    <a routerLink="/sincronizacion"
+                       class="badge bg-danger text-white text-decoration-none px-2 py-2"
+                       title="Citas con conflicto 409 por reubicar">
+                        <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                        {{ sync.conflictosCount() }} por reubicar
+                    </a>
+                }
+            </div>
 
             <!-- IDENTIFICACIÓN -->
             <div class="d-flex align-items-center system-info">

@@ -1,5 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { CatalogCacheService } from './core/offline/catalog-cache.service';
+import { SyncService } from './core/offline/sync.service';
 
 @Component({
   selector: 'app-root',
@@ -8,6 +10,12 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
+  private catalogCache = inject(CatalogCacheService);
+  // Se inyecta para mantener activo el listener automático del evento 'online'
+  private syncService = inject(SyncService);
 
+  ngOnInit(): void {
+    this.catalogCache.sincronizarCatalogos();
+  }
 }

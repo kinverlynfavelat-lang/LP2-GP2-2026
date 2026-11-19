@@ -1,8 +1,10 @@
 package pe.edu.upeu.centromedico.centro_medico.services;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.server.ResponseStatusException;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 
@@ -644,7 +646,8 @@ public class CitaServiceImpl implements ICitaService {
 
         if (!horarioValido) {
 
-            throw new RuntimeException(
+            throw new ResponseStatusException(
+                    HttpStatus.CONFLICT,
                     "El médico no tiene horario disponible para esa fecha y hora");
         }
     }
@@ -673,7 +676,8 @@ public class CitaServiceImpl implements ICitaService {
                     && c.getHoraCita().equals(hora)
                     && c.getEstado() != EstadoCita.ANULADO) {
 
-                throw new RuntimeException(
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
                         "El médico ya tiene una cita reservada en esa fecha y hora");
             }
         }
