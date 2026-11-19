@@ -7,6 +7,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Cita } from '../../../core/interfaces/cita.interface';
 import { CitaService } from '../../../core/services/cita.service';
 import { AlertService } from '../../../core/services/alert.service';
+import { OfflineDbService } from '../../../core/offline/db.service';
+import { NetworkService } from '../../../core/offline/network.service';
+import { OfflineOperationsService } from '../../../core/offline/offline-operations.service';
 @Component({
   selector: 'app-atencion-medica-form',
   standalone: true,
@@ -20,6 +23,9 @@ export class AtencionFormComponent implements OnInit {
   private alertService = inject(AlertService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private offlineDb = inject(OfflineDbService);
+  private network = inject(NetworkService);
+  private offlineOps = inject(OfflineOperationsService);
 
   cita: Cita | null = null;
   idCita = 0;
@@ -48,6 +54,12 @@ export class AtencionFormComponent implements OnInit {
   cargarCita(): void {
     this.cargando = true;
 
+    
+    if (!this.network.isOnline()) {
+      this.cargarCitaDesdeCache();
+      return;
+    }
+
     this.citaService.getCitaById(this.idCita).subscribe({
       next: (data) => {
         if (data.estado !== 'TRIAJE') {
@@ -67,11 +79,26 @@ export class AtencionFormComponent implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        this.alertService.error('No se pudo cargar la cita');
-        this.cargando = false;
-        this.cancelar();
+        console.warn('Error de red al cargar cita, intentando IndexedDB:', err);
+        this.cargarCitaDesdeCache();
       }
     });
+  }
+  private async cargarCitaDesdeCache(): Promise<void> {
+    const local = await this.offlineDb.citasLocales.where('idCita').equals(this.idCita).first();
+    if (!local) {
+      this.alertService.error('No se pudo cargar la cita (sin conexión ni caché local)');
+      this.cargando = false;
+      this.cancelar();
+      return;
+    }
+
+    this.cita = local;
+    this.diagnostico = local.diagnostico || '';
+    this.tratamiento = local.tratamiento || '';
+    this.indicaciones = local.indicaciones || '';
+    this.observaciones = local.observaciones || '';
+    this.cargando = false;
   }
 
   private prepararDatos(estado: string): Cita {
@@ -85,27 +112,32 @@ export class AtencionFormComponent implements OnInit {
     };
   }
 
-  guardar(): void {
+  async guardar(): Promise<void> {
     if (!this.cita || this.guardando) return;
 
     this.guardando = true;
 
-    this.citaService.updateCita(
-      this.idCita,
-      this.prepararDatos('TRIAJE')
-    ).subscribe({
-      next: () => {
-        this.alertService.success('Atención guardada correctamente');
-        this.router.navigate(['/atencion']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.alertService.error(
-          err.error?.message || 'No se pudo guardar la atención'
+    try {
+      const res = await this.offlineOps.guardarAtencion(
+        this.idCita,
+        this.prepararDatos('TRIAJE')
+      );
+
+      if (res.offline) {
+        this.alertService.success(
+          'Sin conexión: atención guardada en cola local (FIFO) para sincronizar al volver el internet.'
         );
-        this.guardando = false;
+      } else {
+        this.alertService.success('Atención guardada correctamente');
       }
-    });
+      this.router.navigate(['/atencion']);
+    } catch (err: any) {
+      console.error(err);
+      this.alertService.error(
+        err?.error?.message || 'No se pudo guardar la atención'
+      );
+      this.guardando = false;
+    }
   }
 
   async finalizar(): Promise<void> {
@@ -126,24 +158,27 @@ export class AtencionFormComponent implements OnInit {
 
     this.guardando = true;
 
-    this.citaService.updateCita(
-      this.idCita,
-      this.prepararDatos('ATENDIDO')
-    ).subscribe({
-      next: () => {
+    try {
+      const res = await this.offlineOps.guardarAtencion(
+        this.idCita,
+        this.prepararDatos('ATENDIDO')
+      );
+
+      if (res.offline) {
         this.alertService.success(
-          'Atención médica finalizada correctamente'
+          'Sin conexión: atención finalizada en cola local (FIFO) y se enviará al volver el internet.'
         );
-        this.router.navigate(['/atencion']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.alertService.error(
-          err.error?.message || 'No se pudo finalizar la atención'
-        );
-        this.guardando = false;
+      } else {
+        this.alertService.success('Atención médica finalizada correctamente');
       }
-    });
+      this.router.navigate(['/atencion']);
+    } catch (err: any) {
+      console.error(err);
+      this.alertService.error(
+        err?.error?.message || 'No se pudo finalizar la atención'
+      );
+      this.guardando = false;
+    }
   }
 
   cancelar(): void {

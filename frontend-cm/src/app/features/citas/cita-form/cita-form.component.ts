@@ -21,6 +21,9 @@ import { MedicoService } from '../../../core/services/medico.service';
 import { EmpleadoService } from '../../../core/services/empleado.service';
 import { Cita } from '../../../core/interfaces/cita.interface';
 import { AlertService } from '../../../core/services/alert.service';
+import { OfflineDbService } from '../../../core/offline/db.service';
+import { NetworkService } from '../../../core/offline/network.service';
+import { OfflineOperationsService } from '../../../core/offline/offline-operations.service';
 
 interface PacienteOpcion {
   idPersona: number;
@@ -70,6 +73,9 @@ export class CitaFormComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private alertService = inject(AlertService);
+  private offlineDb = inject(OfflineDbService);
+  private network = inject(NetworkService);
+  private offlineOps = inject(OfflineOperationsService);
 
   private derivacionApi = '/api/v1/derivaciones';
 
@@ -151,9 +157,13 @@ export class CitaFormComponent implements OnInit {
 
   }
 
-  // CARGAR DATOS
+  // CARGAR DATOS (con respaldo automático en IndexedDB si no hay internet)
 
   cargarDatos(): void {
+    if (!this.network.isOnline()) {
+      this.cargarDatosDesdeCache();
+      return;
+    }
 
     forkJoin({
       personas: this.personaService.getPersonas(),
@@ -162,70 +172,83 @@ export class CitaFormComponent implements OnInit {
     }).subscribe({
 
       next: (data) => {
-
-        this.pacientes = data.personas
-          .filter(p =>
-            p.idPersona != null &&
-            p.tipoPersona === 'PACIENTE'
-          )
-          .map(p => ({
-            idPersona: p.idPersona!,
-            dni: p.dni,
-            nombres: p.nombres,
-            apellidos: p.apellidos
-          }));
-
-        this.empleados = data.empleados
-          .filter(e => e.idPersona != null)
-          .map(e => {
-
-            const persona = data.personas.find(
-              p => p.idPersona === e.idPersona
-            );
-
-            return {
-              idPersona: e.idPersona!,
-              nombres: persona?.nombres || '',
-              apellidos: persona?.apellidos || ''
-            };
-
-          })
-          .filter(e => e.nombres !== '');
-
-        this.medicos = data.medicos
-          .filter(m => m.idEmpleado != null)
-          .map(m => {
-
-            const persona = data.personas.find(
-              p => p.idPersona === m.idEmpleado
-            );
-
-            return {
-              idEmpleado: m.idEmpleado!,
-              nombres: persona?.nombres || '',
-              apellidos: persona?.apellidos || '',
-              especialidad: m.especialidad
-            };
-
-          })
-          .filter(m => m.nombres !== '');
+        this.mapearCatalogos(data.personas, data.empleados, data.medicos);
 
         if (this.id) {
           this.obtenerCita(this.id);
         }
-
       },
 
       error: (err) => {
-        console.error('Error al cargar datos:', err);
-        this.alertService.error(
-          'No se pudieron cargar los datos del formulario'
-        );
+        console.warn('Sin conexión al servidor, cargando catálogos desde IndexedDB:', err);
+        this.cargarDatosDesdeCache();
       }
 
     });
 
   }
+
+  private async cargarDatosDesdeCache(): Promise<void> {
+    try {
+      const [personas, empleados, medicos] = await Promise.all([
+        this.offlineDb.personas.toArray(),
+        this.offlineDb.empleados.toArray(),
+        this.offlineDb.medicos.toArray()
+      ]);
+
+      this.mapearCatalogos(personas, empleados, medicos);
+
+      if (personas.length === 0) {
+        this.alertService.error(
+          'Modo sin conexión: no hay catálogos en caché local todavía.'
+        );
+      }
+    } catch (err) {
+      console.error('Error al leer IndexedDB:', err);
+      this.alertService.error('No se pudieron cargar los datos del formulario');
+    }
+  }
+
+  private mapearCatalogos(personas: any[], empleados: any[], medicos: any[]): void {
+    this.pacientes = personas
+      .filter(p =>
+        p.idPersona != null &&
+        p.tipoPersona === 'PACIENTE'
+      )
+      .map(p => ({
+        idPersona: p.idPersona!,
+        dni: p.dni,
+        nombres: p.nombres,
+        apellidos: p.apellidos
+      }));
+
+    this.empleados = empleados
+      .filter(e => e.idPersona != null)
+      .map(e => {
+        const persona = personas.find(p => p.idPersona === e.idPersona);
+        return {
+          idPersona: e.idPersona!,
+          nombres: persona?.nombres || '',
+          apellidos: persona?.apellidos || ''
+        };
+      })
+      .filter(e => e.nombres !== '');
+
+    this.medicos = medicos
+      .filter(m => m.idEmpleado != null)
+      .map(m => {
+        const persona = personas.find(p => p.idPersona === m.idEmpleado);
+        return {
+          idEmpleado: m.idEmpleado!,
+          nombres: persona?.nombres || '',
+          apellidos: persona?.apellidos || '',
+          especialidad: m.especialidad
+        };
+      })
+      .filter(m => m.nombres !== '');
+
+  }
+
 
   // OBTENER CITA
 
@@ -385,33 +408,41 @@ export class CitaFormComponent implements OnInit {
 
     } else {
 
-      this.citaService.createCita(cita).subscribe({
+      const pac = this.pacientes.find(p => p.idPersona === cita.idPersona);
+      const nombrePaciente = pac ? `${pac.nombres} ${pac.apellidos}` : undefined;
 
-        next: (respuesta) => {
+      this.offlineOps.guardarCita(cita, nombrePaciente)
+        .then(res => {
+          if (res.offline) {
+            this.guardando = false;
+            this.alertService.success(
+              'Sin conexión: la cita se guardó localmente (pendiente_sincronizacion) y se enviará al volver el internet.'
+            );
+            this.router.navigate(['/sincronizacion']);
+            return;
+          }
 
           if (estado === 'DERIVADO') {
-
-            if (!respuesta.idCita) {
+            if (!res.idCita) {
               this.guardando = false;
               this.alertService.error(
                 'La cita se registró, pero no se recibió su identificador. Verifica el listado antes de continuar.'
               );
               return;
             }
-
-            this.guardarDatosDerivacion(respuesta.idCita);
-
+            this.guardarDatosDerivacion(res.idCita);
           } else {
             this.finalizarGuardado();
           }
-
-        },
-
-        error: (err) => {
-          this.errorGuardar(err);
-        }
-
-      });
+        })
+        .catch(err => {
+          if (err instanceof Error && !('error' in err)) {
+            this.guardando = false;
+            this.alertService.error(err.message);
+          } else {
+            this.errorGuardar(err);
+          }
+        });
 
     }
 
@@ -449,16 +480,16 @@ export class CitaFormComponent implements OnInit {
 
         const peticion = existente
           ? this.http.put(
-              `${this.derivacionApi}/${existente.idDerivacion}`,
-              {
-                ...datos,
-                idDerivacion: existente.idDerivacion
-              }
-            )
+            `${this.derivacionApi}/${existente.idDerivacion}`,
+            {
+              ...datos,
+              idDerivacion: existente.idDerivacion
+            }
+          )
           : this.http.post(
-              this.derivacionApi,
-              datos
-            );
+            this.derivacionApi,
+            datos
+          );
 
         peticion.subscribe({
 
