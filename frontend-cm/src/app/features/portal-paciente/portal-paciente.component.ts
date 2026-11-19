@@ -2,12 +2,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertService } from '../../core/services/alert.service';
 
-import {Paciente,FondoEstudiantil,Medico,Horario,Cita,DiaDisponible} from '../../core/interfaces/portal-paciente.interface';
+import {
+  Paciente, FondoEstudiantil, Medico, Horario, Cita, DiaDisponible
+} from '../../core/interfaces/portal-paciente.interface';
+import { PortalPacienteService } from '../../core/services/portal-paciente.service';
 
 @Component({
   selector: 'app-portal-paciente',
@@ -18,8 +21,7 @@ import {Paciente,FondoEstudiantil,Medico,Horario,Cita,DiaDisponible} from '../..
 })
 export class PortalPaciente implements OnInit {
 
-  private readonly http = inject(HttpClient);
-  private readonly api = '/api/v1';
+  private readonly portalPacienteService = inject(PortalPacienteService);
   private readonly alertService = inject(AlertService);
 
   pestana: 'registrar' | 'mis-citas' = 'registrar';
@@ -34,6 +36,15 @@ export class PortalPaciente implements OnInit {
   horarios: Horario[] = [];
   citasMedico: Cita[] = [];
   misCitas: Cita[] = [];
+
+  // RF-03: Fondo estudiantil (solo estudiantes)
+  fondoEstudiantil: FondoEstudiantil | null = null;
+  cargandoFondo = false;
+  errorFondo = '';
+
+  get esEstudiante(): boolean {
+    return this.paciente?.tipoPaciente === 'ESTUDIANTE';
+  }
 
   fechaSeleccionada = '';
   horaSeleccionada = '';
@@ -87,6 +98,7 @@ export class PortalPaciente implements OnInit {
 
     if (opcion === 'mis-citas' && this.paciente) {
       this.consultarMisCitas();
+      this.consultarFondo();
     }
   }
 
@@ -100,6 +112,9 @@ export class PortalPaciente implements OnInit {
     this.mensaje = '';
     this.paciente = null;
     this.misCitas = [];
+    this.fondoEstudiantil = null;
+    this.errorFondo = '';
+    this.cargandoFondo = false;
 
     this.cancelarReprogramacion();
 
@@ -115,9 +130,7 @@ export class PortalPaciente implements OnInit {
 
     this.cargando = true;
 
-    this.http.get<Paciente>(
-      `${this.api}/personas/dni/${dniBuscado}`
-    ).subscribe({
+    this.portalPacienteService.buscarPaciente(dniBuscado).subscribe({
 
       next: paciente => {
 
@@ -126,6 +139,7 @@ export class PortalPaciente implements OnInit {
 
         if (this.pestana === 'mis-citas') {
           this.consultarMisCitas();
+          this.consultarFondo();
         }
       },
 
@@ -148,9 +162,7 @@ export class PortalPaciente implements OnInit {
 
     this.cargandoMedicos = true;
 
-    this.http.get<Medico[]>(
-      `${this.api}/medicos`
-    ).subscribe({
+    this.portalPacienteService.listarMedicos().subscribe({
 
       next: medicos => {
 
@@ -159,9 +171,7 @@ export class PortalPaciente implements OnInit {
 
         medicos.forEach(medico => {
 
-          this.http.get<Horario[]>(
-            `${this.api}/horarios-medicos/medico/${medico.idEmpleado}`
-          ).pipe(
+          this.portalPacienteService.listarHorariosMedico(medico.idEmpleado).pipe(
 
             catchError(() => of([] as Horario[]))
 
@@ -241,13 +251,9 @@ export class PortalPaciente implements OnInit {
 
     forkJoin({
 
-      horarios: this.http.get<Horario[]>(
-        `${this.api}/horarios-medicos/medico/${idMedico}`
-      ),
+      horarios: this.portalPacienteService.listarHorariosMedico(idMedico),
 
-      citas: this.http.get<Cita[]>(
-        `${this.api}/citas/medico/${idMedico}`
-      )
+      citas: this.portalPacienteService.listarCitasMedico(idMedico)
 
     }).subscribe({
 
@@ -583,10 +589,7 @@ export class PortalPaciente implements OnInit {
       notificacion: 'N'
     };
 
-    this.http.post<Cita>(
-      `${this.api}/citas`,
-      nuevaCita
-    ).subscribe({
+    this.portalPacienteService.registrarCita(nuevaCita).subscribe({
 
       next: () => {
 
@@ -637,9 +640,7 @@ export class PortalPaciente implements OnInit {
 
     this.cargando = true;
 
-    this.http.get<Cita[]>(
-      `${this.api}/citas/paciente/${this.paciente.idPersona}`
-    ).subscribe({
+    this.portalPacienteService.listarCitasPaciente(this.paciente.idPersona).subscribe({
 
       next: citas => {
 
@@ -779,12 +780,8 @@ export class PortalPaciente implements OnInit {
     this.error = '';
     this.mensaje = '';
 
-    this.http.patch<Cita>(
-      `${this.api}/citas/${cita.idCita}/reprogramar`,
-      {
-        fechaCita: this.nuevaFechaCita,
-        horaCita: this.nuevaHoraCita
-      }
+    this.portalPacienteService.reprogramarCita(
+      cita.idCita, this.nuevaFechaCita, this.nuevaHoraCita
     ).subscribe({
 
       next: () => {
@@ -812,11 +809,6 @@ export class PortalPaciente implements OnInit {
   }
 
   // ==========================================
-  // RF-02: ANULAR CITA
-  // ==========================================
-
- 
-  // ==========================================
   // RF-02: ANULAR CITA CON SWEETALERT2
   // ==========================================
 
@@ -835,14 +827,13 @@ export class PortalPaciente implements OnInit {
 
     this.procesandoCitaId = cita.idCita;
 
-    this.http.patch<void>(
-      `${this.api}/citas/${cita.idCita}/anular`, {}
-    ).subscribe({
+    this.portalPacienteService.anularCita(cita.idCita).subscribe({
       next: () => {
         this.procesandoCitaId = null;
         this.cancelarReprogramacion();
         this.alertService.toast('Cita anulada correctamente');
         this.consultarMisCitas();
+        this.consultarFondo();
       },
       error: (err) => {
         this.procesandoCitaId = null;
@@ -853,5 +844,40 @@ export class PortalPaciente implements OnInit {
     });
   }
 
+
+  // ==========================================
+  // RF-03: CONSULTAR FONDO ESTUDIANTIL
+  // ==========================================
+
+  consultarFondo(): void {
+    this.fondoEstudiantil = null;
+    this.errorFondo = '';
+
+    const pacienteActual = this.paciente;
+    if (pacienteActual?.tipoPaciente !== 'ESTUDIANTE' ||
+        !pacienteActual.codigoUniversitario) {
+      this.cargandoFondo = false;
+      return;
+    }
+
+    this.cargandoFondo = true;
+
+    this.portalPacienteService.consultarFondo(
+      pacienteActual.codigoUniversitario
+    ).subscribe({
+      next: (data) => {
+        if (this.paciente?.idPersona !== pacienteActual.idPersona) return;
+
+        this.fondoEstudiantil = data;
+        this.cargandoFondo = false;
+      },
+      error: () => {
+        if (this.paciente?.idPersona !== pacienteActual.idPersona) return;
+
+        this.cargandoFondo = false;
+        this.errorFondo = 'No se pudo consultar el fondo estudiantil.';
+      }
+    });
+  }
 
 }

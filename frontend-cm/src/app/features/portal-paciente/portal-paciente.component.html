@@ -1,4 +1,3 @@
-
 <div class="portal">
 
   <main class="contenedor">
@@ -15,17 +14,11 @@
     <!-- PESTAÑAS -->
     <nav class="pestanas" aria-label="Opciones del portal">
 
-      <button
-        type="button"
-        [class.activa]="pestana === 'registrar'"
-        (click)="cambiarPestana('registrar')">
+      <button type="button" [class.activa]="pestana === 'registrar'" (click)="cambiarPestana('registrar')">
         Registrar cita
       </button>
 
-      <button
-        type="button"
-        [class.activa]="pestana === 'mis-citas'"
-        (click)="cambiarPestana('mis-citas')">
+      <button type="button" [class.activa]="pestana === 'mis-citas'" (click)="cambiarPestana('mis-citas')">
         Mis citas
       </button>
 
@@ -58,21 +51,11 @@
             DNI del paciente
           </label>
 
-          <input
-            id="dni-paciente"
-            type="text"
-            [(ngModel)]="dni"
-            maxlength="8"
-            inputmode="numeric"
-            placeholder="Ej. 12345678"
-            (keyup.enter)="buscarPaciente()">
+          <input id="dni-paciente" type="text" [(ngModel)]="dni" maxlength="8" inputmode="numeric"
+            placeholder="Ej. 12345678" (keyup.enter)="buscarPaciente()">
         </div>
 
-        <button
-          type="button"
-          class="btn-principal"
-          [disabled]="cargando"
-          (click)="buscarPaciente()">
+        <button type="button" class="btn-principal" [disabled]="cargando" (click)="buscarPaciente()">
           {{ cargando ? 'Buscando...' : 'Buscar paciente' }}
         </button>
 
@@ -114,17 +97,13 @@
           Cargando médicos...
         </p>
 
-        <p
-          class="sin-datos"
-          *ngIf="!cargandoMedicos && medicos.length === 0">
+        <p class="sin-datos" *ngIf="!cargandoMedicos && medicos.length === 0">
           No hay médicos registrados.
         </p>
 
         <div class="agenda-medicos" *ngIf="medicos.length">
 
-          <div
-            class="agenda-medico"
-            *ngFor="let medico of medicos">
+          <div class="agenda-medico" *ngFor="let medico of medicos">
 
             <!-- LADO IZQUIERDO: MÉDICO -->
             <div class="perfil-medico">
@@ -158,17 +137,14 @@
                 Atención presencial
               </div>
 
-              <button
-                type="button"
-                class="btn-elegir"
+              <button type="button" class="btn-elegir"
                 [class.elegido]="medicoSeleccionado?.idEmpleado === medico.idEmpleado"
-                (click)="seleccionarMedico(medico)"
-                [disabled]="guardando">
+                (click)="seleccionarMedico(medico)" [disabled]="guardando">
 
                 {{
-                  medicoSeleccionado?.idEmpleado === medico.idEmpleado
-                    ? '✓ Médico seleccionado'
-                    : 'Ver fechas y horarios'
+                medicoSeleccionado?.idEmpleado === medico.idEmpleado
+                ? '✓ Médico seleccionado'
+                : 'Ver fechas y horarios'
                 }}
 
               </button>
@@ -176,20 +152,16 @@
             </div>
 
             <!-- LADO DERECHO: AGENDA -->
-            <div
-              class="agenda-horarios"
+            <div class="agenda-horarios"
               *ngIf="medicoSeleccionado?.idEmpleado === medico.idEmpleado; else agendaPendiente">
 
-              <div
-                class="sin-datos"
-                *ngIf="cargandoHorarios">
+              <div class="sin-datos" *ngIf="cargandoHorarios">
                 Consultando disponibilidad...
               </div>
 
               <ng-container *ngIf="!cargandoHorarios">
 
-                <ng-container
-                  *ngIf="diasDisponibles.length; else sinDisponibilidad">
+                <ng-container *ngIf="diasDisponibles.length; else sinDisponibilidad">
 
                   <div class="fechas-cabecera">
 
@@ -202,18 +174,12 @@
 
                     <div class="flechas">
 
-                      <button
-                        type="button"
-                        aria-label="Fechas anteriores"
-                        (click)="moverDias(-1)"
+                      <button type="button" aria-label="Fechas anteriores" (click)="moverDias(-1)"
                         [disabled]="!puedeRetroceder">
                         ‹
                       </button>
 
-                      <button
-                        type="button"
-                        aria-label="Fechas siguientes"
-                        (click)="moverDias(1)"
+                      <button type="button" aria-label="Fechas siguientes" (click)="moverDias(1)"
                         [disabled]="!puedeAvanzar">
                         ›
                       </button>
@@ -225,12 +191,8 @@
                   <!-- FECHAS -->
                   <div class="fechas-grid">
 
-                    <button
-                      type="button"
-                      class="fecha-btn"
-                      *ngFor="let dia of diasVisibles"
-                      [class.activa]="fechaSeleccionada === dia.fecha"
-                      (click)="seleccionarFecha(dia.fecha)">
+                    <button type="button" class="fecha-btn" *ngFor="let dia of diasVisibles"
+                      [class.activa]="fechaSeleccionada === dia.fecha" (click)="seleccionarFecha(dia.fecha)">
 
                       <span>{{ dia.dia }}</span>
                       <strong>{{ dia.numero }}</strong>
@@ -250,12 +212,8 @@
 
                     <div class="horas-grid">
 
-                      <button
-                        type="button"
-                        class="hora-btn"
-                        *ngFor="let hora of horasDisponibles"
-                        [class.activa]="horaSeleccionada === hora"
-                        (click)="horaSeleccionada = hora">
+                      <button type="button" class="hora-btn" *ngFor="let hora of horasDisponibles"
+                        [class.activa]="horaSeleccionada === hora" (click)="horaSeleccionada = hora">
                         {{ hora }}
                       </button>
 
@@ -303,9 +261,7 @@
       </section>
 
       <!-- CONFIRMAR RESERVA -->
-      <section
-        class="tarjeta confirmacion"
-        *ngIf="medicoSeleccionado && horaSeleccionada">
+      <section class="tarjeta confirmacion" *ngIf="medicoSeleccionado && horaSeleccionada">
 
         <div class="titulo-seccion">
           <span class="numero">3</span>
@@ -352,25 +308,19 @@
             Motivo de consulta
           </label>
 
-          <textarea
-            id="motivo-consulta"
-            rows="3"
-            [(ngModel)]="motivoConsulta"
+          <textarea id="motivo-consulta" rows="3" [(ngModel)]="motivoConsulta"
             placeholder="Describe brevemente el motivo de tu consulta">
           </textarea>
 
         </div>
 
-        <button
-          type="button"
-          class="btn-principal confirmar"
-          [disabled]="guardando || cargandoHorarios"
+        <button type="button" class="btn-principal confirmar" [disabled]="guardando || cargandoHorarios"
           (click)="confirmarCita()">
 
           {{
-            guardando
-              ? 'Registrando cita...'
-              : 'Confirmar cita médica'
+          guardando
+          ? 'Registrando cita...'
+          : 'Confirmar cita médica'
           }}
 
         </button>
@@ -383,11 +333,57 @@
     <!-- MIS CITAS - RF-02                    -->
     <!-- ====================================== -->
 
-    <section
-      class="tarjeta"
-      *ngIf="pestana === 'mis-citas' && paciente">
+    <section class="tarjeta" *ngIf="pestana === 'mis-citas' && paciente">
 
       <div class="titulo-seccion">
+
+
+        <!-- RF-03: FONDO ESTUDIANTIL (SOLO ESTUDIANTES) -->
+        <div class="fondo-estudiantil" *ngIf="esEstudiante">
+
+          <div class="titulo-seccion">
+            <span class="numero">S/</span>
+            <div>
+              <h3>Mi fondo estudiantil</h3>
+              <p>Consulta tu saldo disponible del ciclo académico.</p>
+            </div>
+          </div>
+
+          <p class="sin-datos" *ngIf="cargandoFondo">
+            Consultando saldo del fondo estudiantil...
+          </p>
+
+          <div class="alerta error" *ngIf="errorFondo" role="alert">
+            {{ errorFondo }}
+          </div>
+
+          <div class="resumen" *ngIf="fondoEstudiantil as fondo">
+
+            <div>
+              <span>Saldo disponible</span>
+              <strong>
+                S/ {{ fondo.saldoDisponible | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Fondo máximo por ciclo</span>
+              <strong>
+                S/ {{ fondo.fondoMaximo | number:'1.2-2' }}
+              </strong>
+            </div>
+
+            <div>
+              <span>Costo por consulta cubierta</span>
+              <strong>
+                S/ {{ fondo.costoConsulta | number:'1.2-2' }}
+              </strong>
+            </div>
+
+          </div>
+
+        </div>
+
 
         <span class="numero">✓</span>
 
@@ -399,16 +395,13 @@
       </div>
 
       <!-- ACTUALIZAR LISTADO -->
-      <button
-        type="button"
-        class="btn-secundario"
-        [disabled]="cargando || procesandoCitaId !== null"
+      <button type="button" class="btn-secundario" [disabled]="cargando || procesandoCitaId !== null"
         (click)="consultarMisCitas()">
 
         {{
-          cargando
-            ? 'Actualizando...'
-            : 'Actualizar listado'
+        cargando
+        ? 'Actualizando...'
+        : 'Actualizar listado'
         }}
 
       </button>
@@ -416,9 +409,7 @@
       <div class="citas-lista">
 
         <!-- CADA CITA -->
-        <div
-          class="cita-item"
-          *ngFor="let cita of misCitas">
+        <div class="cita-item" *ngFor="let cita of misCitas">
 
           <!-- FECHA Y HORA -->
           <div class="fecha-cita">
@@ -448,28 +439,19 @@
           </span>
 
           <!-- BOTONES RF-02 -->
-          <div
-            class="acciones-cita"
-            *ngIf="puedeGestionarCita(cita)">
+          <div class="acciones-cita" *ngIf="puedeGestionarCita(cita)">
 
-            <button
-              type="button"
-              class="btn-secundario"
-              [disabled]="procesandoCitaId !== null"
+            <button type="button" class="btn-secundario" [disabled]="procesandoCitaId !== null"
               (click)="iniciarReprogramacion(cita)">
               Reprogramar
             </button>
 
-            <button
-              type="button"
-              class="btn-anular"
-              [disabled]="procesandoCitaId !== null"
-              (click)="anularCita(cita)">
+            <button type="button" class="btn-anular" [disabled]="procesandoCitaId !== null" (click)="anularCita(cita)">
 
               {{
-                procesandoCitaId === cita.idCita
-                  ? 'Procesando...'
-                  : 'Anular'
+              procesandoCitaId === cita.idCita
+              ? 'Procesando...'
+              : 'Anular'
               }}
 
             </button>
@@ -477,9 +459,7 @@
           </div>
 
           <!-- FORMULARIO DE REPROGRAMACION -->
-          <div
-            class="reprogramacion-cita"
-            *ngIf="reprogramandoCitaId === cita.idCita">
+          <div class="reprogramacion-cita" *ngIf="reprogramandoCitaId === cita.idCita">
 
             <h4>Reprogramar cita</h4>
 
@@ -497,10 +477,7 @@
                   Nueva fecha
                 </label>
 
-                <input
-                  [id]="'nueva-fecha-' + cita.idCita"
-                  type="date"
-                  [min]="fechaMinimaReprogramacion"
+                <input [id]="'nueva-fecha-' + cita.idCita" type="date" [min]="fechaMinimaReprogramacion"
                   [(ngModel)]="nuevaFechaCita">
 
               </div>
@@ -512,11 +489,7 @@
                   Nueva hora
                 </label>
 
-                <input
-                  [id]="'nueva-hora-' + cita.idCita"
-                  type="time"
-                  step="900"
-                  [(ngModel)]="nuevaHoraCita">
+                <input [id]="'nueva-hora-' + cita.idCita" type="time" step="900" [(ngModel)]="nuevaHoraCita">
 
               </div>
 
@@ -525,24 +498,19 @@
             <!-- CONFIRMAR O CANCELAR -->
             <div class="acciones-reprogramacion">
 
-              <button
-                type="button"
-                class="btn-secundario"
-                [disabled]="procesandoCitaId !== null"
+              <button type="button" class="btn-secundario" [disabled]="procesandoCitaId !== null"
                 (click)="cancelarReprogramacion()">
                 Cancelar
               </button>
 
-              <button
-                type="button"
-                class="btn-principal"
+              <button type="button" class="btn-principal"
                 [disabled]="procesandoCitaId !== null || !nuevaFechaCita || !nuevaHoraCita"
                 (click)="confirmarReprogramacion(cita)">
 
                 {{
-                  procesandoCitaId === cita.idCita
-                    ? 'Guardando...'
-                    : 'Guardar cambios'
+                procesandoCitaId === cita.idCita
+                ? 'Guardando...'
+                : 'Guardar cambios'
                 }}
 
               </button>
@@ -556,9 +524,7 @@
       </div>
 
       <!-- SIN CITAS -->
-      <div
-        class="sin-datos"
-        *ngIf="!cargando && misCitas.length === 0">
+      <div class="sin-datos" *ngIf="!cargando && misCitas.length === 0">
         No tienes citas registradas.
       </div>
 
