@@ -765,3 +765,161 @@ button:disabled {
   }
 
 }
+
+/* ==========================================
+   RF-02: ANULAR Y REPROGRAMAR CITAS
+   ========================================== */
+
+/* Mantener el diseño original de las citas */
+.cita-item {
+  flex-wrap: wrap;
+  column-gap: 18px;
+  row-gap: 12px;
+}
+
+/* Botones de acciones */
+.acciones-cita {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+/* Botón reprogramar */
+.acciones-cita .btn-secundario {
+  padding: 10px 15px;
+  font-size: 12px;
+  border: 1px solid #cfe1e9;
+  border-radius: 9px;
+  transition: background 0.2s ease;
+}
+
+.acciones-cita .btn-secundario:hover:not(:disabled) {
+  background: #d4edf8;
+}
+
+/* Botón anular */
+.btn-anular {
+  background: #fff5f5;
+  color: #b63c42;
+  border: 1px solid #f0c7cb;
+  border-radius: 9px;
+  padding: 10px 15px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.2s ease;
+}
+
+.btn-anular:hover:not(:disabled) {
+  background: #ffe4e6;
+}
+
+/* ==========================================
+   FORMULARIO DE REPROGRAMACIÓN
+   ========================================== */
+
+.reprogramacion-cita {
+  flex: 0 0 100%;
+  width: 100%;
+  padding: 20px;
+  margin-top: 5px;
+  background: #f5fafd;
+  border: 1px solid #dceaf1;
+  border-radius: 12px;
+}
+
+/* Título del formulario */
+.reprogramacion-cita h4 {
+  color: #075779;
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 7px;
+}
+
+/* Descripción */
+.reprogramacion-cita > p {
+  color: #7892a0;
+  font-size: 12px;
+  margin: 0 0 18px;
+  line-height: 1.5;
+}
+
+/* Fecha y hora */
+.campos-reprogramacion {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 15px;
+  margin-bottom: 18px;
+}
+
+.campos-reprogramacion .campo {
+  min-width: 0;
+}
+
+.campos-reprogramacion input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #cfe1e9;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #153d50;
+}
+
+.campos-reprogramacion input:focus {
+  outline: none;
+  border-color: #2a9cc7;
+  box-shadow: 0 0 0 3px #eaf4f8;
+}
+
+/* Botones del formulario */
+.acciones-reprogramacion {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.acciones-reprogramacion .btn-principal {
+  padding: 11px 17px;
+  font-size: 13px;
+}
+
+.acciones-reprogramacion .btn-secundario {
+  padding: 11px 17px;
+  font-size: 13px;
+}
+
+/* ==========================================
+   RESPONSIVE: CELULARES
+   ========================================== */
+
+@media (max-width: 560px) {
+
+  .acciones-cita {
+    width: 100%;
+  }
+
+  .acciones-cita button {
+    flex: 1;
+  }
+
+  .reprogramacion-cita {
+    padding: 15px;
+  }
+
+  .campos-reprogramacion {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .acciones-reprogramacion {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .acciones-reprogramacion button {
+    width: 100%;
+  }
+
+}

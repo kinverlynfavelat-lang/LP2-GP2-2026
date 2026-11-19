@@ -14,6 +14,7 @@
 
     <!-- PESTAÑAS -->
     <nav class="pestanas" aria-label="Opciones del portal">
+
       <button
         type="button"
         [class.activa]="pestana === 'registrar'"
@@ -27,6 +28,7 @@
         (click)="cambiarPestana('mis-citas')">
         Mis citas
       </button>
+
     </nav>
 
     <!-- MENSAJES -->
@@ -77,6 +79,7 @@
       </div>
 
       <div class="paciente-encontrado" *ngIf="paciente">
+
         <span class="avatar">✓</span>
 
         <div>
@@ -87,6 +90,7 @@
         </div>
 
         <span class="estado-ok">Encontrado</span>
+
       </div>
 
     </section>
@@ -132,6 +136,7 @@
                 </div>
 
                 <div class="perfil-datos">
+
                   <span class="especialidad">
                     {{ medico.especialidad }}
                   </span>
@@ -143,6 +148,7 @@
                   <span class="turno">
                     {{ obtenerTurnoMedico(medico.idEmpleado) }}
                   </span>
+
                 </div>
 
               </div>
@@ -274,6 +280,7 @@
             <ng-template #agendaPendiente>
 
               <div class="agenda-invitacion">
+
                 <div class="calendario-icono">▦</div>
 
                 <strong>
@@ -284,6 +291,7 @@
                   Selecciona este médico para ver sus
                   horas disponibles.
                 </p>
+
               </div>
 
             </ng-template>
@@ -339,6 +347,7 @@
         </div>
 
         <div class="campo motivo">
+
           <label for="motivo-consulta">
             Motivo de consulta
           </label>
@@ -349,6 +358,7 @@
             [(ngModel)]="motivoConsulta"
             placeholder="Describe brevemente el motivo de tu consulta">
           </textarea>
+
         </div>
 
         <button
@@ -369,25 +379,30 @@
 
     </ng-container>
 
-    <!-- MIS CITAS -->
+    <!-- ====================================== -->
+    <!-- MIS CITAS - RF-02                    -->
+    <!-- ====================================== -->
+
     <section
       class="tarjeta"
       *ngIf="pestana === 'mis-citas' && paciente">
 
       <div class="titulo-seccion">
+
         <span class="numero">✓</span>
+
         <div>
           <h3>Mis citas médicas</h3>
-          <p>
-            Consulta las citas registradas a tu nombre.
-          </p>
+          <p>Consulta, anula o reprograma tus citas.</p>
         </div>
+
       </div>
 
+      <!-- ACTUALIZAR LISTADO -->
       <button
         type="button"
         class="btn-secundario"
-        [disabled]="cargando"
+        [disabled]="cargando || procesandoCitaId !== null"
         (click)="consultarMisCitas()">
 
         {{
@@ -400,29 +415,147 @@
 
       <div class="citas-lista">
 
+        <!-- CADA CITA -->
         <div
           class="cita-item"
           *ngFor="let cita of misCitas">
 
+          <!-- FECHA Y HORA -->
           <div class="fecha-cita">
+
             <strong>
               {{ cita.fechaCita | date:'dd/MM/yyyy' }}
             </strong>
+
             <span>{{ cita.horaCita }}</span>
+
           </div>
 
+          <!-- INFORMACION -->
           <div class="detalle-cita">
+
             <h4>
               {{ cita.medico || 'Médico por confirmar' }}
             </h4>
+
             <p>{{ cita.motivoConsulta }}</p>
+
           </div>
 
-          
+          <!-- ESTADO -->
+          <span class="estado-cita">
+            {{ cita.estado }}
+          </span>
+
+          <!-- BOTONES RF-02 -->
+          <div
+            class="acciones-cita"
+            *ngIf="puedeGestionarCita(cita)">
+
+            <button
+              type="button"
+              class="btn-secundario"
+              [disabled]="procesandoCitaId !== null"
+              (click)="iniciarReprogramacion(cita)">
+              Reprogramar
+            </button>
+
+            <button
+              type="button"
+              class="btn-anular"
+              [disabled]="procesandoCitaId !== null"
+              (click)="anularCita(cita)">
+
+              {{
+                procesandoCitaId === cita.idCita
+                  ? 'Procesando...'
+                  : 'Anular'
+              }}
+
+            </button>
+
+          </div>
+
+          <!-- FORMULARIO DE REPROGRAMACION -->
+          <div
+            class="reprogramacion-cita"
+            *ngIf="reprogramandoCitaId === cita.idCita">
+
+            <h4>Reprogramar cita</h4>
+
+            <p>
+              Elige una fecha y una hora disponibles
+              para el mismo médico.
+            </p>
+
+            <div class="campos-reprogramacion">
+
+              <!-- NUEVA FECHA -->
+              <div class="campo">
+
+                <label [for]="'nueva-fecha-' + cita.idCita">
+                  Nueva fecha
+                </label>
+
+                <input
+                  [id]="'nueva-fecha-' + cita.idCita"
+                  type="date"
+                  [min]="fechaMinimaReprogramacion"
+                  [(ngModel)]="nuevaFechaCita">
+
+              </div>
+
+              <!-- NUEVA HORA -->
+              <div class="campo">
+
+                <label [for]="'nueva-hora-' + cita.idCita">
+                  Nueva hora
+                </label>
+
+                <input
+                  [id]="'nueva-hora-' + cita.idCita"
+                  type="time"
+                  step="900"
+                  [(ngModel)]="nuevaHoraCita">
+
+              </div>
+
+            </div>
+
+            <!-- CONFIRMAR O CANCELAR -->
+            <div class="acciones-reprogramacion">
+
+              <button
+                type="button"
+                class="btn-secundario"
+                [disabled]="procesandoCitaId !== null"
+                (click)="cancelarReprogramacion()">
+                Cancelar
+              </button>
+
+              <button
+                type="button"
+                class="btn-principal"
+                [disabled]="procesandoCitaId !== null || !nuevaFechaCita || !nuevaHoraCita"
+                (click)="confirmarReprogramacion(cita)">
+
+                {{
+                  procesandoCitaId === cita.idCita
+                    ? 'Guardando...'
+                    : 'Guardar cambios'
+                }}
+
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
 
+      <!-- SIN CITAS -->
       <div
         class="sin-datos"
         *ngIf="!cargando && misCitas.length === 0">

@@ -1,6 +1,7 @@
 
 package pe.edu.upeu.centromedico.centro_medico.services;
 
+import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
 
 import java.util.List;
@@ -21,4 +22,8 @@ public interface IPersonaService {
     Optional<PersonaDTO> actualizar(Long id, PersonaDTO p);
 
     boolean eliminar(Long id);
+
+    Optional<FondoEstudiantilDTO> consultarFondo(
+            String codigoUniversitario
+    );
 }

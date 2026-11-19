@@ -4,6 +4,7 @@ package pe.edu.upeu.centromedico.centro_medico.services;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
 import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
 import pe.edu.upeu.centromedico.centro_medico.entity.Usuario;
@@ -211,6 +212,26 @@ public class PersonaServiceImpl implements IPersonaService {
 
         return Optional.empty();
     }
+
+    @Override
+    public Optional<FondoEstudiantilDTO> consultarFondo(
+            String codigoUniversitario) {
+
+        return personaRepository
+                .findByCodigoUniversitario(codigoUniversitario)
+                .filter(persona ->
+                        persona.getTipoPaciente() == TipoPaciente.ESTUDIANTE
+                )
+                .map(persona -> new FondoEstudiantilDTO(
+                        persona.getCodigoUniversitario(),
+                        persona.getSaldoFondo() == null
+                                ? BigDecimal.ZERO
+                                : persona.getSaldoFondo(),
+                        new BigDecimal("200.00"),
+                        new BigDecimal("50.00")
+                ));
+    }
+
 
     @Override
     public boolean eliminar(Long id) {

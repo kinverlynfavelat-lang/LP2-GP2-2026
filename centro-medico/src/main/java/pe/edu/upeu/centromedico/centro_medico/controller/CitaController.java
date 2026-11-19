@@ -10,6 +10,7 @@ import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 
 import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.ReprogramarCitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.services.ICitaService;
 
 import java.math.BigDecimal;
@@ -156,6 +157,17 @@ public class CitaController {
         }
 
         return ResponseEntity.notFound().build();
+    }
+
+
+    @PatchMapping("/{id}/reprogramar")
+    public ResponseEntity<CitaResponseDTO> reprogramar(
+            @PathVariable Long id,
+            @Valid @RequestBody ReprogramarCitaDTO dto) {
+
+        return citaService.reprogramar(id, dto)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
 }

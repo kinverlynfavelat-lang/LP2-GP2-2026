@@ -7,6 +7,7 @@ import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 
 import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.ReprogramarCitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.entity.Cita;
 import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
 import pe.edu.upeu.centromedico.centro_medico.entity.Medico;
@@ -482,48 +483,107 @@ public class CitaServiceImpl implements ICitaService {
     // ANULAR CITA
     // ==================================
 
+
     @Override
     @Transactional
     public boolean anular(Long id) {
 
-        Optional<Cita> cita =
-                citaRepository.findById(id);
-
-        if (cita.isPresent()) {
-
-            Cita citaActual = cita.get();
-
-            if (citaActual.getEstado() == EstadoCita.ATENDIDO
-                    || citaActual.getEstado() == EstadoCita.ANULADO
-                    || citaActual.getEstado() == EstadoCita.INASISTENCIA
-                    || citaActual.getEstado() == EstadoCita.DERIVADO) {
-
-                throw new RuntimeException(
-                        "La cita no puede ser anulada");
-            }
-
-            LocalDate fecha = citaActual.getFechaCita();
-            LocalTime hora = LocalTime.parse(
-                    citaActual.getHoraCita()
-            );
-
-            if (fecha.isBefore(LocalDate.now())
-                    || (fecha.isEqual(LocalDate.now())
-                    && !hora.isAfter(LocalTime.now()))) {
-
-                throw new RuntimeException(
-                        "La cita ya pasó y no puede ser anulada");
-            }
-
-            citaActual.setEstado(EstadoCita.ANULADO);
-
-            citaRepository.save(citaActual);
-
-            return true;
+        // Verificar que la cita exista
+        if (!citaRepository.existsById(id)) {
+            return false;
         }
 
-        return false;
+        // Llamar al procedimiento almacenado
+        StoredProcedureQuery procedimiento =
+                entityManager.createStoredProcedureQuery(
+                        "SP_ANULAR_CITA"
+                );
+
+        procedimiento.registerStoredProcedureParameter(
+                1,
+                Long.class,
+                ParameterMode.IN
+        );
+
+        procedimiento.setParameter(1, id);
+
+        procedimiento.execute();
+
+        return true;
     }
+
+
+    @Override
+    @Transactional
+    public Optional<CitaResponseDTO> reprogramar(
+            Long id,
+            ReprogramarCitaDTO dto) {
+
+        // 1. Buscar la cita
+        Optional<Cita> resultado = citaRepository.findById(id);
+
+        if (resultado.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Cita cita = resultado.get();
+
+        // 2. Validar que la cita pueda reprogramarse
+        if (cita.getEstado() != EstadoCita.RECEPCION
+                && cita.getEstado() != EstadoCita.TRIAJE) {
+
+            throw new IllegalStateException(
+                    "La cita no puede ser reprogramada"
+            );
+        }
+
+        // 3. Verificar que la cita original no haya pasado
+        validarFechaHora(
+                cita.getFechaCita(),
+                cita.getHoraCita()
+        );
+
+        // 4. Validar la nueva fecha y hora
+        validarFechaHora(
+                dto.fechaCita(),
+                dto.horaCita()
+        );
+
+        // 5. Verificar que tenga medico asignado
+        if (cita.getMedico() == null) {
+            throw new IllegalStateException(
+                    "La cita no tiene medico asignado"
+            );
+        }
+
+        Long idMedico =
+                cita.getMedico().getIdEmpleado();
+
+        // 6. Validar el horario del medico
+        validarHorario(
+                idMedico,
+                dto.fechaCita(),
+                dto.horaCita()
+        );
+
+        // 7. Evitar horarios duplicados
+        validarCitaDuplicada(
+                idMedico,
+                dto.fechaCita(),
+                dto.horaCita(),
+                id
+        );
+
+        // 8. Cambiar solo fecha y hora
+        cita.setFechaCita(dto.fechaCita());
+        cita.setHoraCita(dto.horaCita());
+
+        // 9. Guardar sin modificar estado ni fondo
+        Cita guardada = citaRepository.save(cita);
+
+        return Optional.of(convertirADTO(guardada));
+    }
+
 
     // ==================================
     // VALIDAR PACIENTE

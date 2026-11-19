@@ -3,6 +3,7 @@ package pe.edu.upeu.centromedico.centro_medico.services;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.ReprogramarCitaDTO;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -29,5 +30,10 @@ public interface ICitaService {
     Optional<CitaResponseDTO> actualizar(Long id, CitaDTO dto);
 
     boolean anular(Long id);
+
+    Optional<CitaResponseDTO> reprogramar(
+            Long id,
+            ReprogramarCitaDTO dto
+    );
 
 }

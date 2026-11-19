@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
 import pe.edu.upeu.centromedico.centro_medico.services.IPersonaService;
 
@@ -85,4 +86,15 @@ public class PersonaController {
 
         return ResponseEntity.notFound().build();
     }
+
+    // RF-03: Consultar saldo del fondo estudiantil
+    @GetMapping("/fondo/{codigoUniversitario}")
+    public ResponseEntity<FondoEstudiantilDTO> consultarFondo(
+            @PathVariable String codigoUniversitario) {
+
+        return personaService.consultarFondo(codigoUniversitario)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
 }
