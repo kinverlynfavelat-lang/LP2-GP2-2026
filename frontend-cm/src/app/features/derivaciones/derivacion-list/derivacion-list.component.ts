@@ -2,28 +2,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  HttpClient,
-  HttpErrorResponse
-} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 
-// ESTADOS OFICIALES DEL BACKEND
-type EstadoDerivacion =
-  | 'PENDIENTE'
-  | 'REALIZADA'
-  | 'CANCELADA';
-
-// INTERFAZ DE DERIVACIÓN
-interface Derivacion {
-  idDerivacion: number;
-  fecha: string;
-  motivo: string;
-  centroDestino: string;
-  responsable: string;
-  estado: EstadoDerivacion;
-  idCita: number;
-}
+import {
+  Derivacion,
+  EstadoDerivacion
+} from '../../../core/interfaces/derivacion.interface';
+import { DerivacionService } from '../../../core/services/derivacion.service';
 
 @Component({
   selector: 'app-derivacion-list',
@@ -34,10 +20,8 @@ interface Derivacion {
 })
 export class DerivacionListComponent implements OnInit {
 
-  private http = inject(HttpClient);
+  private derivacionService = inject(DerivacionService);
   private router = inject(Router);
-
-  private apiUrl = '/api/v1/derivaciones';
 
   // LISTAS
   derivaciones: Derivacion[] = [];
@@ -78,7 +62,7 @@ export class DerivacionListComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    this.http.get<Derivacion[]>(this.apiUrl).subscribe({
+    this.derivacionService.getDerivaciones().subscribe({
       next: (datos) => {
         this.derivaciones = datos ?? [];
         this.filtrarDerivaciones();
@@ -184,7 +168,7 @@ export class DerivacionListComponent implements OnInit {
     this.error = '';
     this.mensaje = '';
 
-    this.http.delete<void>(`${this.apiUrl}/${id}`).subscribe({
+    this.derivacionService.deleteDerivacion(id).subscribe({
       next: () => {
         this.eliminando = false;
         this.derivacionEliminar = null;
