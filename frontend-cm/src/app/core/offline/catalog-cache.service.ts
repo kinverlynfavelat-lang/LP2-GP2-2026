@@ -1,6 +1,6 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { catchError, firstValueFrom, forkJoin, of } from 'rxjs';
-import { DiagnosticoCie10, OfflineDbService } from './db.service';
+import { OfflineDbService } from './db.service';
 import { NetworkService } from './network.service';
 import { PersonaService } from '../services/persona.service';
 import { EmpleadoService } from '../services/empleado.service';
@@ -8,24 +8,6 @@ import { MedicoService } from '../services/medico.service';
 import { HorarioMedicoService } from '../services/horario-medico.service';
 import { MedicamentoService } from '../services/medicamento.service';
 import { CitaService } from '../services/cita.service';
-
-const CATALOGO_CIE10_BASE: DiagnosticoCie10[] = [
-  { codigo: 'J00', descripcion: 'Rinofaringitis aguda (resfriado común)' },
-  { codigo: 'J02.9', descripcion: 'Faringitis aguda, no especificada' },
-  { codigo: 'J03.9', descripcion: 'Amigdalitis aguda, no especificada' },
-  { codigo: 'A09', descripcion: 'Diarrea y gastroenteritis de presunto origen infeccioso' },
-  { codigo: 'K29.7', descripcion: 'Gastritis, no especificada' },
-  { codigo: 'R51', descripcion: 'Cefalea' },
-  { codigo: 'R50.9', descripcion: 'Fiebre, no especificada' },
-  { codigo: 'I10', descripcion: 'Hipertensión esencial (primaria)' },
-  { codigo: 'E11.9', descripcion: 'Diabetes mellitus tipo 2 sin complicaciones' },
-  { codigo: 'N39.0', descripcion: 'Infección de vías urinarias, sitio no especificado' },
-  { codigo: 'M54.5', descripcion: 'Lumbago no especificado' },
-  { codigo: 'S93.4', descripcion: 'Esguince y torcedura del tobillo' },
-  { codigo: 'L23.9', descripcion: 'Dermatitis alérgica de contacto' },
-  { codigo: 'F41.9', descripcion: 'Trastorno de ansiedad, no especificado' },
-  { codigo: 'Z00.0', descripcion: 'Examen médico general' }
-];
 
 @Injectable({ providedIn: 'root' })
 export class CatalogCacheService {
@@ -41,16 +23,7 @@ export class CatalogCacheService {
   readonly actualizando = signal(false);
   readonly ultimaActualizacion = signal<Date | null>(null);
 
-  async inicializarCie10(): Promise<void> {
-    const count = await this.db.diagnosticos.count();
-    if (count === 0) {
-      await this.db.diagnosticos.bulkPut(CATALOGO_CIE10_BASE);
-    }
-  }
-
   async sincronizarCatalogos(): Promise<boolean> {
-    await this.inicializarCie10();
-
     if (!this.network.isOnline() || this.actualizando()) {
       return false;
     }
