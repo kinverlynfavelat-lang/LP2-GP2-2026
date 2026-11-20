@@ -2,66 +2,19 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import {
-  HttpClient,
-  HttpErrorResponse
-} from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
 import {
   ActivatedRoute,
   Router
 } from '@angular/router';
 
-// ==========================================
-// ESTADOS OFICIALES DEL BACKEND
-// ==========================================
-
-type EstadoDerivacion =
-  | 'PENDIENTE'
-  | 'REALIZADA'
-  | 'CANCELADA';
-
-// ==========================================
-// INTERFAZ DE CITA MÉDICA
-// ==========================================
-
-interface Cita {
-  idCita: number;
-  fechaCita: string;
-  horaCita: string;
-  paciente: string;
-  medico: string;
-  diagnostico: string | null;
-  tratamiento: string | null;
-  estado: string;
-}
-
-// ==========================================
-// INTERFAZ DE DERIVACIÓN
-// ==========================================
-
-interface Derivacion {
-  idDerivacion: number;
-  fecha: string;
-  motivo: string;
-  centroDestino: string;
-  responsable: string;
-  estado: EstadoDerivacion;
-  idCita: number;
-}
-
-// ==========================================
-// DATOS PARA ENVIAR AL BACKEND
-// ==========================================
-
-interface DerivacionRequest {
-  idDerivacion: number | null;
-  fecha: string;
-  motivo: string;
-  centroDestino: string;
-  responsable: string;
-  estado: EstadoDerivacion;
-  idCita: number;
-}
+import { Cita } from '../../../core/interfaces/cita.interface';
+import {
+  DerivacionRequest,
+  EstadoDerivacion
+} from '../../../core/interfaces/derivacion.interface';
+import { CitaService } from '../../../core/services/cita.service';
+import { DerivacionService } from '../../../core/services/derivacion.service';
 
 // ==========================================
 // COMPONENTE
@@ -76,11 +29,10 @@ interface DerivacionRequest {
 })
 export class DerivacionFormComponent implements OnInit {
 
-  private http = inject(HttpClient);
+  private derivacionService = inject(DerivacionService);
+  private citaService = inject(CitaService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-
-  private api = '/api/v1';
 
   // ==========================================
   // CONTROL DEL FORMULARIO
@@ -187,9 +139,7 @@ export class DerivacionFormComponent implements OnInit {
     this.cargando = true;
     this.error = '';
 
-    this.http.get<Cita[]>(
-      `${this.api}/citas`
-    ).subscribe({
+    this.citaService.getCitas().subscribe({
       next: (citas) => {
         this.citas = citas ?? [];
 
@@ -235,9 +185,7 @@ export class DerivacionFormComponent implements OnInit {
   // ==========================================
 
   cargarDerivacion(id: number): void {
-    this.http.get<Derivacion>(
-      `${this.api}/derivaciones/${id}`
-    ).subscribe({
+    this.derivacionService.getDerivacionById(id).subscribe({
       next: (derivacion) => {
 
         this.formulario = {
@@ -368,13 +316,12 @@ export class DerivacionFormComponent implements OnInit {
       this.modoEdicion &&
       this.idDerivacion !== null
 
-        ? this.http.put<Derivacion>(
-            `${this.api}/derivaciones/${this.idDerivacion}`,
+        ? this.derivacionService.updateDerivacion(
+            this.idDerivacion,
             datos
           )
 
-        : this.http.post<Derivacion>(
-            `${this.api}/derivaciones`,
+        : this.derivacionService.createDerivacion(
             datos
           );
 
