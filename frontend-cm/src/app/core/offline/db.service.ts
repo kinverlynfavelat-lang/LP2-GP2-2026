@@ -9,11 +9,6 @@ import { HorarioMedico } from '../interfaces/horario-medico.interface';
 
 export type SyncStatus = 'PENDIENTE' | 'SINCRONIZADO' | 'CONFLICTO' | 'ERROR';
 
-export interface DiagnosticoCie10 {
-  codigo: string;
-  descripcion: string;
-}
-
 export interface CitaOffline extends Cita {
   localUuid: string;
   syncStatus: SyncStatus;
@@ -41,7 +36,6 @@ export class OfflineDbService extends Dexie {
   medicos!: Table<Medico, number>;
   horarios!: Table<HorarioMedico, number>;
   medicamentos!: Table<Medicamento, number>;
-  diagnosticos!: Table<DiagnosticoCie10, string>;
   citasLocales!: Table<CitaOffline, string>;
   syncQueue!: Table<SyncQueueItem, number>;
 
@@ -57,6 +51,10 @@ export class OfflineDbService extends Dexie {
       diagnosticos: 'codigo, descripcion',
       citasLocales: 'localUuid, idCita, syncStatus, [idMedico+fechaCita+horaCita]',
       syncQueue: '++id, status, entityType, localUuid, createdAt'
+    });
+
+    this.version(2).stores({
+      diagnosticos: null
     });
   }
 }

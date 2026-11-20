@@ -30,7 +30,6 @@ export class BandejaSyncComponent implements OnInit {
   totalPacientesCache = 0;
   totalMedicosCache = 0;
   totalMedicamentosCache = 0;
-  totalDiagnosticosCache = 0;
 
   // Edición inline para reubicar cita en conflicto (409)
   editandoId: number | null = null;
@@ -59,17 +58,15 @@ export class BandejaSyncComponent implements OnInit {
       this.cola = await this.sync.obtenerColaCompleta();
       await this.sync.actualizarContadores();
 
-      const [pac, med, farm, cie] = await Promise.all([
+      const [pac, med, farm] = await Promise.all([
         this.db.personas.where('tipoPersona').equals('PACIENTE').count(),
         this.db.medicos.count(),
-        this.db.medicamentos.count(),
-        this.db.diagnosticos.count()
+        this.db.medicamentos.count()
       ]);
 
       this.totalPacientesCache = pac;
       this.totalMedicosCache = med;
       this.totalMedicamentosCache = farm;
-      this.totalDiagnosticosCache = cie;
     } finally {
       this.cargando = false;
     }
