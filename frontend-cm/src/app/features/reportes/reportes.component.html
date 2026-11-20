@@ -1,0 +1,539 @@
+
+<div class="container-fluid reportes-container">
+
+  <!-- ENCABEZADO -->
+  <div class="encabezado mb-4">
+
+    <div>
+      <h2>Reportes de gestión</h2>
+
+      <p class="subtitulo">
+        Consulta las atenciones médicas realizadas
+        por día, semana y mes.
+      </p>
+    </div>
+
+  </div>
+
+  <!-- FILTROS -->
+  <div class="card panel-filtros mb-4">
+
+    <div class="card-body">
+
+      <h5 class="titulo-seccion mb-3">
+        <i class="bi bi-funnel me-2"></i>
+        Filtros del reporte
+      </h5>
+
+      <!-- TIPO DE REPORTE -->
+      <div class="tipos-reporte mb-3">
+
+        <button
+          type="button"
+          class="btn-tipo"
+          [class.activo]="tipoReporte === 'diario'"
+          (click)="cambiarTipo('diario')">
+
+          <i class="bi bi-calendar-day me-1"></i>
+          Diario
+        </button>
+
+        <button
+          type="button"
+          class="btn-tipo"
+          [class.activo]="tipoReporte === 'semanal'"
+          (click)="cambiarTipo('semanal')">
+
+          <i class="bi bi-calendar-week me-1"></i>
+          Semanal
+        </button>
+
+        <button
+          type="button"
+          class="btn-tipo"
+          [class.activo]="tipoReporte === 'mensual'"
+          (click)="cambiarTipo('mensual')">
+
+          <i class="bi bi-calendar-month me-1"></i>
+          Mensual
+        </button>
+
+      </div>
+
+      <!-- FECHA Y BOTON CONSULTAR -->
+      <div class="row g-3 align-items-end">
+
+        <div class="col-md-5 col-lg-4">
+
+          <label class="form-label fw-semibold">
+            Seleccionar fecha
+          </label>
+
+          <input
+            type="date"
+            class="form-control input-fecha"
+            [(ngModel)]="fechaSeleccionada">
+
+          <small class="text-muted">
+            @if (tipoReporte === 'diario') {
+              Se consultará el día seleccionado.
+            } @else if (tipoReporte === 'semanal') {
+              Se consultará de lunes a domingo.
+            } @else {
+              Se consultará todo el mes seleccionado.
+            }
+          </small>
+
+        </div>
+
+        <div class="col-md-auto">
+
+          <button
+            type="button"
+            class="btn btn-consultar"
+            [disabled]="cargando || !fechaSeleccionada"
+            (click)="consultarReporte()">
+
+            <i class="bi bi-search me-1"></i>
+
+            @if (cargando) {
+              Consultando...
+            } @else {
+              Consultar reporte
+            }
+
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ERROR -->
+  @if (errorMensaje) {
+
+    <div class="alert alert-danger mb-4">
+      <i class="bi bi-exclamation-triangle me-2"></i>
+      {{ errorMensaje }}
+    </div>
+
+  }
+
+  <!-- PERIODO -->
+  <div class="periodo-consultado mb-4">
+
+    <div>
+      <small>PERIODO CONSULTADO</small>
+      <h4>{{ obtenerPeriodo() }}</h4>
+    </div>
+
+    <span class="estado-reporte">
+      <i class="bi bi-check-circle me-1"></i>
+      {{ tipoReporte | titlecase }}
+    </span>
+
+  </div>
+
+  <!-- TARJETAS ESTADISTICAS -->
+  <div class="row g-3 mb-4">
+
+    <!-- TOTAL ATENCIONES -->
+    <div class="col-md-4">
+
+      <div class="card tarjeta-estadistica">
+
+        <div class="card-body">
+
+          <div class="d-flex justify-content-between">
+
+            <div>
+              <p>Total de atenciones</p>
+              <h3>{{ totalAtenciones }}</h3>
+            </div>
+
+            <div class="icono-estadistica">
+              <i class="bi bi-clipboard2-pulse"></i>
+            </div>
+
+          </div>
+
+          <small>
+            Atenciones con estado ATENDIDO
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- MEDICOS -->
+    <div class="col-md-4">
+
+      <div class="card tarjeta-estadistica">
+
+        <div class="card-body">
+
+          <div class="d-flex justify-content-between">
+
+            <div>
+              <p>Médicos participantes</p>
+              <h3>{{ totalMedicos }}</h3>
+            </div>
+
+            <div class="icono-estadistica">
+              <i class="bi bi-person-badge"></i>
+            </div>
+
+          </div>
+
+          <small>
+            Médicos con atenciones registradas
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- TIPOS DE PACIENTE -->
+    <div class="col-md-4">
+
+      <div class="card tarjeta-estadistica">
+
+        <div class="card-body">
+
+          <div class="d-flex justify-content-between">
+
+            <div>
+              <p>Tipos de paciente</p>
+              <h3>{{ totalTiposPaciente }}</h3>
+            </div>
+
+            <div class="icono-estadistica">
+              <i class="bi bi-people"></i>
+            </div>
+
+          </div>
+
+          <small>
+            Categorías atendidas en el periodo
+          </small>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- GRAFICOS -->
+  <div class="row g-4 mb-4">
+
+    <!-- GRAFICO DE BARRAS -->
+    <div class="col-lg-7">
+
+      <div class="card tarjeta-grafico h-100">
+
+        <div class="card-body">
+
+          <h5 class="titulo-seccion">
+            <i class="bi bi-bar-chart me-2"></i>
+            {{ obtenerTituloGrafico() }}
+          </h5>
+
+          <p class="descripcion-grafico">
+            Cantidad de atenciones realizadas durante
+            el periodo consultado.
+          </p>
+
+          @if (totalAtenciones > 0) {
+
+            <div class="grafico-barras">
+
+              @for (barra of barras; track $index) {
+
+                <div class="grupo-barra"
+                     [title]="barra.titulo + ': ' + barra.cantidad + ' atenciones'">
+
+                  <div class="barra-pista">
+
+                    <div
+                      class="barra-relleno"
+                      [style.height.%]="barra.altura">
+
+                      @if (barra.cantidad > 0) {
+                        <span class="numero-barra">
+                          {{ barra.cantidad }}
+                        </span>
+                      }
+
+                    </div>
+
+                  </div>
+
+                  <span class="etiqueta-barra">
+                    {{ barra.etiqueta }}
+                  </span>
+
+                </div>
+
+              }
+
+            </div>
+
+          } @else {
+
+            <div class="sin-datos">
+              <i class="bi bi-bar-chart"></i>
+              <p>No hay atenciones para graficar.</p>
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- GRAFICO CIRCULAR -->
+    <div class="col-lg-5">
+
+      <div class="card tarjeta-grafico h-100">
+
+        <div class="card-body">
+
+          <h5 class="titulo-seccion">
+            <i class="bi bi-pie-chart me-2"></i>
+            Atenciones por tipo de paciente
+          </h5>
+
+          <p class="descripcion-grafico">
+            Distribución porcentual de las atenciones.
+          </p>
+
+          @if (totalAtenciones > 0) {
+
+            <div class="contenedor-circular">
+
+              <div
+                class="grafico-circular"
+                [style.background]="graficoCircular">
+
+                <div class="centro-circular">
+
+                  <strong>{{ totalAtenciones }}</strong>
+                  <span>Atenciones</span>
+
+                </div>
+
+              </div>
+
+              <div class="leyenda-circular">
+
+                @for (item of distribucion; track item.tipo) {
+
+                  <div class="item-leyenda">
+
+                    <div class="d-flex align-items-center gap-2">
+
+                      <span
+                        class="color-leyenda"
+                        [style.backgroundColor]="item.color">
+                      </span>
+
+                      <span>{{ item.tipo }}</span>
+
+                    </div>
+
+                    <strong>
+                      {{ item.porcentaje | number:'1.0-2' }}%
+                    </strong>
+
+                  </div>
+
+                }
+
+              </div>
+
+            </div>
+
+          } @else {
+
+            <div class="sin-datos">
+              <i class="bi bi-pie-chart"></i>
+              <p>No hay datos para mostrar.</p>
+            </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- DETALLE DE ATENCIONES -->
+  <div class="card panel-tabla mb-4">
+
+    <div class="card-body">
+
+      <!-- ENCABEZADO DE TABLA -->
+      <div class="d-flex flex-wrap justify-content-between
+                  align-items-center gap-3 mb-3">
+
+        <div>
+
+          <h5 class="titulo-seccion mb-1">
+            <i class="bi bi-table me-2"></i>
+            Detalle de atenciones
+          </h5>
+
+          <p class="descripcion-grafico mb-0">
+            Información agrupada por médico,
+            especialidad y tipo de paciente.
+          </p>
+
+        </div>
+
+        <!-- BUSCADOR -->
+        <div class="search-container">
+
+          <i class="bi bi-search search-icon"></i>
+
+          <input
+            type="text"
+            class="form-control search-input"
+            placeholder="Buscar médico, especialidad o paciente..."
+            [(ngModel)]="busqueda"
+            (input)="filtrarReportes()">
+
+        </div>
+
+      </div>
+
+      <!-- TABLA -->
+      <div class="table-responsive">
+
+        <table class="table table-hover align-middle">
+
+          <thead>
+            <tr>
+              <th>N.º</th>
+              <th>Fecha</th>
+              <th>Médico</th>
+              <th>Especialidad</th>
+              <th>Tipo de paciente</th>
+              <th class="text-center">Atenciones</th>
+              <th class="text-center">Porcentaje</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (r of reportesFiltrados; track $index; let i = $index) {
+
+              <tr>
+
+                <td>{{ i + 1 }}</td>
+
+                <td>
+                  {{ formatearFecha(r.fechaAtencion || r.fecha) }}
+                </td>
+
+                <td>
+                  <span class="nombre-medico">
+                    {{ r.medico }}
+                  </span>
+                </td>
+
+                <td>{{ r.especialidad }}</td>
+
+                <td>
+                  <span class="badge-paciente">
+                    {{ r.tipoPaciente }}
+                  </span>
+                </td>
+
+                <td class="text-center">
+
+                  <span class="badge-cantidad">
+                    {{ r.cantAtenciones }}
+                  </span>
+
+                </td>
+
+                <td class="text-center">
+
+                  <span class="porcentaje">
+                    {{ r.porcentaje | number:'1.0-2' }}%
+                  </span>
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+
+                <td colspan="7" class="text-center py-5">
+
+                  @if (cargando) {
+
+                    <span>
+                      Consultando atenciones...
+                    </span>
+
+                  } @else if (busqueda) {
+
+                    No se encontraron resultados con
+                    "{{ busqueda }}".
+
+                  } @else {
+
+                    No existen atenciones registradas
+                    para el periodo seleccionado.
+
+                  }
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+      <!-- PIE DE TABLA -->
+      <div class="pie-tabla">
+
+        <span>
+          Registros encontrados:
+          <strong>{{ reportesFiltrados.length }}</strong>
+        </span>
+
+        <span>
+          Total de atenciones del periodo:
+          <strong>{{ totalAtenciones }}</strong>
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

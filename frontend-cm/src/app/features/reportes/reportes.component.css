@@ -1,0 +1,573 @@
+
+/* ==========================================
+   RF-25: REPORTES DE GESTION
+   ========================================== */
+
+.reportes-container {
+  max-width: 1450px;
+  padding: 30px 20px 50px;
+}
+
+/* ENCABEZADO */
+
+.encabezado {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+h2 {
+  color: #075477;
+  font-size: 27px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitulo {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 6px;
+  margin-bottom: 0;
+}
+
+.badge-reporte {
+  background-color: #e5f4fc;
+  color: #075477;
+  border: 1px solid #c9e4f2;
+  padding: 9px 14px;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* ==========================================
+   PANEL DE FILTROS
+   ========================================== */
+
+.panel-filtros,
+.panel-tabla,
+.tarjeta-grafico {
+  border: 1px solid #dceaf2;
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgba(7, 84, 119, 0.05);
+  background: white;
+}
+
+.panel-filtros .card-body,
+.panel-tabla .card-body,
+.tarjeta-grafico .card-body {
+  padding: 22px;
+}
+
+.titulo-seccion {
+  color: #075477;
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+/* BOTONES DE TIPO DE REPORTE */
+
+.tipos-reporte {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.btn-tipo {
+  background-color: #f5f9fc;
+  border: 1px solid #cbdce7;
+  color: #075477;
+  border-radius: 7px;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btn-tipo:hover {
+  border-color: #329bc2;
+  background-color: #e5f4fc;
+}
+
+.btn-tipo.activo {
+  background-color: #075477;
+  border-color: #075477;
+  color: white;
+}
+
+/* FECHA */
+
+.input-fecha {
+  padding: 10px 12px;
+  border: 1px solid #cbdce7;
+  border-radius: 7px;
+}
+
+.input-fecha:focus {
+  border-color: #329bc2;
+  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
+}
+
+/* BOTON CONSULTAR */
+
+.btn-consultar {
+  background-color: #075477;
+  color: white;
+  border: 1px solid #075477;
+  padding: 10px 20px;
+  border-radius: 7px;
+  font-weight: 600;
+  min-height: 44px;
+}
+
+.btn-consultar:hover {
+  background-color: #329bc2;
+  border-color: #329bc2;
+  color: white;
+}
+
+.btn-consultar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   PERIODO CONSULTADO
+   ========================================== */
+
+.periodo-consultado {
+  background: #e5f4fc;
+  border: 1px solid #c9e4f2;
+  border-radius: 10px;
+  padding: 20px 24px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+
+.periodo-consultado small {
+  color: #718096;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.periodo-consultado h4 {
+  color: #075477;
+  font-weight: 700;
+  margin: 6px 0 0;
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.estado-reporte {
+  color: #075477;
+  font-size: 13px;
+  font-weight: 600;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 20px;
+}
+
+/* ==========================================
+   TARJETAS ESTADISTICAS
+   ========================================== */
+
+.tarjeta-estadistica {
+  background: white;
+  border: 1px solid #dceaf2;
+  border-radius: 10px;
+  height: 100%;
+  box-shadow: 0 3px 12px rgba(7, 84, 119, 0.05);
+}
+
+.tarjeta-estadistica .card-body {
+  padding: 22px;
+}
+
+.tarjeta-estadistica p {
+  color: #718096;
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.tarjeta-estadistica h3 {
+  color: #075477;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 12px;
+}
+
+.tarjeta-estadistica small {
+  color: #718096;
+  font-size: 12px;
+}
+
+.icono-estadistica {
+  width: 48px;
+  height: 48px;
+  background-color: #e5f4fc;
+  color: #329bc2;
+  border-radius: 10px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 23px;
+}
+
+/* ==========================================
+   GRAFICOS
+   ========================================== */
+
+.descripcion-grafico {
+  color: #718096;
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.tarjeta-grafico {
+  min-height: 350px;
+}
+
+/* GRAFICO DE BARRAS */
+
+.grafico-barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  height: 245px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  border-bottom: 1px solid #cbdce7;
+  padding: 15px 5px 0;
+}
+
+.grupo-barra {
+  min-width: 48px;
+  flex: 1;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.barra-pista {
+  width: 100%;
+  height: 190px;
+
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.barra-relleno {
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    #329bc2 0%,
+    #075477 100%
+  );
+
+  width: 70%;
+  max-width: 52px;
+
+  min-height: 0;
+  border-radius: 5px 5px 0 0;
+
+  transition: height 0.3s ease;
+}
+
+.numero-barra {
+  position: absolute;
+  bottom: calc(100% + 5px);
+  left: 50%;
+  transform: translateX(-50%);
+
+  color: #075477;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.etiqueta-barra {
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+  padding-bottom: 8px;
+
+  color: #52677b;
+  text-align: center;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   GRAFICO CIRCULAR
+   ========================================== */
+
+.contenedor-circular {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 10px 0;
+}
+
+.grafico-circular {
+  width: 190px;
+  height: 190px;
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  flex-shrink: 0;
+}
+
+.centro-circular {
+  width: 115px;
+  height: 115px;
+  border-radius: 50%;
+  background-color: white;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.centro-circular strong {
+  color: #075477;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.centro-circular span {
+  color: #718096;
+  font-size: 12px;
+}
+
+.leyenda-circular {
+  width: 100%;
+  max-width: 350px;
+}
+
+.item-leyenda {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  color: #52677b;
+  font-size: 13px;
+  padding: 8px 0;
+
+  border-bottom: 1px solid #edf2f7;
+}
+
+.item-leyenda strong {
+  color: #075477;
+}
+
+.color-leyenda {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+/* ==========================================
+   TABLA DE ATENCIONES
+   ========================================== */
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 13px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #329bc2;
+}
+
+.search-input {
+  padding: 11px 12px 11px 40px;
+  border: 1px solid #cbdce7;
+  border-radius: 7px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  border-color: #329bc2;
+  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
+}
+
+.table {
+  border: 1px solid #dceaf2;
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+.table thead th {
+  background-color: #e5f4fc !important;
+  color: #075477;
+  font-weight: 700;
+  padding: 15px 12px;
+  border-bottom: 2px solid #c9e4f2;
+  white-space: nowrap;
+}
+
+.table tbody td {
+  color: #334e68;
+  padding: 13px 12px;
+  vertical-align: middle;
+}
+
+.table tbody tr:hover td {
+  background-color: #f1f8fc;
+}
+
+.nombre-medico {
+  color: #075477;
+  font-weight: 600;
+}
+
+.badge-paciente {
+  background-color: #e5f4fc;
+  color: #075477;
+  border: 1px solid #c9e4f2;
+  padding: 5px 9px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.badge-cantidad {
+  background-color: #e9f5fa;
+  color: #075477;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 700;
+}
+
+.porcentaje {
+  color: #075477;
+  font-weight: 700;
+}
+
+/* PIE DE TABLA */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  margin-top: 18px;
+  padding-top: 14px;
+
+  border-top: 1px solid #dceaf2;
+
+  color: #718096;
+  font-size: 13px;
+}
+
+.pie-tabla strong {
+  color: #075477;
+}
+
+/* ESTADO SIN DATOS */
+
+.sin-datos {
+  min-height: 230px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  color: #94a3b8;
+}
+
+.sin-datos i {
+  font-size: 45px;
+  margin-bottom: 12px;
+}
+
+.sin-datos p {
+  font-size: 14px;
+  text-align: center;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+  .reportes-container {
+    padding: 15px 12px 35px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .encabezado {
+    align-items: flex-start;
+  }
+
+  .panel-filtros .card-body,
+  .panel-tabla .card-body,
+  .tarjeta-grafico .card-body {
+    padding: 16px;
+  }
+
+  .tipos-reporte {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .btn-tipo {
+    padding: 10px 5px;
+    font-size: 12px;
+  }
+
+  .periodo-consultado {
+    padding: 16px;
+  }
+
+  .periodo-consultado h4 {
+    font-size: 17px;
+  }
+
+  .table {
+    font-size: 12px;
+  }
+
+  .grafico-circular {
+    width: 165px;
+    height: 165px;
+  }
+
+  .centro-circular {
+    width: 100px;
+    height: 100px;
+  }
+
+}

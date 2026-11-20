@@ -192,6 +192,14 @@ export const routes: Routes = [
             },
 
             {
+                path: 'reportes',
+                loadComponent: () =>
+                    import('./features/reportes/reportes.component')
+                        .then(m => m.ReportesComponent)
+            },
+
+
+            {
                 path: '',
                 redirectTo: 'home',
                 pathMatch: 'full'

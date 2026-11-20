@@ -2,17 +2,9 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 
-import {
-  Paciente,
-  FondoEstudiantil,
-  Medico,
-  Horario,
-  Cita
-} from '../interfaces/portal-paciente.interface';
+import {Paciente,FondoEstudiantil,Medico,Horario,Cita} from '../interfaces/portal-paciente.interface';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({providedIn: 'root'})
 export class PortalPacienteService {
 
   private http = inject(HttpClient);
