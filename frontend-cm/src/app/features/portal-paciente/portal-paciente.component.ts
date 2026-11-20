@@ -461,7 +461,7 @@ export class PortalPaciente implements OnInit {
     return this.inicioDias > 0;
   }
 
-  get puedeAvanzar(): boolean {
+  get puedeAvanzar(): boolean { 
 
     return (
       this.inicioDias + this.diasPorPagina <

@@ -2,11 +2,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { CitaService } from '../../../core/services/cita.service';
 import { Cita } from '../../../core/interfaces/cita.interface';
 import { AlertService } from '../../../core/services/alert.service';
-import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-triaje-list',
@@ -23,6 +23,7 @@ export class TriajeListComponent implements OnInit {
   citas: Cita[] = [];
   citasFiltradas: Cita[] = [];
   citasCriticas: Cita[] = [];
+
   mostrarSoloCriticas = false;
 
   citaSeleccionada: Cita | null = null;
@@ -33,7 +34,7 @@ export class TriajeListComponent implements OnInit {
   guardando = false;
   errorCarga = false;
 
-  // Datos del formulario
+  // DATOS DEL FORMULARIO
   temperatura: number | null = null;
   presion: number | null = null;
   frecuenciaCardiaca: number | null = null;
@@ -46,47 +47,86 @@ export class TriajeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarCitas();
-    this.cargarCriticas();
   }
+
+  // ==========================================
+  // CANTIDAD DE ALERTAS EN CITAS DE TRIAJE
+  // ==========================================
+
+  get cantidadAlertas(): number {
+
+    const ids = new Set(
+      this.citasCriticas
+        .map(c => c.idCita)
+        .filter(id => id != null)
+    );
+
+    return this.citas.filter(c =>
+      c.idCita != null && ids.has(c.idCita)
+    ).length;
+  }
+
+  // ==========================================
+  // CONSULTAR ALERTAS CONFIGURADAS
+  // ==========================================
 
   cargarCriticas(): void {
-    this.citaService.getAlertasTriaje(38.0, 120.0).subscribe({
-      next: (data) => {
-        this.citasCriticas = data;
-      },
-      error: () => {}
-    });
+
+    this.citaService.getAlertasTriaje(38.0, 120.0)
+      .subscribe({
+
+        next: (data) => {
+          this.citasCriticas = data;
+          this.filtrarCitas();
+        },
+
+        error: () => {
+          this.citasCriticas = [];
+          this.mostrarSoloCriticas = false;
+          this.filtrarCitas();
+        }
+
+      });
   }
 
-  // Listar pacientes pendientes de triaje
+  // ==========================================
+  // LISTAR CITAS EN TRIAJE
+  // ==========================================
+
   listarCitas(): void {
 
-    if (this.cargando) return;
+    if (this.cargando) {
+      return;
+    }
 
     this.cargando = true;
     this.errorCarga = false;
-    this.cargarCriticas();
 
     this.citaService.getCitas().subscribe({
 
       next: (data) => {
 
         this.citas = data.filter(cita =>
-          String(cita.estado ?? '').trim().toUpperCase() === 'TRIAJE'
+          String(cita.estado ?? '')
+            .trim()
+            .toUpperCase() === 'TRIAJE'
         );
 
         this.citas.sort((a, b) => {
 
-          const fechaA = `${a.fechaCita} ${a.horaCita}`;
-          const fechaB = `${b.fechaCita} ${b.horaCita}`;
+          const fechaA =
+            `${a.fechaCita} ${a.horaCita}`;
+
+          const fechaB =
+            `${b.fechaCita} ${b.horaCita}`;
 
           return fechaA.localeCompare(fechaB);
-
         });
 
         this.filtrarCitas();
         this.cargando = false;
 
+        this.cargarCriticas();
       },
 
       error: (err) => {
@@ -99,36 +139,66 @@ export class TriajeListComponent implements OnInit {
         this.alertService.error(
           'No se pudieron cargar los pacientes pendientes de triaje'
         );
-
       }
 
     });
-
   }
 
-  // Buscar pacientes
+  // ==========================================
+  // FILTRAR CITAS
+  // ==========================================
+
   filtrarCitas(): void {
 
     const texto = this.busqueda.trim().toLowerCase();
-    const fuente = this.mostrarSoloCriticas ? this.citasCriticas : this.citas;
+
+    const idsAlertas = new Set(
+      this.citasCriticas
+        .map(c => c.idCita)
+        .filter(id => id != null)
+    );
+
+    const fuente = this.mostrarSoloCriticas
+      ? this.citas.filter(c =>
+          c.idCita != null && idsAlertas.has(c.idCita)
+        )
+      : this.citas;
 
     this.citasFiltradas = fuente.filter(cita => {
 
+      const paciente =
+        (cita.paciente ?? '').toLowerCase();
+
+      const motivo =
+        (cita.motivoConsulta ?? '').toLowerCase();
+
+      const fecha = String(cita.fechaCita ?? '');
+
       return (
-        (cita.paciente ?? '').toLowerCase().includes(texto) ||
-        (cita.motivoConsulta ?? '').toLowerCase().includes(texto)
+        paciente.includes(texto) ||
+        motivo.includes(texto) ||
+        fecha.includes(texto)
       );
 
     });
-
   }
 
+  // ==========================================
+  // MOSTRAR / OCULTAR ALERTAS
+  // ==========================================
+
   alternarCriticas(): void {
-    this.mostrarSoloCriticas = !this.mostrarSoloCriticas;
+
+    this.mostrarSoloCriticas =
+      !this.mostrarSoloCriticas;
+
     this.filtrarCitas();
   }
 
-  // Seleccionar paciente
+  // ==========================================
+  // SELECCIONAR CITA
+  // ==========================================
+
   seleccionarCita(cita: Cita): void {
 
     this.citaSeleccionada = cita;
@@ -136,16 +206,19 @@ export class TriajeListComponent implements OnInit {
     this.temperatura = cita.temperatura;
     this.presion = cita.presion;
     this.frecuenciaCardiaca = cita.frecuenciaCardiaca;
-    this.frecuenciaRespiratoria = cita.frecuenciaRespiratoria;
+    this.frecuenciaRespiratoria =
+      cita.frecuenciaRespiratoria;
 
     this.peso = cita.peso;
     this.talla = cita.talla;
 
     this.motivoEmergencia = '';
-
   }
 
-  // Limpiar formulario
+  // ==========================================
+  // CANCELAR FORMULARIO
+  // ==========================================
+
   cancelar(): void {
 
     this.citaSeleccionada = null;
@@ -159,10 +232,12 @@ export class TriajeListComponent implements OnInit {
     this.talla = null;
 
     this.motivoEmergencia = '';
-
   }
 
-  // Validar que los valores ingresados sean correctos
+  // ==========================================
+  // VALIDAR VALORES
+  // ==========================================
+
   private validarValores(): boolean {
 
     const valores = [
@@ -176,24 +251,29 @@ export class TriajeListComponent implements OnInit {
 
     for (const valor of valores) {
 
-      if (valor !== null &&
-          (!Number.isFinite(Number(valor)) || Number(valor) <= 0)) {
+      if (
+        valor !== null &&
+        (
+          !Number.isFinite(Number(valor)) ||
+          Number(valor) <= 0
+        )
+      ) {
 
         this.alertService.error(
           'Los valores registrados deben ser mayores que cero'
         );
 
         return false;
-
       }
-
     }
 
     return true;
-
   }
 
-  // Guardar evaluación de triaje
+  // ==========================================
+  // GUARDAR EVALUACION DE TRIAJE
+  // ==========================================
+
   guardarTriaje(): void {
 
     if (!this.citaSeleccionada || this.guardando) {
@@ -218,7 +298,8 @@ export class TriajeListComponent implements OnInit {
       temperatura: this.temperatura,
       presion: this.presion,
       frecuenciaCardiaca: this.frecuenciaCardiaca,
-      frecuenciaRespiratoria: this.frecuenciaRespiratoria,
+      frecuenciaRespiratoria:
+        this.frecuenciaRespiratoria,
 
       peso: this.peso,
       talla: this.talla,
@@ -258,12 +339,14 @@ export class TriajeListComponent implements OnInit {
         this.cancelar();
         this.guardando = false;
         this.listarCitas();
-
       },
 
       error: (err) => {
 
-        console.error('Error al guardar triaje:', err);
+        console.error(
+          'Error al guardar triaje:',
+          err
+        );
 
         this.alertService.error(
           err.error?.message ||
@@ -271,15 +354,15 @@ export class TriajeListComponent implements OnInit {
         );
 
         this.guardando = false;
-
       }
 
     });
-
   }
 
+  // ==========================================
+  // ACTUALIZAR LISTADO
+  // ==========================================
 
-  // Actualizar listado
   actualizar(): void {
     this.listarCitas();
   }

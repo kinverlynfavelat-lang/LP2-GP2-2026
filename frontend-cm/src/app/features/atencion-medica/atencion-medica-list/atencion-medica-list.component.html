@@ -1,95 +1,313 @@
 
-<div class="container py-4">
+<div class="container atencion-container mt-4 mb-5">
 
-  <div class="d-flex justify-content-between align-items-center
-              flex-wrap gap-3 mb-4">
+  <!-- ========================================== -->
+  <!-- ENCABEZADO -->
+  <!-- ========================================== -->
+
+  <div class="encabezado-pagina">
+
     <div>
-      <h2 class="titulo-pagina mb-1">
-        <i class="bi bi-clipboard2-pulse me-2"></i>
+
+      <h2 class="titulo-pagina">
         Atención médica
       </h2>
-      <p class="text-muted mb-0">
-        Pacientes pendientes de atención médica.
+
+      <p class="subtitulo-pagina">
+        Consulta y atiende a los pacientes pendientes
+        de atención médica.
       </p>
+
     </div>
 
-    <button class="btn btn-outline-primary"
-            (click)="cargarCitas()"
-            [disabled]="cargando">
-      <i class="bi bi-arrow-clockwise me-1"></i>
+    <button
+      type="button"
+      class="btn btn-actualizar"
+      (click)="cargarCitas()"
+      [disabled]="cargando">
+
+      <i class="bi bi-arrow-clockwise me-2"></i>
       Actualizar
+
     </button>
+
   </div>
 
-  <div class="card border-0 shadow-sm">
-    <div class="card-header bg-white py-3">
-      <h5 class="mb-0">
-        <i class="bi bi-people me-2"></i>
-        Pacientes por atender
-        <span class="badge bg-primary ms-2">
-          {{ citas.length }}
-        </span>
-      </h5>
+  <!-- ========================================== -->
+  <!-- CONTADOR Y BUSCADOR -->
+  <!-- ========================================== -->
+
+  <div class="barra-herramientas">
+
+    <div class="contador-atenciones">
+
+      <i class="bi bi-clipboard2-pulse"></i>
+
+      <span>
+        <strong>{{ citasFiltradas.length }}</strong>
+        citas pendientes de atención
+      </span>
+
     </div>
 
-    <div class="card-body p-0">
+    <div class="buscador-atenciones">
 
-      <div *ngIf="cargando" class="text-center py-5">
-        <div class="spinner-border text-primary"></div>
-        <p class="mt-2 text-muted">Cargando pacientes...</p>
+      <div class="search-box">
+
+        <i class="bi bi-search search-icon"></i>
+
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar paciente, médico, fecha o motivo..."
+          aria-label="Buscar por paciente, médico, fecha, hora o motivo"
+          [(ngModel)]="busqueda"
+          (input)="filtrarCitas()">
+
       </div>
 
-      <div *ngIf="!cargando && citas.length === 0"
-           class="text-center py-5 text-muted">
-        <i class="bi bi-clipboard-check fs-1"></i>
-        <p class="mt-2 mb-0">
-          No hay pacientes pendientes de atención.
-        </p>
+    </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
+
+  @if (cargando) {
+
+    <div class="estado-vacio">
+
+      <div
+        class="spinner-border text-primary mb-3"
+        role="status">
       </div>
 
-      <div *ngIf="!cargando && citas.length > 0"
-           class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
-          <thead>
+      <p>Cargando pacientes pendientes de atención...</p>
+
+    </div>
+
+  } @else if (errorCarga) {
+
+    <!-- ERROR DE CARGA -->
+
+    <div class="estado-vacio">
+
+      <i class="bi bi-exclamation-circle icono-vacio"></i>
+
+      <h6>
+        No se pudo cargar la información
+      </h6>
+
+      <p>
+        Intenta actualizar nuevamente el listado.
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-actualizar mt-3"
+        (click)="cargarCitas()">
+
+        Reintentar
+
+      </button>
+
+    </div>
+
+  } @else {
+
+    <!-- ========================================== -->
+    <!-- TABLA DE ATENCIONES -->
+    <!-- ========================================== -->
+
+    <div class="tabla-atenciones table-responsive">
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+
+          <tr>
+            <th>N.º</th>
+            <th>Paciente</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Médico</th>
+            <th>Motivo de consulta</th>
+            <th>Estado</th>
+            <th class="text-center">Acción</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+            cita of citasFiltradas;
+            track cita.idCita;
+            let i = $index
+          ) {
+
             <tr>
-              <th>N.º</th>
-              <th>Paciente</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Médico</th>
-              <th>Motivo de consulta</th>
-              <th>Estado</th>
-              <th class="text-center">Acción</th>
-            </tr>
-          </thead>
 
-          <tbody>
-            <tr *ngFor="let cita of citas; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td class="fw-semibold">
-                {{ cita.paciente || 'No registrado' }}
-              </td>
-              <td>{{ cita.fechaCita | date:'dd/MM/yyyy' }}</td>
-              <td>{{ cita.horaCita }}</td>
-              <td>{{ cita.medico || 'No asignado' }}</td>
-              <td>{{ cita.motivoConsulta }}</td>
+              <!-- NUMERO -->
               <td>
-                <span class="badge bg-warning text-dark">
-                  Pendiente
+                <span class="numero-fila">
+                  {{ i + 1 }}
                 </span>
               </td>
-              <td class="text-center">
-                <button class="btn btn-sm btn-atender"
-                        (click)="atender(cita)">
-                  <i class="bi bi-clipboard2-check me-1"></i>
-                  Atender
-                </button>
+
+              <!-- PACIENTE -->
+              <td>
+
+                <span class="nombre-paciente">
+                  {{ cita.paciente || 'No registrado' }}
+                </span>
+
               </td>
+
+              <!-- FECHA -->
+              <td>
+
+                <span class="fecha-cita">
+                  {{ formatearFecha(cita.fechaCita) }}
+                </span>
+
+              </td>
+
+              <!-- HORA -->
+              <td>
+
+                <span class="hora-cita">
+                  {{ cita.horaCita || '-' }}
+                </span>
+
+              </td>
+
+              <!-- MEDICO -->
+              <td>
+
+                <span class="nombre-medico">
+                  {{ cita.medico || 'No asignado' }}
+                </span>
+
+              </td>
+
+              <!-- MOTIVO -->
+              <td>
+
+                <span
+                  class="motivo-consulta"
+                  [title]="cita.motivoConsulta || ''">
+
+                  {{ cita.motivoConsulta || 'Sin motivo registrado' }}
+
+                </span>
+
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+
+                <span class="estado-badge">
+                  PENDIENTE
+                </span>
+
+              </td>
+
+              <!-- ACCION -->
+              <td class="text-center">
+
+                <button
+                  type="button"
+                  class="btn btn-atender"
+                  title="Registrar atención médica"
+                  [attr.aria-label]="
+                    'Atender a ' +
+                    (cita.paciente || 'paciente')
+                  "
+                  (click)="atender(cita)">
+
+                  <i class="bi bi-clipboard2-check me-2"></i>
+                  Atender
+
+                </button>
+
+              </td>
+
             </tr>
-          </tbody>
-        </table>
-      </div>
+
+          } @empty {
+
+            <tr>
+
+              <td colspan="8" class="text-center py-5">
+
+                <div class="sin-resultados">
+
+                  <i class="bi bi-clipboard-check"></i>
+
+                  @if (busqueda) {
+
+                    <h6>
+                      No se encontraron coincidencias
+                    </h6>
+
+                    <p>
+                      Prueba buscando por otro paciente,
+                      médico, fecha o motivo de consulta.
+                    </p>
+
+                  } @else {
+
+                    <h6>
+                      No hay citas pendientes de atención
+                    </h6>
+
+                    <p>
+                      Las citas aparecerán cuando
+                      estén en la etapa de triaje.
+                    </p>
+
+                  }
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
 
     </div>
-  </div>
+
+    <!-- ========================================== -->
+    <!-- PIE DE TABLA -->
+    <!-- ========================================== -->
+
+    <div class="pie-tabla">
+
+      <span>
+
+        <i class="bi bi-info-circle me-1"></i>
+
+        Se muestran las citas habilitadas
+        para atención médica.
+
+      </span>
+
+      <span>
+
+        Total pendiente:
+        <strong>{{ citas.length }}</strong>
+
+      </span>
+
+    </div>
+
+  }
+
 </div>

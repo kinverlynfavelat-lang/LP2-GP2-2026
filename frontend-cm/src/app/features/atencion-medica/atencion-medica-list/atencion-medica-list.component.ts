@@ -1,6 +1,7 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { Cita } from '../../../core/interfaces/cita.interface';
@@ -10,7 +11,7 @@ import { AlertService } from '../../../core/services/alert.service';
 @Component({
   selector: 'app-atencion-medica-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './atencion-medica-list.component.html',
   styleUrl: './atencion-medica-list.component.css'
 })
@@ -21,30 +22,155 @@ export class AtencionListComponent implements OnInit {
   private router = inject(Router);
 
   citas: Cita[] = [];
-  cargando = false;
+  citasFiltradas: Cita[] = [];
+
+  busqueda: string = '';
+
+  cargando: boolean = false;
+  errorCarga: boolean = false;
 
   ngOnInit(): void {
     this.cargarCitas();
   }
 
+  // ==========================================
+  // CARGAR CITAS PENDIENTES DE ATENCION
+  // ==========================================
+
   cargarCitas(): void {
+
+    if (this.cargando) {
+      return;
+    }
+
     this.cargando = true;
+    this.errorCarga = false;
 
     this.citaService.getCitas().subscribe({
+
       next: (data) => {
-        this.citas = data.filter(c => c.estado === 'TRIAJE');
+
+        this.citas = data.filter(c =>
+          String(c.estado ?? '')
+            .trim()
+            .toUpperCase() === 'TRIAJE'
+        );
+
+        this.filtrarCitas();
         this.cargando = false;
+
       },
+
       error: (err) => {
-        console.error(err);
-        this.alertService.error('No se pudieron cargar las citas');
+
+        console.error(
+          'Error al cargar citas médicas:',
+          err
+        );
+
+        this.errorCarga = true;
         this.cargando = false;
+
+        this.alertService.error(
+          'No se pudieron cargar las citas'
+        );
+
       }
+
     });
   }
 
-  atender(cita: Cita): void {
-    if (!cita.idCita) return;
-    this.router.navigate(['/atencion/registrar', cita.idCita]);
+  // ==========================================
+  // BUSCAR CITAS
+  // ==========================================
+
+  filtrarCitas(): void {
+
+    const texto = this.busqueda
+      .trim()
+      .toLowerCase();
+
+    if (!texto) {
+
+      this.citasFiltradas = [...this.citas];
+      return;
+
+    }
+
+    this.citasFiltradas = this.citas.filter(c => {
+
+      const paciente =
+        (c.paciente ?? '').toLowerCase();
+
+      const medico =
+        (c.medico ?? '').toLowerCase();
+
+      const motivo =
+        (c.motivoConsulta ?? '').toLowerCase();
+
+      const fecha =
+        String(c.fechaCita ?? '').toLowerCase();
+
+      const fechaFormateada =
+        this.formatearFecha(c.fechaCita);
+
+      const hora =
+        String(c.horaCita ?? '').toLowerCase();
+
+      const estado =
+        String(c.estado ?? '').toLowerCase();
+
+      return (
+        paciente.includes(texto) ||
+        medico.includes(texto) ||
+        motivo.includes(texto) ||
+        fecha.includes(texto) ||
+        fechaFormateada.includes(texto) ||
+        hora.includes(texto) ||
+        estado.includes(texto) ||
+        'pendiente'.includes(texto)
+      );
+
+    });
   }
+
+  // ==========================================
+  // FORMATEAR FECHA
+  // ==========================================
+
+  formatearFecha(
+    fecha: string | null | undefined
+  ): string {
+
+    if (!fecha) {
+      return '-';
+    }
+
+    const partes = fecha
+      .substring(0, 10)
+      .split('-');
+
+    if (partes.length !== 3) {
+      return fecha;
+    }
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
+  }
+
+  // ==========================================
+  // ATENDER PACIENTE
+  // ==========================================
+
+  atender(cita: Cita): void {
+
+    if (!cita.idCita) {
+      return;
+    }
+
+    this.router.navigate([
+      '/atencion/registrar',
+      cita.idCita
+    ]);
+  }
+
 }

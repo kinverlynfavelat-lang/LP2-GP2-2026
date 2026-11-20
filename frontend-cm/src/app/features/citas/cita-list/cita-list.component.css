@@ -1,129 +1,547 @@
-/* CONTENEDOR */
-.container {
-  max-width: 1450px;
-  padding-top: 15px;
+
+/* ==========================================
+   GESTION DE CITAS MEDICAS - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --cita-primario: var(--color-primario, #07577A);
+  --cita-secundario: var(--color-secundario, #43A6CC);
+  --cita-celeste: var(--color-celeste, #E8F5FB);
+  --cita-borde: var(--color-borde, #DCEAF1);
+  --cita-texto: var(--color-texto-oscuro, #263E4D);
+  --cita-muted: var(--color-texto-secundario, #526B7A);
 }
 
-/* TITULO */
-h2 {
-  color: #075477;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.citas-container {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
+
+.titulo-pagina {
+  color: var(--cita-primario);
   font-size: 27px;
   font-weight: 700;
   margin: 0;
 }
 
-/* BOTON NUEVO */
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+/* ==========================================
+   BOTON NUEVA CITA
+   ========================================== */
+
 .btn-nuevo {
-  background-color: #075477;
-  color: #ffffff;
-  border: 1px solid #075477;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
   padding: 10px 17px;
+
+  background-color: var(--cita-primario);
+  color: white;
+
+  border: 1px solid var(--cita-primario);
   border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
 .btn-nuevo:hover {
-  background-color: #329BC2;
-  border-color: #329BC2;
+  background-color: var(--cita-secundario);
+  border-color: var(--cita-secundario);
   color: white;
 }
 
-/* TABLA */
-.table {
-  background-color: white;
-  border: 1px solid #dceaf2;
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 14px;
+/* ==========================================
+   CONTADOR Y BUSCADOR
+   ========================================== */
+
+.barra-herramientas {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 18px;
+  margin-bottom: 18px;
 }
 
-.table thead th {
-  background-color: #E5F4FC;
-  color: #075477;
-  font-weight: 700;
-  padding: 15px 12px;
-  border-bottom: 2px solid #c9e4f2;
+/* CONTADOR */
+
+.contador-citas {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--cita-muted);
+  font-size: 14px;
   white-space: nowrap;
 }
 
-.table tbody td {
-  color: #334e68;
-  padding: 13px 12px;
+.contador-citas i {
+  color: var(--cita-secundario);
+  font-size: 18px;
+}
+
+.contador-citas strong {
+  color: var(--cita-primario);
+  font-weight: 700;
+}
+
+/* BUSCADOR */
+
+.buscador-citas {
+  width: 100%;
+  max-width: 410px;
+  margin-left: auto;
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
+  color: var(--cita-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 14px 10px 42px;
+
+  background-color: #ffffff;
+  color: var(--cita-texto);
+
+  border: 1px solid #cbdce7;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8ba0ac;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--cita-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   TABLA DE CITAS
+   ========================================== */
+
+.tabla-citas {
+  width: 100%;
+  max-width: 100%;
+
+  background-color: #ffffff;
+
+  border: 1px solid var(--cita-borde);
+  border-radius: 10px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
+}
+
+.tabla-citas .table {
+  width: 100%;
+  min-width: 1050px;
+
+  --bs-table-bg: #ffffff;
+  --bs-table-hover-bg: #f3f9fc;
+
+  font-size: 14px;
+}
+
+/* ENCABEZADO DE TABLA */
+
+.tabla-citas .table thead th {
+  background-color: var(--cita-celeste) !important;
+  color: var(--cita-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #c9e4f2;
+
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* FILAS */
+
+.tabla-citas .table tbody td {
+  padding: 14px 12px;
+
+  color: var(--cita-texto);
+  border-bottom: 1px solid #e7eff4;
+
   vertical-align: middle;
 }
 
-.table tbody tr:hover {
-  background-color: #f1f8fc;
+.tabla-citas .table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* EDITAR */
-.btn-editar {
-  background-color: #329BC2;
-  color: white;
-  border: 1px solid #329BC2;
+/* ==========================================
+   DATOS DE LA TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526b7a;
+  font-size: 13px;
+}
+
+.nombre-paciente {
+  color: #263E4D;
   font-weight: 600;
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+.nombre-medico {
+  color: #344f60;
+  line-height: 1.5;
+}
+
+
+.fecha-cita {
+  color: #526B7A;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hora-cita {
+  color: #607f90;
+  white-space: nowrap;
+}
+
+.motivo-cita {
+  display: block;
+  max-width: 330px;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  color: #526b7a;
+}
+
+/* ==========================================
+   ESTADOS - DISEÑO MINIMALISTA UPeU
+   ========================================== */
+
+/* ESTADOS - PALETA UPeU SALUD */
+
+.estado-badge,
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 11px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+/* RECEPCION - AZUL */
+.estado-recepcion,
+.badge-recepcion {
+  background-color: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
+}
+
+/* TRIAJE - DORADO SUAVE */
+.estado-triaje,
+.badge-triaje {
+  background-color: #F8F0DE;
+  color: #8B682A;
+  border-color: #EEDFBF;
+}
+
+/* ATENDIDO - VERDE */
+.estado-atendido,
+.badge-atendido {
+  background-color: #E5F3E9;
+  color: #287448;
+  border-color: #CBE8D4;
+}
+
+/* ANULADO - ROJO SUAVE */
+.estado-anulado,
+.badge-anulado {
+  background-color: #F8E9EB;
+  color: #A54953;
+  border-color: #F0D5D9;
+}
+
+/* DERIVADO - AZUL LAVANDA */
+.estado-derivado,
+.badge-derivado {
+  background-color: #EBEFF8;
+  color: #536A91;
+  border-color: #DAE2F2;
+}
+
+/* INASISTENCIA - GRIS */
+.estado-inasistencia,
+.badge-inasistencia {
+  background-color: #EDF1F4;
+  color: #647582;
+  border-color: #DCE4E9;
+}
+
+/* ==========================================
+   ACCIONES - ESTILO MINIMALISTA UPeU
+   ========================================== */
+
+.acciones-cita {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+/* EDITAR - AZUL INSTITUCIONAL */
+
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #07577A;
+  color: #ffffff;
+
+  border: 1px solid #07577A;
+  border-radius: 7px;
+
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 500;
+
+  transition: all 0.2s ease;
 }
 
 .btn-editar:hover {
-  background-color: #075477;
-  color: white;
+  background-color: #09688F;
+  border-color: #09688F;
+  color: #ffffff;
 }
 
-/* ANULAR */
+
+/* ANULAR - ROJO PASTEL ELEGANTE */
+
 .btn-eliminar {
-  background-color: #ffffff;
-  color: #c44b55;
-  border: 1px solid #e5aeb3;
+  background-color: #F7DDE1;
+  color: #A63F4C;
+  border: 1px solid #E7A4AE;
+  border-radius: 7px;
+  padding: 7px 12px;
+  font-size: 12px;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
 .btn-eliminar:hover {
-  background-color: #c44b55;
-  color: white;
+  background-color: #EFC5CB;
+  color: #8F303D;
+  border-color: #D78591;
 }
 
-/* ESTADOS */
-.estado-badge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 5px;
+.btn-eliminar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+
+/* CITAS FINALIZADAS */
+
+.texto-sin-acciones {
+  color: #8798a3;
   font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* SIN ACCIONES */
+
+.texto-sin-acciones {
+  display: inline-block;
+
+  color: #8195a3;
+  font-size: 12px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+  padding: 15px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--cita-primario);
+}
+
+/* ==========================================
+   ESTADOS VACIOS
+   ========================================== */
+
+.estado-vacio {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  text-align: center;
+
+  color: #8296a5;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.sin-resultados i {
+  display: block;
+  color: #a2b4bf;
+
+  font-size: 34px;
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--cita-primario);
   font-weight: 700;
-  background-color: #e5f4fc;
-  color: #075477;
+  margin-bottom: 8px;
 }
 
-.estado-atendido {
-  background-color: #d9f2e4;
-  color: #187345;
+.sin-resultados p {
+  color: #8195a3;
+  font-size: 13px;
+  margin: 0;
 }
 
-.estado-anulado {
-  background-color: #fce4e4;
-  color: #b42332;
-}
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 
-.estado-derivado {
-  background-color: #fff0d5;
-  color: #996000;
-}
-
-.estado-inasistencia {
-  background-color: #eeeeee;
-  color: #555555;
-}
-
-/* RESPONSIVE */
 @media (max-width: 768px) {
-  .container {
+
+  .citas-container {
     padding: 12px;
   }
 
-  h2 {
+  .titulo-pagina {
     font-size: 22px;
   }
 
-  .table {
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .buscador-citas {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .tabla-citas .table {
     font-size: 12px;
   }
+
+  .pie-tabla {
+    align-items: flex-start;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-nuevo {
+    width: 100%;
+  }
+
+  .acciones-cita {
+    gap: 6px;
+  }
+
 }

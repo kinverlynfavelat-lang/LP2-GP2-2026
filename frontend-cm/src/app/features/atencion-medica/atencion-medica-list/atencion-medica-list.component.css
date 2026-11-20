@@ -1,165 +1,505 @@
 
-/* LISTADO DE ATENCIÓN MÉDICA */
+/* ==========================================
+   ATENCION MEDICA - UPeU SALUD
+   ========================================== */
 
 :host {
   display: block;
-  --azul: #075779;
-  --azul-oscuro: #06445f;
-  --celeste: #eaf4f8;
-  --borde: #e2eaf0;
+
+  --atencion-primario: var(--color-primario, #07577A);
+  --atencion-secundario: var(--color-secundario, #43A6CC);
+  --atencion-celeste: var(--color-celeste, #E8F5FB);
+  --atencion-borde: var(--color-borde, #DCEAF1);
+  --atencion-texto: var(--color-texto-oscuro, #263E4D);
+  --atencion-muted: var(--color-texto-secundario, #526B7A);
 }
 
-.container {
-  max-width: 1350px;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.atencion-container {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
 }
 
-/* ENCABEZADO */
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
 
 .titulo-pagina {
-  color: #075779;
+  color: var(--atencion-primario);
   font-size: 27px;
-  font-weight: 750;
-  letter-spacing: -0.5px;
-}
-
-.titulo-pagina i {
-  color: #1685ac;
-}
-
-.text-muted {
-  color: #718096 !important;
-}
-
-/* TARJETA PRINCIPAL */
-
-.card {
-  border-radius: 15px;
-  overflow: hidden;
-  background: #ffffff;
-  box-shadow: 0 5px 22px rgba(7, 87, 121, .07) !important;
-}
-
-.card-header {
-  background: #ffffff !important;
-  border-bottom: 1px solid #e7edf2;
-  padding: 20px 23px !important;
-}
-
-.card-header h5 {
-  color: #075779;
-  font-size: 17px;
   font-weight: 700;
+  margin: 0;
+}
+
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
+
+.btn-actualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 10px 17px;
+
+  background-color: var(--atencion-primario);
+  color: #ffffff;
+
+  border: 1px solid var(--atencion-primario);
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-actualizar:hover {
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #ffffff;
+}
+
+.btn-actualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   CONTADOR Y BUSCADOR
+   ========================================== */
+
+.barra-herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  gap: 18px;
+  margin-bottom: 18px;
 }
 
 /* CONTADOR */
 
-.card-header .badge {
-  background: #e1f2fa !important;
-  color: #075779;
-  font-size: 12px;
-  padding: 7px 11px;
-  border-radius: 8px;
-}
+.contador-atenciones {
+  display: flex;
+  align-items: center;
+  gap: 9px;
 
-/* TABLA */
-
-.table {
-  margin-bottom: 0;
-}
-
-.table thead th {
-  background: #edf6fa;
-  color: #075779;
-  font-size: 12px;
-  font-weight: 700;
-  padding: 17px 15px;
-  border-bottom: 1px solid #dbeaf1;
+  color: var(--atencion-muted);
+  font-size: 14px;
   white-space: nowrap;
 }
 
-.table tbody td {
-  color: #344457;
+.contador-atenciones i {
+  color: var(--atencion-secundario);
+  font-size: 18px;
+}
+
+.contador-atenciones strong {
+  color: var(--atencion-primario);
+  font-weight: 700;
+}
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-atenciones {
+  width: 100%;
+  max-width: 410px;
+  margin-left: auto;
+}
+
+.search-box {
+  position: relative;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
+  color: var(--atencion-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  display: block;
+
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 14px 10px 42px;
+
+  background-color: #ffffff;
+  color: var(--atencion-texto);
+
+  border: 1px solid #cbdce7;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8ba0ac;
+}
+
+.search-input:focus {
+  outline: none;
+
+  border-color: var(--atencion-secundario);
+
+  box-shadow:
+    0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   TABLA DE ATENCION
+   ========================================== */
+
+.tabla-atenciones {
+  width: 100%;
+  max-width: 100%;
+
+  background-color: #ffffff;
+
+  border: 1px solid var(--atencion-borde);
+  border-radius: 10px;
+
+  box-shadow:
+    0 3px 12px rgba(7, 87, 122, 0.05);
+}
+
+.tabla-atenciones .table {
+  width: 100%;
+  min-width: 1050px;
+
+  --bs-table-bg: #ffffff;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
+}
+
+/* ==========================================
+   ENCABEZADO DE TABLA
+   ========================================== */
+
+.tabla-atenciones .table thead th {
+  background-color: var(--atencion-celeste) !important;
+  color: var(--atencion-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
   font-size: 13px;
-  padding: 19px 15px;
-  border-bottom: 1px solid #edf1f5;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* ==========================================
+   FILAS DE TABLA
+   ========================================== */
+
+.tabla-atenciones .table tbody td {
+  padding: 14px 12px;
+
+  color: var(--atencion-texto);
+  border-bottom: 1px solid #E7EFF4;
+
   vertical-align: middle;
 }
 
-.table tbody tr:hover td {
-  background: #f5fafc;
+.tabla-atenciones .table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.table tbody tr:last-child td {
-  border-bottom: 0;
+/* ==========================================
+   NUMERO DE FILA
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
 }
 
-.table tbody td.fw-semibold {
-  color: #183c51;
-  font-weight: 700 !important;
-}
+/* ==========================================
+   NOMBRE DEL PACIENTE
+   ========================================== */
 
-/* ESTADO PENDIENTE */
+.nombre-paciente {
+  color: #263E4D;
 
-.table .badge.bg-warning {
-  background: #fff1d6 !important;
-  color: #a96b12 !important;
-  border: 1px solid #f6dfac;
-  font-size: 11px;
-  font-weight: 650;
-  padding: 7px 11px;
-  border-radius: 20px;
-}
-
-/* BOTÓN ATENDER */
-
-.btn-atender {
-  background: #075779;
-  border: 1px solid #075779;
-  color: #ffffff;
+  font-size: 14px;
   font-weight: 600;
-  font-size: 12px;
-  padding: 10px 17px;
-  border-radius: 9px;
-  transition: all .2s ease;
+
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+/* ==========================================
+   FECHA Y HORA
+   ========================================== */
+
+.fecha-cita {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
   white-space: nowrap;
 }
 
-.btn-atender:hover {
-  background: #06445f;
-  border-color: #06445f;
-  color: #ffffff;
-  box-shadow: 0 4px 10px rgba(7, 87, 121, .18);
+.hora-cita {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-/* BOTÓN ACTUALIZAR */
+/* ==========================================
+   NOMBRE DEL MEDICO
+   ========================================== */
 
-.btn-outline-primary {
-  border-color: #b7d6e5;
-  background: #ffffff;
-  color: #075779;
-  border-radius: 9px;
+.nombre-medico {
+  color: #344F60;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ==========================================
+   MOTIVO DE CONSULTA
+   ========================================== */
+
+.motivo-consulta {
+  display: block;
+  max-width: 330px;
+
+  color: #526B7A;
+  font-size: 14px;
+  line-height: 1.5;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   ESTADO PENDIENTE
+   ========================================== */
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  background-color: #F8F0DE;
+  color: #8B682A;
+
+  border: 1px solid #EEDFBF;
+  border-radius: 7px;
+
+  font-size: 11px;
   font-weight: 600;
-  padding: 10px 17px;
+
+  letter-spacing: 0.2px;
+  white-space: nowrap;
 }
 
-.btn-outline-primary:hover {
-  background: #075779;
-  border-color: #075779;
-  color: white;
+/* ==========================================
+   BOTON ATENDER
+   ========================================== */
+
+.btn-atender {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 36px;
+  padding: 8px 13px;
+
+  background-color: var(--atencion-primario);
+  color: #ffffff;
+
+  border: 1px solid var(--atencion-primario);
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
 }
 
-/* RESPONSIVE */
+.btn-atender:hover {
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #ffffff;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+  padding: 15px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--atencion-primario);
+  font-weight: 700;
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+
+  text-align: center;
+  color: #8296A5;
+}
+
+.estado-vacio h6 {
+  color: var(--atencion-primario);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.sin-resultados i {
+  display: block;
+
+  color: #A2B4BF;
+  font-size: 34px;
+
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--atencion-primario);
+  font-size: 14px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.sin-resultados p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+.icono-vacio {
+  display: block;
+
+  color: #A2B4BF;
+  font-size: 32px;
+
+  margin-bottom: 12px;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 
 @media (max-width: 768px) {
+
+  .atencion-container {
+    padding: 12px;
+  }
+
   .titulo-pagina {
     font-size: 22px;
   }
 
-  .card-header {
-    padding: 16px !important;
+  .subtitulo-pagina {
+    font-size: 13px;
   }
 
-  .table tbody td {
-    padding: 13px;
+  .encabezado-pagina {
+    align-items: flex-start;
   }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .buscador-atenciones {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .tabla-atenciones .table {
+    font-size: 12px;
+  }
+
+  .pie-tabla {
+    align-items: flex-start;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-actualizar {
+    width: 100%;
+  }
+
 }

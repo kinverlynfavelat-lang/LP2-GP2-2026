@@ -1,144 +1,511 @@
 
-/* CONTENEDOR */
-.container {
-  max-width: 1450px;
-  padding-top: 15px;
+/* ==========================================
+   GESTION DE PACIENTES - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --paciente-primario: var(--color-primario, #07577A);
+  --paciente-secundario: var(--color-secundario, #43A6CC);
+  --paciente-celeste: var(--color-celeste, #E8F5FB);
+  --paciente-borde: var(--color-borde, #DCEAF1);
+  --paciente-texto: var(--color-texto-oscuro, #263E4D);
+  --paciente-muted: var(--color-texto-secundario, #526B7A);
 }
 
-/* TITULO */
-h2 {
-  color: #075477;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.pacientes-container {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.titulo-pagina {
+  color: var(--paciente-primario);
   font-size: 27px;
   font-weight: 700;
   margin: 0;
 }
 
-/* BOTON NUEVO */
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+/* ==========================================
+   BOTON NUEVO PACIENTE
+   ========================================== */
+
 .btn-nuevo {
-  background-color: #075477;
-  color: #ffffff;
-  border: 1px solid #075477;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
   padding: 10px 17px;
+
+  background-color: var(--paciente-primario);
+  color: #ffffff;
+
+  border: 1px solid var(--paciente-primario);
   border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
 .btn-nuevo:hover {
-  background-color: #329BC2;
-  border-color: #329BC2;
-  color: white;
+  background-color: var(--paciente-secundario);
+  border-color: var(--paciente-secundario);
+  color: #ffffff;
 }
 
-/* TABLA */
-.table {
-  background-color: white;
-  border: 1px solid #dceaf2;
-  border-radius: 8px;
-  overflow: hidden;
+/* ==========================================
+   CONTADOR Y BUSCADOR
+   ========================================== */
+
+.barra-herramientas {
+  width: 100%;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+/* CONTADOR */
+
+.contador-pacientes {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--paciente-muted);
   font-size: 14px;
-}
-
-.table thead th {
-  background-color: #E5F4FC !important;
-  color: #075477;
-  font-weight: 700;
-  padding: 15px 12px;
-  border-bottom: 2px solid #c9e4f2;
   white-space: nowrap;
 }
 
-.table tbody td {
-  color: #334e68;
-  padding: 13px 12px;
-  vertical-align: middle;
+.contador-pacientes i {
+  color: var(--paciente-secundario);
+  font-size: 18px;
 }
 
-.table tbody tr:hover {
-  background-color: #f1f8fc;
-}
-
-/* EDITAR */
-.btn-editar {
-  background-color: #329BC2;
-  color: white;
-  border: 1px solid #329BC2;
-  font-weight: 600;
-}
-
-.btn-editar:hover {
-  background-color: #075477;
-  color: white;
-}
-
-/* ELIMINAR */
-.btn-eliminar {
-  background-color: #ffffff;
-  color: #c44b55;
-  border: 1px solid #e5aeb3;
-  font-weight: 600;
-}
-
-.btn-eliminar:hover {
-  background-color: #c44b55;
-  color: white;
-}
-
-/* RESPONSIVE */
-@media (max-width: 768px) {
-  .container {
-    padding: 12px;
-  }
-
-  h2 {
-    font-size: 22px;
-  }
-
-  .table {
-    font-size: 12px;
-  }
+.contador-pacientes strong {
+  color: var(--paciente-primario);
+  font-weight: 700;
 }
 
 /* BUSCADOR */
+
+.buscador-pacientes {
+  width: 100%;
+  max-width: 410px;
+  margin-left: auto;
+}
+
 .search-container {
   position: relative;
-  max-width: 450px;
+  width: 100%;
 }
 
 .search-icon {
   position: absolute;
-  left: 13px;
+  left: 14px;
   top: 50%;
+
   transform: translateY(-50%);
-  color: #329BC2;
+
+  color: var(--paciente-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
 }
 
 .search-input {
-  padding: 11px 12px 11px 40px;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 14px 10px 42px;
+
+  background-color: #ffffff;
+  color: var(--paciente-texto);
+
   border: 1px solid #cbdce7;
-  border-radius: 7px;
+  border-radius: 8px;
+
   font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8ba0ac;
 }
 
 .search-input:focus {
-  border-color: #329BC2;
-  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
+  outline: none;
+  border-color: var(--paciente-secundario);
+
+  box-shadow:
+    0 0 0 3px rgba(67, 166, 204, 0.12);
 }
 
-/* ESTADOS */
-.estado-badge {
-  display: inline-block;
-  padding: 5px 10px;
-  border-radius: 20px;
-  font-size: 11px;
-  font-weight: 700;
+/* ==========================================
+   TABLA DE PACIENTES
+   ========================================== */
+
+.tabla-pacientes {
+  width: 100%;
+  max-width: 100%;
+
+  background-color: #ffffff;
+
+  border: 1px solid var(--paciente-borde);
+  border-radius: 10px;
+
+  box-shadow:
+    0 3px 12px rgba(7, 87, 122, 0.05);
 }
+
+.tabla-pacientes .table {
+  width: 100%;
+  min-width: 1050px;
+
+  --bs-table-bg: #ffffff;
+  --bs-table-hover-bg: #f3f9fc;
+
+  font-size: 14px;
+}
+
+/* ENCABEZADO DE TABLA */
+
+.tabla-pacientes .table thead th {
+  background-color: var(--paciente-celeste) !important;
+  color: var(--paciente-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #c9e4f2;
+
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* FILAS */
+
+.tabla-pacientes .table tbody td {
+  padding: 14px 12px;
+
+  color: var(--paciente-texto);
+
+  border-bottom: 1px solid #e7eff4;
+
+  vertical-align: middle;
+}
+
+.tabla-pacientes .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   DATOS DE LA TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526b7a;
+  font-size: 13px;
+}
+
+.dni-paciente {
+  color: #344f60;
+  font-size: 14px;
+  font-weight: 500;
+
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.nombre-paciente {
+  color: var(--paciente-primario);
+  font-weight: 600;
+  text-transform: capitalize;
+
+  line-height: 1.5;
+}
+
+.tipo-paciente {
+  color: #526b7a;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.correo-paciente {
+  color: #526b7a;
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.telefono-paciente {
+  color: #526b7a;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   ESTADOS
+   ========================================== */
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+
+  border: 1px solid transparent;
+
+  white-space: nowrap;
+}
+
+/* ACTIVO - AZUL INSTITUCIONAL SUAVE */
 
 .estado-activo {
-  background-color: #e5f4fc;
-  color: #075477;
+  background-color: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
 }
 
+/* INACTIVO - GRIS AZULADO */
+
 .estado-inactivo {
-  background-color: #f1f3f5;
-  color: #596773;
+  background-color: #EDF1F4;
+  color: #647582;
+  border-color: #DCE4E9;
+}
+
+/* ==========================================
+   BOTONES DE ACCION
+   ========================================== */
+
+.acciones-paciente {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  white-space: nowrap;
+}
+
+/* EDITAR - AZUL */
+
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 36px;
+
+  background-color: #07577A;
+  color: #ffffff;
+
+  border: 1px solid #07577A;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-editar:hover {
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #ffffff;
+}
+
+/* ELIMINAR - ROJO PASTEL */
+
+.btn-eliminar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 36px;
+
+  background-color: #F7DDE1;
+  color: #A63F4C;
+
+  border: 1px solid #E7A4AE;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-eliminar:hover {
+  background-color: #EFC5CB;
+  color: #8F303D;
+  border-color: #D78591;
+}
+
+.btn-eliminar:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 12px;
+  padding: 15px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--paciente-primario);
+}
+
+/* ==========================================
+   CARGA Y TABLA VACIA
+   ========================================== */
+
+.estado-vacio {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  text-align: center;
+
+  color: #8296a5;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.sin-resultados i {
+  display: block;
+
+  color: #a2b4bf;
+  font-size: 34px;
+
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--paciente-primario);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sin-resultados p {
+  color: #8195a3;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 768px) {
+
+  .pacientes-container {
+    padding: 12px;
+  }
+
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .buscador-pacientes {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .tabla-pacientes .table {
+    font-size: 12px;
+  }
+
+  .pie-tabla {
+    align-items: flex-start;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-nuevo {
+    width: 100%;
+  }
+
+  .acciones-paciente {
+    gap: 6px;
+  }
+
 }

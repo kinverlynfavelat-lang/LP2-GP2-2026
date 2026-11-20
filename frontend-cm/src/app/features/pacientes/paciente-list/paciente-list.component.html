@@ -1,130 +1,309 @@
 
-<div class="container mt-4">
+<div class="container pacientes-container mt-4 mb-5">
 
+  <!-- ========================================== -->
   <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- ========================================== -->
 
-    <h2 class="text-upeu-primary">
-      Gestión de pacientes
-    </h2>
+  <div class="encabezado-pagina">
 
-    <div class="d-flex gap-2">
-      <a routerLink="/historial-pacientes" class="btn btn-outline-primary">
-        <i class="bi bi-journal-medical me-1"></i>
-        Historial de pacientes
-      </a>
+    <div>
 
-      <a routerLink="/pacientes/nuevo" class="btn btn-nuevo">
-        <i class="bi bi-plus-circle me-1"></i>
-        Nuevo paciente
-      </a>
+      <h2 class="titulo-pagina">
+        Gestión de pacientes
+      </h2>
+
+      <p class="subtitulo-pagina">
+        Consulta y administra los pacientes
+        registrados en el centro médico.
+      </p>
+
+    </div>
+
+    <a
+      routerLink="/pacientes/nuevo"
+      class="btn btn-nuevo">
+
+      <i class="bi bi-plus-circle me-2"></i>
+      Nuevo paciente
+
+    </a>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CONTADOR Y BUSCADOR -->
+  <!-- ========================================== -->
+
+  <div class="barra-herramientas">
+
+    <div class="contador-pacientes">
+
+      <i class="bi bi-people"></i>
+
+      <span>
+        <strong>{{ pacientesFiltrados.length }}</strong>
+        pacientes encontrados
+      </span>
+
+    </div>
+
+    <div class="buscador-pacientes">
+
+      <div class="search-container">
+
+        <i class="bi bi-search search-icon"></i>
+
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar por DNI, nombres o apellidos..."
+          aria-label="Buscar pacientes por DNI, nombres o apellidos"
+          [(ngModel)]="busqueda"
+          (input)="filtrarPacientes()">
+
+      </div>
+
     </div>
 
   </div>
 
-  <!-- BUSCADOR -->
-  <div class="d-flex justify-content-end mb-3">
-    <div class="search-container" style="width: 100%; max-width: 350px;">
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
 
-      <i class="bi bi-search search-icon"></i>
+  @if (cargando) {
 
-      <input
-        type="text"
-        class="form-control search-input"
-        placeholder="Buscar por DNI, nombres o apellidos..."
-        [(ngModel)]="busqueda"
-        (input)="filtrarPacientes()">
+    <div class="estado-vacio">
+
+      <div
+        class="spinner-border text-primary mb-3"
+        role="status">
+      </div>
+
+      <p>Cargando pacientes...</p>
 
     </div>
-  </div>
 
-  <!-- TABLA -->
-  <div class="table-responsive">
+  } @else {
 
-    <table class="table table-hover shadow-sm align-middle">
+    <!-- ========================================== -->
+    <!-- TABLA DE PACIENTES -->
+    <!-- ========================================== -->
 
-      <thead>
-        <tr>
-          <th>N.º</th>
-          <th>DNI</th>
-          <th>Paciente</th>
-          <th>Tipo de paciente</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <div class="tabla-pacientes table-responsive">
 
-      <tbody>
+      <table class="table table-hover align-middle mb-0">
 
-        @for (p of pacientesFiltrados; track p.idPersona; let i = $index) {
+        <thead>
 
           <tr>
-
-            <td>{{ i + 1 }}</td>
-
-            <td>{{ p.dni }}</td>
-
-            <td>{{ p.nombres }} {{ p.apellidos }}</td>
-
-            <td>{{ p.tipoPaciente }}</td>
-
-            <td>{{ p.correo }}</td>
-
-            <td>{{ p.telefono }}</td>
-
-            <td>
-              <span class="estado-badge"
-                    [ngClass]="p.estado === 'ACTIVO' ? 'estado-activo' : 'estado-inactivo'">
-                {{ p.estado }}
-              </span>
-            </td>
-
-            <td>
-
-              <a
-                [routerLink]="['/pacientes/editar', p.idPersona]"
-                class="btn btn-sm btn-editar me-2">
-
-                <i class="bi bi-pencil-square me-1"></i>
-                Editar
-
-              </a>
-
-              <button
-                (click)="eliminar(p.idPersona!)"
-                class="btn btn-sm btn-eliminar">
-
-                <i class="bi bi-trash me-1"></i>
-                Eliminar
-
-              </button>
-
-            </td>
-
+            <th>N.º</th>
+            <th>DNI</th>
+            <th>Paciente</th>
+            <th>Tipo de paciente</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
           </tr>
 
-        } @empty {
+        </thead>
 
-          <tr>
-            <td colspan="7" class="text-center py-4">
+        <tbody>
 
-              @if (busqueda) {
-                No se encontraron pacientes con "{{ busqueda }}".
-              } @else {
-                No hay pacientes registrados.
-              }
+          @for (
+            p of pacientesFiltrados;
+            track p.idPersona;
+            let i = $index
+          ) {
 
-            </td>
-          </tr>
+            <tr>
 
-        }
+              <!-- NUMERO -->
+              <td>
+                <span class="numero-fila">
+                  {{ i + 1 }}
+                </span>
+              </td>
 
-      </tbody>
+              <!-- DNI -->
+              <td>
+                <span class="dni-paciente">
+                  {{ p.dni || '-' }}
+                </span>
+              </td>
 
-    </table>
+              <!-- PACIENTE -->
+              <td>
+                <span class="nombre-paciente">
+                  {{ p.nombres }} {{ p.apellidos }}
+                </span>
+              </td>
 
-  </div>
+              <!-- TIPO -->
+              <td>
+                <span class="tipo-paciente">
+                  {{ p.tipoPaciente || '-' }}
+                </span>
+              </td>
+
+              <!-- CORREO -->
+              <td>
+                <span class="correo-paciente">
+                  {{ p.correo || '-' }}
+                </span>
+              </td>
+
+              <!-- TELEFONO -->
+              <td>
+                <span class="telefono-paciente">
+                  {{ p.telefono || '-' }}
+                </span>
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+
+                <span
+                  class="estado-badge"
+                  [ngClass]="
+                    p.estado === 'ACTIVO'
+                      ? 'estado-activo'
+                      : 'estado-inactivo'
+                  ">
+
+                  {{ p.estado || 'SIN ESTADO' }}
+
+                </span>
+
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="text-center">
+
+                <div class="acciones-paciente">
+
+                  <a
+                    [routerLink]="[
+                      '/pacientes/editar',
+                      p.idPersona
+                    ]"
+                    class="btn btn-sm btn-editar"
+                    title="Editar paciente"
+                    [attr.aria-label]="
+                      'Editar paciente ' +
+                      p.nombres + ' ' + p.apellidos
+                    ">
+
+                    <i
+                      class="bi bi-pencil-square"
+                      aria-hidden="true">
+                    </i>
+
+                  </a>
+
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-eliminar"
+                    title="Eliminar paciente"
+                    [attr.aria-label]="
+                      'Eliminar paciente ' +
+                      p.nombres + ' ' + p.apellidos
+                    "
+                    [disabled]="eliminandoId !== null"
+                    (click)="eliminar(p.idPersona!)">
+
+                    @if (eliminandoId === p.idPersona) {
+
+                      <span
+                        class="spinner-border spinner-border-sm"
+                        role="status">
+                      </span>
+
+                    } @else {
+
+                      <i
+                        class="bi bi-trash"
+                        aria-hidden="true">
+                      </i>
+
+                    }
+
+                  </button>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          } @empty {
+
+            <tr>
+
+              <td colspan="8" class="text-center py-5">
+
+                <div class="sin-resultados">
+
+                  <i class="bi bi-people"></i>
+
+                  @if (busqueda) {
+
+                    <h6>
+                      No se encontraron coincidencias
+                    </h6>
+
+                    <p>
+                      Prueba buscando con otro DNI,
+                      nombre o apellido.
+                    </p>
+
+                  } @else {
+
+                    <h6>
+                      No hay pacientes registrados
+                    </h6>
+
+                    <p>
+                      Registra un nuevo paciente
+                      para comenzar.
+                    </p>
+
+                  }
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PIE DE TABLA -->
+    <!-- ========================================== -->
+
+    <div class="pie-tabla">
+
+      <span>
+        <i class="bi bi-info-circle me-1"></i>
+        Directorio administrativo de pacientes.
+      </span>
+
+      <span>
+        Total registrado:
+        <strong>{{ pacientes.length }}</strong>
+      </span>
+
+    </div>
+
+  }
 
 </div>

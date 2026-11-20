@@ -1,278 +1,530 @@
-<div class="container-fluid py-4">
 
-    <!-- ENCABEZADO -->
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+<div class="container-fluid triaje-pagina mt-4 mb-5">
+
+  <!-- ====================================== -->
+  <!-- ENCABEZADO -->
+  <!-- ====================================== -->
+
+  <div class="encabezado-pagina">
+
+    <div>
+
+      <h2 class="titulo-pagina">
+        Gestión de triaje
+      </h2>
+
+      <p class="subtitulo-pagina">
+        Registro y evaluación inicial de pacientes.
+      </p>
+
+    </div>
+
+    <button
+      type="button"
+      class="btn btn-actualizar"
+      (click)="actualizar()"
+      [disabled]="cargando || guardando">
+
+      <i class="bi bi-arrow-clockwise me-2"></i>
+      Actualizar
+
+    </button>
+
+  </div>
+
+  <!-- ====================================== -->
+  <!-- CONTADOR Y BUSCADOR -->
+  <!-- ====================================== -->
+
+  <div class="barra-herramientas">
+
+    <div class="contador-triaje">
+
+      <i class="bi bi-clipboard2-pulse"></i>
+
+      <span>
+        <strong>{{ citas.length }}</strong>
+        citas pendientes de evaluación
+      </span>
+
+    </div>
+
+    <div class="buscador">
+
+      <i class="bi bi-search search-icon"></i>
+
+      <input
+        type="text"
+        class="form-control search-input"
+        placeholder="Buscar paciente, motivo o fecha..."
+        aria-label="Buscar citas por paciente, motivo o fecha"
+        [(ngModel)]="busqueda"
+        (input)="filtrarCitas()">
+
+    </div>
+
+  </div>
+
+  <!-- ====================================== -->
+  <!-- ALERTAS POR UMBRALES -->
+  <!-- ====================================== -->
+
+  @if (cantidadAlertas > 0) {
+
+    <div class="alerta-triaje">
+
+      <div class="alerta-contenido">
+
+        <i class="bi bi-exclamation-circle alerta-icono"></i>
+
         <div>
-            <h2 class="titulo-pagina mb-1">
-                <i class="bi bi-heart-pulse me-2"></i>
-                Gestión de triaje
-            </h2>
-            <p class="text-muted mb-0">
-                Registro y evaluación inicial de pacientes.
-            </p>
+
+          <strong>
+            Alertas de triaje
+          </strong>
+
+          <p>
+            {{ cantidadAlertas }}
+            cita(s) presentan valores que alcanzan
+            los umbrales configurados:
+            temperatura ≥ 38 °C o presión registrada
+            ≥ 120 mmHg. Se requiere revisión clínica.
+          </p>
+
         </div>
 
-        <button class="btn btn-actualizar" type="button" (click)="actualizar()" [disabled]="cargando || guardando">
-            <i class="bi bi-arrow-clockwise me-2"></i>
-            Actualizar
-        </button>
-    </div>
+      </div>
 
-    <!-- RESUMEN -->
-    <div class="row g-3 mb-4">
+      <button
+        type="button"
+        class="btn btn-filtro-alertas"
+        (click)="alternarCriticas()">
 
-        <div class="col-md-4">
-            <div class="card resumen-card">
-                <div class="card-body">
-                    <div class="resumen-icono">
-                        <i class="bi bi-people"></i>
-                    </div>
-                    <p>Pacientes pendientes</p>
-                    <h3>{{ citas.length }}</h3>
-                </div>
-            </div>
-        </div>
+        <i
+          class="bi me-1"
+          [ngClass]="mostrarSoloCriticas
+            ? 'bi-list-ul'
+            : 'bi-funnel'">
+        </i>
 
-        <div class="col-md-4">
-            <div class="card resumen-card">
-                <div class="card-body">
-                    <div class="resumen-icono icono-verde">
-                        <i class="bi bi-clipboard2-pulse"></i>
-                    </div>
-                    <p>Pacientes en evaluación</p>
-                    <h3>{{ citasFiltradas.length }}</h3>
-                </div>
-            </div>
-        </div>
+        {{ mostrarSoloCriticas
+          ? 'Ver todas'
+          : 'Ver alertas (' + cantidadAlertas + ')' }}
 
-        <div class="col-md-4">
-            <div class="card resumen-card">
-                <div class="card-body">
-                    <div class="resumen-icono icono-naranja">
-                        <i class="bi bi-clock-history"></i>
-                    </div>
-                    <p>Estado del módulo</p>
-                    <h3 class="estado-activo">Activo</h3>
-                </div>
-            </div>
-        </div>
+      </button>
 
     </div>
 
-    <!-- BANNER DE ALERTAS CRÍTICAS (QUERY: TRIAJE CRÍTICO) -->
-    @if (citasCriticas.length > 0) {
-      <div class="alert alert-danger d-flex justify-content-between align-items-center mb-4 shadow-sm rounded-3">
-        <div class="d-flex align-items-center gap-2">
-          <i class="bi bi-exclamation-triangle-fill fs-4 text-danger"></i>
-          <div>
-            <strong>Alerta de Triaje:</strong>
-            <span> Se detectaron {{ citasCriticas.length }} paciente(s) con signos vitales en estado crítico (Fiebre ≥ 38 °C o Presión ≥ 120 mmHg).</span>
-          </div>
+  }
+
+  <!-- ====================================== -->
+  <!-- LISTADO DE CITAS -->
+  <!-- ====================================== -->
+
+  <div class="listado-card">
+
+    <div class="listado-header">
+
+      <div>
+
+        <h5 class="mb-1">
+          Pacientes pendientes de triaje
+        </h5>
+
+        <p class="mb-0">
+          Selecciona una cita para registrar
+          la evaluación del paciente.
+        </p>
+
+      </div>
+
+      <span class="contador-visible">
+        {{ citasFiltradas.length }}
+        resultados
+      </span>
+
+    </div>
+
+    <!-- CARGANDO -->
+    @if (cargando) {
+
+      <div class="estado-tabla">
+
+        <div
+          class="spinner-border text-primary mb-3"
+          role="status">
         </div>
+
+        <p>Cargando citas de triaje...</p>
+
+      </div>
+
+    } @else if (errorCarga) {
+
+      <!-- ERROR -->
+      <div class="estado-tabla">
+
+        <i class="bi bi-exclamation-circle icono-vacio"></i>
+
+        <h6>No se pudo cargar la información</h6>
+
         <button
           type="button"
-          class="btn btn-sm btn-danger px-3"
-          (click)="alternarCriticas()">
-          <i class="bi" [ngClass]="mostrarSoloCriticas ? 'bi-list-ul me-1' : 'bi-funnel-fill me-1'"></i>
-          {{ mostrarSoloCriticas ? 'Ver todos los pacientes' : 'Filtrar Críticos (' + citasCriticas.length + ')' }}
+          class="btn btn-outline-primary btn-sm mt-2"
+          (click)="actualizar()">
+
+          Reintentar
+
         </button>
+
       </div>
+
+    } @else {
+
+      <!-- TABLA -->
+      <div class="table-responsive">
+
+        <table class="table table-hover align-middle tabla-triaje mb-0">
+
+          <thead>
+
+            <tr>
+              <th>N.º</th>
+              <th>Paciente</th>
+              <th>Motivo de consulta</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Estado</th>
+              <th class="text-center">Acción</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            @for (
+              cita of citasFiltradas;
+              track cita.idCita;
+              let i = $index
+            ) {
+
+              <tr>
+
+                <!-- NUMERO -->
+                <td>
+                  <span class="numero-fila">
+                    {{ i + 1 }}
+                  </span>
+                </td>
+
+                <!-- PACIENTE -->
+                <td>
+
+                  <span class="nombre-paciente">
+                    {{ cita.paciente || 'Sin paciente' }}
+                  </span>
+
+                </td>
+
+                <!-- MOTIVO -->
+                <td>
+
+                  <span
+                    class="motivo-consulta"
+                    [title]="cita.motivoConsulta || ''">
+
+                    {{ cita.motivoConsulta || 'Sin motivo registrado' }}
+
+                  </span>
+
+                </td>
+
+                <!-- FECHA -->
+                <td>
+
+                  <span class="fecha-cita">
+                    {{ cita.fechaCita | date:'dd/MM/yyyy' }}
+                  </span>
+
+                </td>
+
+                <!-- HORA -->
+                <td>
+
+                  <span class="hora-cita">
+                    {{ cita.horaCita || '-' }}
+                  </span>
+
+                </td>
+
+                <!-- ESTADO -->
+                <td>
+
+                  <span class="estado-badge">
+                    TRIAJE
+                  </span>
+
+                </td>
+
+                <!-- ACCION -->
+                <td class="text-center">
+
+                  <a
+                    [routerLink]="[
+                      '/triaje/registrar',
+                      cita.idCita
+                    ]"
+                    class="btn btn-registrar"
+                    title="Registrar evaluación de triaje">
+
+                    <i class="bi bi-clipboard2-pulse me-2"></i>
+                    Evaluar
+
+                  </a>
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+
+                <td colspan="7">
+
+                  <div class="estado-tabla">
+
+                    <i class="bi bi-clipboard-check icono-vacio"></i>
+
+                    @if (mostrarSoloCriticas) {
+
+                      <h6>
+                        No se encontraron alertas
+                      </h6>
+
+                      <p>
+                        No hay citas que coincidan
+                        con el filtro actual.
+                      </p>
+
+                    } @else if (busqueda) {
+
+                      <h6>
+                        No se encontraron coincidencias
+                      </h6>
+
+                      <p>
+                        Prueba con otro nombre,
+                        motivo o fecha.
+                      </p>
+
+                    } @else {
+
+                      <h6>
+                        No hay citas pendientes de triaje
+                      </h6>
+
+                      <p>
+                        Las citas aparecerán cuando
+                        ingresen a esta etapa.
+                      </p>
+
+                    }
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
     }
 
-    <!-- LISTADO -->
-    <div class="card listado-card">
+  </div>
 
-        <div class="listado-header">
-            <div>
-                <h5>Pacientes en espera de triaje</h5>
-                <small class="text-muted">
-                    Selecciona un paciente para registrar su evaluación.
-                </small>
-            </div>
+  <!-- ====================================== -->
+  <!-- FORMULARIO EXISTENTE -->
+  <!-- ====================================== -->
 
-            <div class="buscador">
-                <i class="bi bi-search"></i>
-                <input type="text" class="form-control" placeholder="Buscar paciente..." [(ngModel)]="busqueda"
-                    (ngModelChange)="filtrarCitas()">
-            </div>
+  @if (citaSeleccionada) {
+
+    <div class="formulario-card mt-4">
+
+      <div class="formulario-header">
+
+        <div>
+
+          <h5 class="mb-1">
+            Evaluación del paciente
+          </h5>
+
+          <p class="mb-0">
+            {{ citaSeleccionada.paciente }}
+          </p>
+
         </div>
 
-        <div class="table-responsive">
-            <table class="table align-middle tabla-triaje mb-0">
+        <button
+          type="button"
+          class="btn btn-cerrar"
+          aria-label="Cerrar evaluación"
+          (click)="cancelar()">
 
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>PACIENTE</th>
-                        <th>MOTIVO DE CONSULTA</th>
-                        <th>FECHA</th>
-                        <th>HORA</th>
-                        <th>ESTADO</th>
-                        <th class="text-center">ACCIÓN</th>
-                    </tr>
-                </thead>
+          <i class="bi bi-x-lg"></i>
 
-                <tbody>
+        </button>
 
-                    <tr *ngFor="let cita of citasFiltradas; let i = index">
+      </div>
 
-                        <td>{{ i + 1 }}</td>
+      <div class="formulario-body">
 
-                        <td>
-                            <div class="paciente-info">
-                                <div class="avatar">
-                                    <i class="bi bi-person"></i>
-                                </div>
-                                <strong>{{ cita.paciente }}</strong>
-                            </div>
-                        </td>
+        <div class="aviso-formulario">
 
-                        <td>
-                            {{ cita.motivoConsulta }}
-                        </td>
+          <i class="bi bi-info-circle me-2"></i>
 
-                        <td>
-                            {{ cita.fechaCita | date:'dd/MM/yyyy' }}
-                        </td>
+          Registra los datos que puedan obtenerse
+          durante la evaluación. El peso y la talla
+          pueden quedar vacíos si no es posible medirlos.
 
-                        <td>{{ cita.horaCita }}</td>
-
-                        <td>
-                            <span class="estado-badge">
-                                En triaje
-                            </span>
-                        </td>
-
-                        <td class="text-center">
-
-                            <a [routerLink]="['/triaje/registrar', cita.idCita]" class="btn btn-registrar">
-
-                                <i class="bi bi-clipboard2-pulse me-1"></i>
-                                Evaluar
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr *ngIf="cargando">
-                        <td colspan="6" class="estado-tabla">
-                            <div class="spinner-border text-primary"></div>
-                            <p>Cargando pacientes...</p>
-                        </td>
-                    </tr>
-
-                    <tr *ngIf="!cargando && errorCarga">
-                        <td colspan="6" class="estado-tabla">
-                            <i class="bi bi-exclamation-circle fs-2 text-danger"></i>
-                            <p>No se pudo cargar la información.</p>
-                            <button class="btn btn-outline-primary btn-sm" (click)="actualizar()">
-                                Reintentar
-                            </button>
-                        </td>
-                    </tr>
-
-                    <tr *ngIf="!cargando && !errorCarga && citasFiltradas.length === 0">
-                        <td colspan="6" class="estado-tabla">
-                            <i class="bi bi-clipboard-check fs-1 text-muted"></i>
-                            <h6>No hay pacientes pendientes</h6>
-                            <p class="text-muted">
-                                Los pacientes aparecerán cuando su cita pase a triaje.
-                            </p>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
         </div>
+
+        <!-- SIGNOS VITALES -->
+
+        <h6 class="subtitulo-formulario">
+          <i class="bi bi-heart-pulse me-2"></i>
+          Signos vitales
+        </h6>
+
+        <div class="row g-3">
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Temperatura (°C)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="temperatura"
+              name="temperatura"
+              min="0.1"
+              step="0.1"
+              placeholder="Ej. 36.5">
+
+          </div>
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Presión arterial (mmHg)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="presion"
+              name="presion"
+              min="0.1"
+              step="0.1"
+              placeholder="Ej. 120">
+
+          </div>
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Frecuencia cardíaca (lpm)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="frecuenciaCardiaca"
+              name="frecuenciaCardiaca"
+              min="0.1"
+              step="0.1"
+              placeholder="Ej. 80">
+
+          </div>
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Frecuencia respiratoria (rpm)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="frecuenciaRespiratoria"
+              name="frecuenciaRespiratoria"
+              min="0.1"
+              step="0.1"
+              placeholder="Ej. 18">
+
+          </div>
+
+        </div>
+
+        <hr class="my-4">
+
+        <!-- MEDIDAS ANTROPOMETRICAS -->
+
+        <h6 class="subtitulo-formulario">
+          <i class="bi bi-rulers me-2"></i>
+          Medidas antropométricas
+        </h6>
+
+        <div class="row g-3">
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Peso (kg)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="peso"
+              name="peso"
+              min="0.1"
+              step="0.01"
+              placeholder="Ej. 65.50">
+
+          </div>
+
+          <div class="col-md-4">
+
+            <label class="form-label">
+              Talla (m)
+            </label>
+
+            <input
+              type="number"
+              class="form-control"
+              [(ngModel)]="talla"
+              name="talla"
+              min="0.1"
+              step="0.01"
+              placeholder="Ej. 1.70">
+
+          </div>
+
+        </div>
+
+      </div>
 
     </div>
 
-    <!-- FORMULARIO -->
-    <div class="card formulario-card mt-4" *ngIf="citaSeleccionada">
-
-        <div class="formulario-header">
-            <div>
-                <h5 class="mb-1">Evaluación del paciente</h5>
-                <p class="mb-0">
-                    {{ citaSeleccionada.paciente }}
-                </p>
-            </div>
-
-            <button type="button" class="btn btn-cerrar" (click)="cancelar()">
-                <i class="bi bi-x-lg"></i>
-            </button>
-        </div>
-
-        <div class="card-body">
-
-            <div class="alert alert-info">
-                <i class="bi bi-info-circle me-2"></i>
-                Registra los datos que puedan obtenerse durante la evaluación.
-                El peso y la talla pueden quedar vacíos cuando no sea posible medirlos.
-            </div>
-
-            <h6 class="subtitulo-formulario">
-                <i class="bi bi-heart-pulse me-2"></i>
-                Signos vitales
-            </h6>
-
-            <div class="row g-3">
-
-                <div class="col-md-4">
-                    <label class="form-label">Temperatura (°C)</label>
-                    <input type="number" class="form-control" [(ngModel)]="temperatura" name="temperatura" min="0.1"
-                        step="0.1" placeholder="Ej. 36.5">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Presión arterial (mmHg)</label>
-                    <input type="number" class="form-control" [(ngModel)]="presion" name="presion" min="0.1" step="0.1"
-                        placeholder="Ej. 120">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Frecuencia cardíaca (lpm)</label>
-                    <input type="number" class="form-control" [(ngModel)]="frecuenciaCardiaca" name="frecuenciaCardiaca"
-                        min="0.1" step="0.1" placeholder="Ej. 80">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Frecuencia respiratoria (rpm)</label>
-                    <input type="number" class="form-control" [(ngModel)]="frecuenciaRespiratoria"
-                        name="frecuenciaRespiratoria" min="0.1" step="0.1" placeholder="Ej. 18">
-                </div>
-
-            </div>
-
-            <hr class="my-4">
-
-            <h6 class="subtitulo-formulario">
-                <i class="bi bi-rulers me-2"></i>
-                Medidas antropométricas
-            </h6>
-
-            <div class="row g-3">
-
-                <div class="col-md-4">
-                    <label class="form-label">Peso (kg)</label>
-                    <input type="number" class="form-control" [(ngModel)]="peso" name="peso" min="0.1" step="0.01"
-                        placeholder="Ej. 65.50">
-                </div>
-
-                <div class="col-md-4">
-                    <label class="form-label">Talla (m)</label>
-                    <input type="number" class="form-control" [(ngModel)]="talla" name="talla" min="0.1" step="0.01"
-                        placeholder="Ej. 1.70">
-                </div>
-
-            </div>
-
-            <hr class="my-4">
-
-        </div>
-
-    </div>
+  }
 
 </div>

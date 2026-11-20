@@ -1,29 +1,131 @@
-.text-upeu-primary {
-  color: #1a5276;
-  font-weight: 700;
+
+/* ==========================================
+   HISTORIAL DE PACIENTES - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --historial-primario: var(--color-primario, #07577A);
+  --historial-secundario: var(--color-secundario, #43A6CC);
+  --historial-celeste: var(--color-celeste, #E8F5FB);
+  --historial-borde: var(--color-borde, #DCEAF1);
+  --historial-texto: var(--color-texto-oscuro, #263E4D);
+  --historial-muted: var(--color-texto-secundario, #526B7A);
 }
 
+/* ==========================================
+   CONTENEDOR GENERAL
+   ========================================== */
+
+.historial-pagina {
+  width: 100%;
+  max-width: 1450px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 15px 18px 30px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.titulo-pagina {
+  color: var(--historial-primario);
+  font-size: 27px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitulo-pagina {
+  color: var(--historial-muted);
+  font-size: 14px;
+  margin: 5px 0 0;
+}
+
+/* ==========================================
+   BOTON NUEVA CITA
+   ========================================== */
+
 .btn-nuevo {
-  background-color: #1a5276;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 17px;
+
+  background-color: var(--historial-primario);
   color: #ffffff;
-  font-weight: 500;
-  border-radius: 8px;
-  padding: 8px 16px;
+  border: 1px solid var(--historial-primario);
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+
   transition: all 0.2s ease;
 }
 
 .btn-nuevo:hover {
-  background-color: #154360;
+  background-color: var(--historial-secundario);
+  border-color: var(--historial-secundario);
   color: #ffffff;
 }
 
-.search-card {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+/* ==========================================
+   CONTADOR Y BUSCADOR
+   ========================================== */
+
+.barra-herramientas {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 18px;
+}
+
+/* CONTADOR */
+
+.contador-pacientes {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--historial-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.contador-pacientes i {
+  color: var(--historial-secundario);
+  font-size: 18px;
+}
+
+.contador-pacientes strong {
+  color: var(--historial-primario);
+  font-weight: 700;
+}
+
+/* BUSCADOR */
+
+.buscador-historial {
+  width: 100%;
+  max-width: 410px;
+  margin-left: auto;
 }
 
 .search-box {
   position: relative;
+  width: 100%;
 }
 
 .search-icon {
@@ -31,177 +133,482 @@
   top: 50%;
   left: 14px;
   transform: translateY(-50%);
-  color: #94a3b8;
-  font-size: 1rem;
+
+  color: var(--historial-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
 }
 
 .search-input {
-  padding-left: 42px;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px 10px 42px;
+
+  background-color: #ffffff;
+  color: var(--historial-texto);
+
+  border: 1px solid #cbdce7;
   border-radius: 8px;
-  border: 1px solid #cbd5e1;
-  font-size: 0.95rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8ba0ac;
 }
 
 .search-input:focus {
-  border-color: #1a5276;
-  box-shadow: 0 0 0 3px rgba(26, 82, 118, 0.15);
+  outline: none;
+  border-color: var(--historial-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
 }
 
-.table th {
-  font-size: 0.82rem;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: #475569;
-  font-weight: 600;
-  padding: 12px 14px;
-  background-color: #f8fafc;
+/* ==========================================
+   TABLA DE HISTORIAL
+   ========================================== */
+
+.tabla-historial {
+  width: 100%;
+  max-width: 100%;
+
+  background-color: #ffffff;
+  border: 1px solid var(--historial-borde);
+  border-radius: 10px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
-.table td {
-  padding: 12px 14px;
-  vertical-align: middle;
-  font-size: 0.92rem;
+.tabla-historial .table {
+  width: 100%;
+  min-width: 1060px;
+
+  --bs-table-bg: #ffffff;
+  --bs-table-hover-bg: #f3f9fc;
+
+  font-size: 14px;
 }
 
-.btn-historial {
-  background: #0284c7;
-  color: #ffffff;
-  border: none;
-  font-weight: 500;
-  border-radius: 6px;
-  padding: 6px 12px;
-  transition: background 0.2s ease, transform 0.1s ease;
-}
+/* ENCABEZADO DE TABLA */
 
-.btn-historial:hover {
-  background: #0369a1;
-  color: #ffffff;
-  transform: translateY(-1px);
-}
+.tabla-historial .table thead th {
+  background-color: var(--historial-celeste) !important;
+  color: var(--historial-primario) !important;
 
-/* Badges de estado */
-.badge-estado {
-  display: inline-block;
-  padding: 4px 10px;
-  font-size: 0.75rem;
+  padding: 15px 12px;
+  border-bottom: 2px solid #c9e4f2;
+
+  font-size: 13px;
   font-weight: 700;
-  border-radius: 50rem;
-  text-transform: uppercase;
-  letter-spacing: 0.4px;
+  white-space: nowrap;
 }
 
-.badge-atendido {
-  background-color: #dcfce7;
-  color: #15803d;
+/* FILAS */
+
+.tabla-historial .table tbody td {
+  padding: 14px 12px;
+  color: var(--historial-texto);
+  border-bottom: 1px solid #e7eff4;
+  vertical-align: middle;
 }
+
+.tabla-historial .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   DNI
+   ========================================== */
+
+.dni-texto {
+  display: inline-block;
+  color: #344F60;
+
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   NOMBRE DEL PACIENTE
+   ========================================== */
+
+.nombre-paciente {
+  color: #263E4D;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+.detalle-paciente {
+  display: block;
+  margin-top: 4px;
+
+  color: #8195a3;
+  font-size: 12px;
+}
+
+/* ==========================================
+   FECHA Y HORA
+   ========================================== */
+
+.fecha-cita {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.fecha-cita i {
+  color: var(--historial-secundario);
+}
+
+.hora-cita {
+  color: #718B9B;
+  font-size: 12px;
+  margin-top: 5px;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   MEDICO Y MOTIVO
+   ========================================== */
+
+.medico-texto {
+  display: block;
+  color: #344f60;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.motivo-texto {
+  display: block;
+  max-width: 220px;
+
+  color: #526b7a;
+  font-size: 14px;
+  line-height: 1.5;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   ESTADOS - PALETA UPeU SALUD
+   ========================================== */
+
+.badge-estado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+
+  border: 1px solid transparent;
+}
+
+/* RECEPCION - AZUL */
+
+.badge-recepcion {
+  background-color: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
+}
+
+/* TRIAJE - DORADO SUAVE */
 
 .badge-triaje {
-  background-color: #fef3c7;
-  color: #b45309;
+  background-color: #F8F0DE;
+  color: #8B682A;
+  border-color: #EEDFBF;
 }
 
-.badge-pendiente {
-  background-color: #e0f2fe;
-  color: #0369a1;
+/* ATENDIDO - VERDE */
+
+.badge-atendido {
+  background-color: #E5F3E9;
+  color: #287448;
+  border-color: #CBE8D4;
 }
+
+/* ANULADO - ROJO SUAVE */
 
 .badge-anulado {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: #F8E9EB;
+  color: #A54953;
+  border-color: #F0D5D9;
 }
+
+/* DERIVADO - AZUL LAVANDA */
+
+.badge-derivado {
+  background-color: #EBEFF8;
+  color: #536A91;
+  border-color: #DAE2F2;
+}
+
+/* INASISTENCIA - GRIS */
+
+.badge-inasistencia {
+  background-color: #EDF1F4;
+  color: #647582;
+  border-color: #DCE4E9;
+}
+
+/* OTROS ESTADOS */
 
 .badge-secondary {
   background-color: #f1f5f9;
   color: #475569;
 }
 
-/* Modal Custom */
+/* ==========================================
+   BOTON VER HISTORIAL
+   ========================================== */
+
+.btn-historial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--historial-primario);
+  color: #ffffff;
+
+  border: 1px solid var(--historial-primario);
+  border-radius: 7px;
+
+  padding: 8px 13px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.btn-historial:hover {
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #ffffff;
+}
+
+/* ==========================================
+   ESTADOS VACIOS
+   ========================================== */
+
+.estado-vacio {
+  min-height: 220px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px;
+  text-align: center;
+  color: #8296a5;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.sin-resultados i {
+  display: block;
+  color: #a2b4bf;
+  font-size: 34px;
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--historial-primario);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sin-resultados p {
+  color: #8195a3;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ==========================================
+   MODAL DE HISTORIAL CLINICO
+   ========================================== */
+
 .modal-backdrop-custom {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.65);
-  backdrop-filter: blur(4px);
   z-index: 1050;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 20px;
+
+  background: rgba(15, 35, 50, 0.65);
+  backdrop-filter: blur(4px);
+
   animation: fadeIn 0.2s ease-out;
 }
 
 .modal-dialog-custom {
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+
+  overflow: hidden;
+
   background: #ffffff;
   border-radius: 14px;
-  width: 100%;
-  max-width: 860px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+
   animation: slideUp 0.25s ease-out;
 }
 
 .modal-content-custom {
   display: flex;
   flex-direction: column;
+
   height: 100%;
   max-height: 90vh;
 }
 
+/* ==========================================
+   CABECERA DEL MODAL
+   ========================================== */
+
 .modal-header-custom {
-  background: linear-gradient(135deg, #1a5276 0%, #0e3752 100%);
-  padding: 20px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 18px;
+
+  padding: 22px 24px;
+
+  background: linear-gradient(
+    135deg,
+    #07577A 0%,
+    #064560 100%
+  );
+
+  color: #ffffff;
 }
 
 .avatar-paciente {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 50px;
+  height: 50px;
+
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.17);
+  color: #ffffff;
+
+  font-size: 25px;
+}
+
+.nombre-modal {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+
+.datos-modal {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  color: #d4eaf3;
+  font-size: 12px;
+}
+
+.datos-modal strong {
   color: #ffffff;
 }
 
+/* BOTON CERRAR */
+
 .btn-close-custom {
-  background: rgba(255, 255, 255, 0.15);
-  border: none;
-  color: #ffffff;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 36px;
+  height: 36px;
+
+  border: none;
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+
   cursor: pointer;
-  transition: background 0.2s;
+
+  transition: background-color 0.2s ease;
 }
 
 .btn-close-custom:hover {
   background: rgba(255, 255, 255, 0.3);
 }
 
+/* ==========================================
+   CUERPO Y PIE DEL MODAL
+   ========================================== */
+
 .modal-body-custom {
-  padding: 24px;
-  overflow-y: auto;
   flex: 1;
+  overflow-y: auto;
+
+  padding: 25px;
+  background-color: #f9fcfe;
 }
 
 .modal-footer-custom {
-  padding: 14px 24px;
-  border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: flex-end;
-  background-color: #f8fafc;
+
+  padding: 15px 24px;
+
+  background: #ffffff;
+  border-top: 1px solid var(--historial-borde);
 }
 
-/* Timeline */
+.modal-footer-custom .btn {
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+/* ==========================================
+   LINEA DE TIEMPO
+   ========================================== */
+
 .timeline {
   position: relative;
   padding-left: 28px;
@@ -210,11 +617,13 @@
 .timeline::before {
   content: '';
   position: absolute;
+
   top: 10px;
   bottom: 10px;
-  left: 12px;
+  left: 11px;
+
   width: 2px;
-  background-color: #cbd5e1;
+  background-color: #cbdde7;
 }
 
 .timeline-item {
@@ -223,45 +632,282 @@
 
 .timeline-badge {
   position: absolute;
+
+  top: 16px;
   left: -28px;
-  top: 12px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
+  z-index: 1;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+
+  width: 24px;
+  height: 24px;
+
+  border-radius: 50%;
+
   color: #ffffff;
-  z-index: 1;
+  font-size: 12px;
 }
 
 .badge-latest {
-  background-color: #0284c7;
-  box-shadow: 0 0 0 4px rgba(2, 132, 199, 0.25);
+  background-color: var(--historial-secundario);
+  box-shadow: 0 0 0 4px rgba(67, 166, 204, 0.18);
 }
 
 .badge-past {
-  background-color: #64748b;
+  background-color: #94a3b8;
 }
+
+/* ==========================================
+   TARJETA DE CITA
+   ========================================== */
 
 .timeline-card {
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  background-color: #ffffff;
+
+  border: 1px solid var(--historial-borde);
+  border-radius: 11px;
+
+  overflow: hidden;
+
+  box-shadow: 0 3px 10px rgba(7, 87, 122, 0.04);
 }
 
-.timeline-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08) !important;
+.timeline-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 14px 18px;
+
+  background-color: var(--historial-celeste);
+  border-bottom: 1px solid var(--historial-borde);
 }
+
+.fecha-historial {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  color: var(--historial-primario);
+  font-size: 13px;
+}
+
+.fecha-historial > span {
+  color: #607f90;
+}
+
+.etiqueta-reciente {
+  display: inline-block;
+
+  padding: 4px 8px;
+  border-radius: 5px;
+
+  background-color: #ffffff;
+  color: var(--historial-primario);
+
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.timeline-card-body {
+  padding: 20px;
+}
+
+/* ==========================================
+   INFORMACION CLINICA
+   ========================================== */
+
+.etiqueta-clinica {
+  display: block;
+  margin-bottom: 6px;
+
+  color: #8195a3;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.valor-clinico {
+  color: #344f60;
+  font-size: 14px;
+  font-weight: 600;
+
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.seccion-clinica {
+  padding: 17px;
+
+  background-color: #f6fafc;
+  border: 1px solid #e0edf3;
+  border-radius: 9px;
+}
+
+.seccion-clinica h6 {
+  color: var(--historial-primario);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+/* ==========================================
+   SIGNOS VITALES EN EL MODAL
+   ========================================== */
+
+.vitales-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.vital-item {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+
+  padding: 13px;
+
+  background: #ffffff;
+  border: 1px solid var(--historial-borde);
+  border-radius: 8px;
+}
+
+.vital-item span {
+  color: #8195a3;
+  font-size: 11px;
+}
+
+.vital-item strong {
+  color: var(--historial-primario);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   ANIMACIONES
+   ========================================== */
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(15px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 992px) {
+
+  .historial-pagina {
+    padding: 12px 16px 28px;
+  }
+
+  .titulo-pagina {
+    font-size: 24px;
+  }
+
+  .vitales-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 768px) {
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .titulo-pagina {
+    font-size: 22px;
+  }
+
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .buscador-historial {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .tabla-historial .table {
+    font-size: 12px;
+  }
+
+  .modal-backdrop-custom {
+    padding: 10px;
+  }
+
+  .modal-dialog-custom,
+  .modal-content-custom {
+    max-height: 95vh;
+  }
+
+  .modal-header-custom {
+    padding: 16px;
+  }
+
+  .modal-body-custom {
+    padding: 16px;
+  }
+
+  .timeline-card-body {
+    padding: 14px;
+  }
+
+  .vitales-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .titulo-pagina {
+    font-size: 20px;
+  }
+
+  .btn-nuevo {
+    width: 100%;
+  }
+
+  .vitales-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .datos-modal {
+    gap: 5px;
+    flex-direction: column;
+  }
+
 }

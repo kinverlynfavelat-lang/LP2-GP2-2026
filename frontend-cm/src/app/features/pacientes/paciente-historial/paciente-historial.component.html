@@ -1,308 +1,558 @@
-<div class="container mt-4 mb-5">
+<div class="container-fluid historial-pagina mt-4 mb-5">
 
   <!-- ENCABEZADO -->
-  <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+  <div class="encabezado-pagina">
+
     <div>
-      <h2 class="text-upeu-primary mb-1 d-flex align-items-center">
-        <i class="bi bi-journal-medical me-2"></i>
-        Historial de Pacientes
+      <h2 class="titulo-pagina">
+        Historial de pacientes
       </h2>
- 
+
+      <p class="subtitulo-pagina">
+        Consulta las citas y el historial clínico de cada paciente.
+      </p>
     </div>
 
-    <div class="d-flex gap-2">
-      <a routerLink="/pacientes" class="btn btn-outline-secondary">
-        <i class="bi bi-people me-1"></i>
-        Directorio de Pacientes
-      </a>
-      <a routerLink="/citas/nuevo" class="btn btn-nuevo">
-        <i class="bi bi-plus-circle me-1"></i>
-        Nueva Cita
-      </a>
-    </div>
+    <a routerLink="/citas/nuevo" class="btn btn-nuevo">
+
+      <i class="bi bi-plus-circle me-2"></i>
+      Nueva cita
+    </a>
+
   </div>
 
+  <!-- CONTADOR Y BUSCADOR -->
+  <div class="barra-herramientas">
 
-  <!-- BARRA DE BÚSQUEDA GENERAL -->
-  <div class="search-card p-3 mb-4 shadow-sm rounded-3">
-    <div class="row g-2 align-items-center">
-      <div class="col-md-9">
-        <div class="search-box position-relative">
-          <i class="bi bi-search search-icon"></i>
-          <input
-            type="text"
-            class="form-control search-input"
-            placeholder="Buscar por DNI, nombres, apellidos, motivo de consulta o médico..."
-            [(ngModel)]="busqueda"
-            (input)="filtrar()">
-        </div>
-      </div>
-      <div class="col-md-3 text-md-end">
-        <span class="badge bg-light text-dark border px-3 py-2 fs-6">
-          <i class="bi bi-person-check me-1 text-primary"></i>
-          {{ pacientesFiltrados.length }} paciente(s)
-        </span>
+    <div class="contador-pacientes">
+      <i class="bi bi-people"></i>
+
+      <span>
+        <strong>{{ pacientesFiltrados.length }}</strong>
+        pacientes encontrados
+      </span>
+    </div>
+
+    <div class="buscador-historial">
+      <div class="search-box">
+
+        <i class="bi bi-search search-icon"></i>
+
+        <input id="buscadorHistorial" type="text" class="form-control search-input"
+          placeholder="Buscar paciente, médico o motivo..."
+          aria-label="Buscar pacientes por DNI, nombre, médico o motivo" [(ngModel)]="busqueda" (input)="filtrar()">
+
       </div>
     </div>
+
   </div>
 
-  <!-- SPINNER DE CARGA -->
+  <!-- CARGANDO -->
   @if (cargando) {
-    <div class="text-center py-5">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="text-muted mt-2">Consultando últimas citas por paciente...</p>
+
+  <div class="estado-vacio">
+    <div class="spinner-border text-primary mb-3" role="status">
     </div>
+
+    <p>Consultando el historial de pacientes...</p>
+  </div>
+
   } @else {
 
-    <!-- TABLA DE RESULTADOS -->
-    <div class="table-responsive shadow-sm rounded-3">
-      <table class="table table-hover align-middle mb-0 bg-white">
-        <thead class="table-light">
-          <tr>
-            <th>DNI</th>
-            <th>Paciente</th>
-            <th>Última Cita</th>
-            <th>Médico Tratante</th>
-            <th>Motivo Consulta</th>
-            <th>Signos Vitales</th>
-            <th>Estado</th>
-            <th class="text-center">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (c of pacientesFiltrados; track (c.idCita || c.idPersona)) {
-            <tr>
-              <td>
-                <span class="badge bg-light text-dark border font-monospace">
-                  {{ c.dniPaciente || '-' }}
-                </span>
-              </td>
-              <td>
-                <div class="fw-semibold text-dark">{{ c.paciente }}</div>
-                <small class="text-muted">ID Paciente: #{{ c.idPersona }}</small>
-              </td>
-              <td>
-                <div class="fw-medium text-primary">
-                  <i class="bi bi-calendar-event me-1"></i>
-                  {{ c.fechaCita }}
-                </div>
-                <small class="text-muted">
-                  <i class="bi bi-clock me-1"></i>{{ c.horaCita }}
-                </small>
-              </td>
-              <td>
-                <i class="bi bi-person-badge text-muted me-1"></i>
-                {{ c.medico || 'Por asignar' }}
-              </td>
-              <td>
-                <span class="text-truncate d-inline-block" style="max-width: 220px;" [title]="c.motivoConsulta">
-                  {{ c.motivoConsulta || 'Consulta general' }}
-                </span>
-              </td>
-              <td>
-                @if (c.temperatura || c.presion) {
-                  <small class="d-block text-secondary">
-                    <span class="badge bg-light text-dark border me-1" title="Temperatura">
-                      🌡️ {{ c.temperatura }} °C
-                    </span>
-                    <span class="badge bg-light text-dark border" title="Presión">
-                      🩺 {{ c.presion }} mmHg
-                    </span>
-                  </small>
-                } @else {
-                  <span class="text-muted small">Sin triaje</span>
-                }
-              </td>
-              <td>
-                <span class="badge-estado" [ngClass]="obtenerClaseEstado(c.estado)">
-                  {{ c.estado }}
-                </span>
-              </td>
-              <td class="text-center">
-                <button
-                  type="button"
-                  class="btn btn-sm btn-historial"
-                  (click)="verHistorial(c)">
-                  <i class="bi bi-clock-history me-1"></i>
-                  Ver Historial
-                </button>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="8" class="text-center py-5">
-                <i class="bi bi-search fs-1 text-muted d-block mb-2"></i>
-                <h6 class="text-muted">No se encontraron pacientes con citas registradas</h6>
-                <p class="text-muted small">Prueba cambiando los términos de búsqueda o registra una nueva cita médica.</p>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
+  <!-- TABLA DE PACIENTES -->
+  <div class="tabla-historial table-responsive">
+
+    <table class="table table-hover align-middle mb-0">
+
+      <thead>
+        <tr>
+          <th>N.º</th>
+          <th>DNI</th>
+          <th>Paciente</th>
+          <th>Última cita</th>
+          <th>Médico tratante</th>
+          <th>Motivo de consulta</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        c of pacientesFiltrados;
+        track (c.idCita || c.idPersona);
+        let i = $index
+        ) {
+
+        <tr>
+          <td>{{ i + 1 }}</td>
+
+          <!-- DNI -->
+          <td>
+            <span class="dni-texto">
+              {{ c.dniPaciente || '-' }}
+            </span>
+          </td>
+
+          <!-- PACIENTE -->
+          <td>
+            <div class="nombre-paciente">
+              {{ c.paciente || 'Sin nombre' }}
+            </div>
+
+            <small class="detalle-paciente">
+              ID de paciente: #{{ c.idPersona }}
+            </small>
+          </td>
+
+          <!-- ULTIMA CITA -->
+          <td>
+            <div class="fecha-cita">
+              <i class="bi bi-calendar3 me-2"></i>
+              {{ formatearFecha(c.fechaCita) }}
+            </div>
+
+            <div class="hora-cita">
+              <i class="bi bi-clock me-2"></i>
+              {{ c.horaCita || '-' }}
+            </div>
+          </td>
+
+          <!-- MEDICO -->
+          <td>
+            <span class="medico-texto">
+              {{ c.medico || 'Por asignar' }}
+            </span>
+          </td>
+
+          <!-- MOTIVO -->
+          <td>
+            <span class="motivo-texto" [title]="c.motivoConsulta || ''">
+
+              {{ c.motivoConsulta || 'Consulta general' }}
+            </span>
+          </td>
+
+          <!-- ESTADO -->
+          <td>
+            <span class="badge-estado" [ngClass]="obtenerClaseEstado(c.estado)">
+
+              {{ c.estado || 'SIN ESTADO' }}
+            </span>
+          </td>
+
+          <!-- ACCIONES -->
+          <td class="text-center">
+            <button type="button" class="btn btn-historial" title="Consultar historial clínico"
+              [attr.aria-label]="'Ver historial de ' + (c.paciente || 'paciente')" (click)="verHistorial(c)">
+
+              <i class="bi bi-clock-history me-2"></i>
+              Ver historial
+            </button>
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="7" class="text-center py-5">
+
+            <div class="sin-resultados">
+              <i class="bi bi-search"></i>
+
+              @if (busqueda) {
+              <h6>No se encontraron coincidencias</h6>
+
+              <p>
+                Prueba con otro nombre, DNI,
+                médico o motivo de consulta.
+              </p>
+              } @else {
+              <h6>
+                No hay pacientes con citas registradas
+              </h6>
+
+              <p>
+                Registra una nueva cita médica
+                para comenzar el historial.
+              </p>
+              }
+
+            </div>
+
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
 
   }
 
 </div>
 
-<!-- MODAL DE HISTORIAL CLÍNICO COMPLETO -->
+
+<!-- ========================================== -->
+<!-- MODAL DE HISTORIAL CLINICO -->
+<!-- ========================================== -->
+
 @if (mostrarModal) {
-  <div class="modal-backdrop-custom" (click)="cerrarModal()">
-    <div class="modal-dialog-custom" (click)="$event.stopPropagation()">
-      <div class="modal-content-custom">
 
-        <!-- CABECERA DEL MODAL -->
-        <div class="modal-header-custom">
-          <div class="d-flex align-items-center gap-3">
-            <div class="avatar-paciente">
-              <i class="bi bi-person-fill fs-2"></i>
-            </div>
-            <div>
-              <h4 class="mb-0 text-white fw-bold">{{ pacienteSeleccionado?.paciente }}</h4>
-              <div class="text-white-50 small mt-1">
-                <span class="me-3">
-                  <i class="bi bi-card-text me-1"></i> DNI: <strong>{{ pacienteSeleccionado?.dniPaciente || 'No especificado' }}</strong>
-                </span>
-                <span>
-                  <i class="bi bi-folder-check me-1"></i> Citas registradas: <strong>{{ historialCitas.length }}</strong>
-                </span>
-              </div>
-            </div>
+<div class="modal-backdrop-custom" (click)="cerrarModal()">
+
+  <div class="modal-dialog-custom" role="dialog" aria-modal="true" aria-labelledby="tituloModalHistorial"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-content-custom">
+
+      <!-- CABECERA DEL MODAL -->
+      <div class="modal-header-custom">
+
+        <div class="d-flex align-items-center gap-3">
+
+          <div class="avatar-paciente">
+            <i class="bi bi-person-fill"></i>
           </div>
-          <button type="button" class="btn-close-custom" (click)="cerrarModal()">
-            <i class="bi bi-x-lg"></i>
-          </button>
-        </div>
 
-        <!-- CUERPO DEL MODAL -->
-        <div class="modal-body-custom">
-          @if (cargandoHistorial) {
-            <div class="text-center py-5">
-              <div class="spinner-border text-primary" role="status"></div>
-              <p class="text-muted mt-2">Cargando expediente e historial del paciente...</p>
-            </div>
-          } @else if (historialCitas.length === 0) {
-            <div class="text-center py-4">
-              <i class="bi bi-folder-x fs-1 text-muted"></i>
-              <p class="text-muted mt-2">No se registran antecedentes de citas para este paciente.</p>
-            </div>
-          } @else {
+          <div>
 
-            <div class="timeline">
-              @for (cita of historialCitas; track cita.idCita; let idx = $index) {
-                <div class="timeline-item">
+            <h4 id="tituloModalHistorial" class="nombre-modal mb-1">
 
-                  <!-- Ícono del timeline -->
-                  <div class="timeline-badge" [ngClass]="idx === 0 ? 'badge-latest' : 'badge-past'">
-                    <i class="bi" [ngClass]="idx === 0 ? 'bi-star-fill' : 'bi-check2'"></i>
-                  </div>
+              {{ pacienteSeleccionado?.paciente }}
+            </h4>
 
-                  <!-- Tarjeta de la cita -->
-                  <div class="card timeline-card shadow-sm border-0 mb-3">
-                    <div class="card-header bg-light py-2 px-3 d-flex justify-content-between align-items-center">
-                      <div class="d-flex align-items-center gap-2">
-                        <span class="fw-bold text-primary">
-                          <i class="bi bi-calendar-event me-1"></i>{{ cita.fechaCita }}
-                        </span>
-                        <span class="text-muted small">
-                          <i class="bi bi-clock me-1"></i>{{ cita.horaCita }}
-                        </span>
-                        @if (idx === 0) {
-                          <span class="badge bg-primary text-white ms-2">Última Atención</span>
-                        }
-                      </div>
-                      <span class="badge-estado" [ngClass]="obtenerClaseEstado(cita.estado)">
-                        {{ cita.estado }}
-                      </span>
-                    </div>
+            <div class="datos-modal">
 
-                    <div class="card-body p-3">
-                      <div class="row g-3">
+              <span>
+                DNI:
+                <strong>
+                  {{ pacienteSeleccionado?.dniPaciente || '-' }}
+                </strong>
+              </span>
 
-                        <!-- Médico y Motivo -->
-                        <div class="col-md-6">
-                          <div class="mb-2">
-                            <span class="text-muted small d-block">Médico Tratante:</span>
-                            <strong>
-                              <i class="bi bi-person-badge text-primary me-1"></i>
-                              {{ cita.medico || 'Sin médico asignado' }}
-                            </strong>
-                          </div>
-                          <div>
-                            <span class="text-muted small d-block">Motivo de Consulta:</span>
-                            <p class="mb-0 text-dark">{{ cita.motivoConsulta || 'Consulta regular' }}</p>
-                          </div>
-                        </div>
+              <span>
+                Citas registradas:
+                <strong>{{ historialCitas.length }}</strong>
+              </span>
 
-                        <!-- Signos vitales del triaje -->
-                        <div class="col-md-6">
-                          <span class="text-muted small d-block mb-1">Signos Vitales (Triaje):</span>
-                          <div class="d-flex flex-wrap gap-2">
-                            <span class="badge bg-white text-dark border p-2" title="Temperatura">
-                               Temp: <strong>{{ cita.temperatura ?? '-' }} °C</strong>
-                            </span>
-                            <span class="badge bg-white text-dark border p-2" title="Presión Arterial">
-                               Presión: <strong>{{ cita.presion ?? '-' }} mmHg</strong>
-                            </span>
-                            <span class="badge bg-white text-dark border p-2" title="Frecuencia Cardíaca">
-                               Pulso: <strong>{{ cita.frecuenciaCardiaca ?? '-' }} lpm</strong>
-                            </span>
-                            <span class="badge bg-white text-dark border p-2" title="Índice de Masa Corporal">
-                               IMC: <strong>{{ calcularImc(cita.peso, cita.talla) }}</strong>
-                            </span>
-                          </div>
-                        </div>
-
-                        <!-- Diagnóstico y Tratamiento -->
-                        @if (cita.diagnostico || cita.tratamiento) {
-                          <div class="col-12">
-                            <div class="p-2 rounded bg-light border-start border-4 border-primary">
-                              @if (cita.diagnostico) {
-                                <div class="mb-1">
-                                  <strong class="text-primary small">Diagnóstico:</strong>
-                                  <span class="ms-1 text-dark">{{ cita.diagnostico }}</span>
-                                </div>
-                              }
-                              @if (cita.tratamiento) {
-                                <div>
-                                  <strong class="text-success small">Tratamiento / Receta:</strong>
-                                  <span class="ms-1 text-dark">{{ cita.tratamiento }}</span>
-                                </div>
-                              }
-                            </div>
-                          </div>
-                        }
-
-                        <!-- Observaciones / Indicaciones -->
-                        @if (cita.observaciones || cita.indicaciones) {
-                          <div class="col-12">
-                            <small class="text-muted">
-                              <i class="bi bi-chat-left-text me-1"></i>
-                              <strong>Indicaciones:</strong> {{ cita.indicaciones || cita.observaciones }}
-                            </small>
-                          </div>
-                        }
-
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              }
             </div>
 
-          }
+          </div>
+
         </div>
 
-        <!-- PIE DEL MODAL -->
-        <div class="modal-footer-custom">
-          <button type="button" class="btn btn-secondary px-4" (click)="cerrarModal()">
-            <i class="bi bi-x me-1"></i>
-            Cerrar
-          </button>
-        </div>
+        <button type="button" class="btn-close-custom" aria-label="Cerrar historial" (click)="cerrarModal()">
+
+          <i class="bi bi-x-lg"></i>
+        </button>
 
       </div>
+
+      <!-- CUERPO DEL MODAL -->
+      <div class="modal-body-custom">
+
+        @if (cargandoHistorial) {
+
+        <div class="estado-vacio">
+
+          <div class="spinner-border text-primary mb-3" role="status">
+          </div>
+
+          <p>Cargando historial clínico...</p>
+
+        </div>
+
+        } @else if (historialCitas.length === 0) {
+
+        <div class="estado-vacio">
+          <i class="bi bi-folder-x"></i>
+
+          <p>
+            No se encontraron citas para este paciente.
+          </p>
+        </div>
+
+        } @else {
+
+        <!-- LINEA DE TIEMPO -->
+        <div class="timeline">
+
+          @for (
+          cita of historialCitas;
+          track cita.idCita;
+          let idx = $index
+          ) {
+
+          <div class="timeline-item">
+
+            <!-- INDICADOR -->
+            <div class="timeline-badge" [ngClass]="idx === 0
+                      ? 'badge-latest'
+                      : 'badge-past'">
+
+              <i class="bi" [ngClass]="idx === 0
+                        ? 'bi-star-fill'
+                        : 'bi-check2'">
+              </i>
+
+            </div>
+
+            <!-- TARJETA DE CITA -->
+            <div class="timeline-card mb-3">
+
+              <!-- FECHA Y ESTADO -->
+              <div class="timeline-card-header">
+
+                <div class="fecha-historial">
+
+                  <i class="bi bi-calendar3"></i>
+
+                  <strong>
+                    {{ formatearFecha(cita.fechaCita) }}
+                  </strong>
+
+                  <span>
+                    <i class="bi bi-clock"></i>
+                    {{ cita.horaCita }}
+                  </span>
+
+                  @if (idx === 0) {
+                  <span class="etiqueta-reciente">
+                    Más reciente
+                  </span>
+                  }
+
+                </div>
+
+                <span class="badge-estado" [ngClass]="obtenerClaseEstado(cita.estado)">
+
+                  {{ cita.estado }}
+                </span>
+
+              </div>
+
+              <!-- DATOS CLINICOS -->
+              <div class="timeline-card-body">
+
+                <div class="row g-3">
+
+                  <!-- MEDICO TRATANTE -->
+                  <div class="col-md-6">
+
+                    <span class="etiqueta-clinica">
+                      Médico tratante
+                    </span>
+
+                    <div class="valor-clinico">
+                      {{ cita.medico || 'Por asignar' }}
+                    </div>
+
+                  </div>
+
+                  <!-- MOTIVO DE CONSULTA -->
+                  <div class="col-md-6">
+
+                    <span class="etiqueta-clinica">
+                      Motivo de consulta
+                    </span>
+
+                    <div class="valor-clinico">
+                      {{ cita.motivoConsulta || 'Consulta general' }}
+                    </div>
+
+                  </div>
+
+                  <!-- SIGNOS VITALES -->
+                  <div class="col-12">
+
+                    <div class="seccion-clinica">
+
+                      <h6>
+                        <i class="bi bi-heart-pulse me-2"></i>
+                        Signos vitales
+                      </h6>
+
+                      <div class="vitales-grid">
+
+                        <div class="vital-item">
+                          <span>Temperatura</span>
+
+                          <strong>
+                            {{ cita.temperatura ?? '-' }}
+                            °C
+                          </strong>
+                        </div>
+
+                        <div class="vital-item">
+                          <span>Presión arterial</span>
+
+                          <strong>
+                            {{ cita.presion ?? '-' }}
+                            mmHg
+                          </strong>
+                        </div>
+
+                        <div class="vital-item">
+                          <span>Frecuencia cardíaca</span>
+
+                          <strong>
+                            {{ cita.frecuenciaCardiaca ?? '-' }}
+                            lpm
+                          </strong>
+                        </div>
+
+                        <div class="vital-item">
+                          <span>IMC</span>
+
+                          <strong>
+                            {{ calcularImc(cita.peso, cita.talla) }}
+                          </strong>
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  <!-- DIAGNOSTICO Y TRATAMIENTO -->
+                  @if (cita.diagnostico || cita.tratamiento) {
+
+                  <div class="col-12">
+
+                    <div class="seccion-clinica">
+
+                      <h6>
+                        <i class="bi bi-clipboard2-pulse me-2"></i>
+                        Información de la atención
+                      </h6>
+
+                      @if (cita.diagnostico) {
+
+                      <div class="mb-3">
+
+                        <span class="etiqueta-clinica">
+                          Diagnóstico
+                        </span>
+
+                        <p class="valor-clinico mb-0">
+                          {{ cita.diagnostico }}
+                        </p>
+
+                      </div>
+
+                      }
+
+                      @if (cita.tratamiento) {
+
+                      <div>
+
+                        <span class="etiqueta-clinica">
+                          Tratamiento
+                        </span>
+
+                        <p class="valor-clinico mb-0">
+                          {{ cita.tratamiento }}
+                        </p>
+
+                      </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                  }
+
+                  <!-- OBSERVACIONES E INDICACIONES -->
+                  @if (cita.observaciones || cita.indicaciones) {
+
+                  <div class="col-12">
+
+                    <div class="seccion-clinica">
+
+                      <h6>
+                        <i class="bi bi-journal-text me-2"></i>
+                        Observaciones e indicaciones
+                      </h6>
+
+                      @if (cita.observaciones) {
+
+                      <div class="mb-3">
+
+                        <span class="etiqueta-clinica">
+                          Observaciones
+                        </span>
+
+                        <p class="valor-clinico mb-0">
+                          {{ cita.observaciones }}
+                        </p>
+
+                      </div>
+
+                      }
+
+                      @if (cita.indicaciones) {
+
+                      <div>
+
+                        <span class="etiqueta-clinica">
+                          Indicaciones
+                        </span>
+
+                        <p class="valor-clinico mb-0">
+                          {{ cita.indicaciones }}
+                        </p>
+
+                      </div>
+
+                      }
+
+                    </div>
+
+                  </div>
+
+                  }
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+      </div>
+
+      <!-- PIE DEL MODAL -->
+      <div class="modal-footer-custom">
+
+        <button type="button" class="btn btn-secondary px-4" (click)="cerrarModal()">
+
+          <i class="bi bi-x me-2"></i>
+          Cerrar
+
+        </button>
+
+      </div>
+
     </div>
+
   </div>
+
+</div>
+
 }

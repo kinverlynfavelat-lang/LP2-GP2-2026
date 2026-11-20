@@ -1,101 +1,301 @@
-<div class="container mt-4">
 
-  <div class="d-flex justify-content-between align-items-center mb-3">
+<div class="container citas-container mt-4 mb-5">
 
-    <h2 class="text-upeu-primary">
-      Gestión de citas médicas
-    </h2>
+  <!-- ========================================== -->
+  <!-- ENCABEZADO -->
+  <!-- ========================================== -->
 
-    <a routerLink="/citas/nuevo" class="btn btn-nuevo">
-      <i class="bi bi-plus-circle me-1"></i>
+  <div class="encabezado-pagina">
+
+    <div>
+      <h2 class="titulo-pagina">
+        Gestión de citas médicas
+      </h2>
+
+      <p class="subtitulo-pagina">
+        Consulta y administra las citas registradas
+        en el centro médico.
+      </p>
+    </div>
+
+    <a
+      routerLink="/citas/nuevo"
+      class="btn btn-nuevo">
+
+      <i class="bi bi-plus-circle me-2"></i>
       Nueva cita
+
     </a>
 
   </div>
 
-  <div class="table-responsive">
+  <!-- ========================================== -->
+  <!-- BUSCADOR Y CONTADOR -->
+  <!-- ========================================== -->
 
-    <table class="table table-hover shadow-sm align-middle">
+  <div class="barra-herramientas">
 
-      <thead>
-        <tr>
-          <th>N.º</th>
-          <th>Paciente</th>
-          <th>Médico</th>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Motivo</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    <div class="contador-citas">
 
-      <tbody>
+      <i class="bi bi-calendar-check"></i>
 
-        @for (c of citas; track c.idCita; let i = $index) {
+      <span>
+        <strong>{{ citasFiltradas.length }}</strong>
+        citas encontradas
+      </span>
 
-          <tr>
+    </div>
 
-            <td>{{ i + 1 }}</td>
+    <div class="buscador-citas">
 
-            <td>{{ c.paciente }}</td>
+      <div class="search-box">
 
-            <td>{{ c.medico || 'Sin asignar' }}</td>
+        <i class="bi bi-search search-icon"></i>
 
-            <td>{{ c.fechaCita }}</td>
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar paciente, médico, fecha o estado..."
+          aria-label="Buscar por paciente, médico, fecha, hora, motivo o estado"
+          [(ngModel)]="busqueda"
+          (input)="filtrarCitas()">
 
-            <td>{{ c.horaCita }}</td>
+      </div>
 
-            <td>{{ c.motivoConsulta }}</td>
-
-            <td>
-              <span class="estado-badge"
-                    [ngClass]="'estado-' + c.estado?.toLowerCase()">
-                {{ c.estado }}
-              </span>
-            </td>
-
-            <td>
-
-              <a
-                [routerLink]="['/citas/editar', c.idCita]"
-                class="btn btn-sm btn-editar me-2">
-                <i class="bi bi-pencil-square me-1"></i>
-                Editar
-              </a>
-
-              @if (c.estado !== 'ATENDIDO' &&
-                   c.estado !== 'ANULADO' &&
-                   c.estado !== 'INASISTENCIA' &&
-                   c.estado !== 'DERIVADO') {
-
-                <button
-                  (click)="anular(c.idCita!)"
-                  class="btn btn-sm btn-eliminar">
-                  <i class="bi bi-x-circle me-1"></i>
-                  Anular
-                </button>
-
-              }
-
-            </td>
-
-          </tr>
-
-        } @empty {
-
-          <tr>
-            <td colspan="7" class="text-center py-4">
-              No hay citas registradas.
-            </td>
-          </tr>
-
-        }
-
-      </tbody>
-
-    </table>
+    </div>
 
   </div>
+
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
+
+  @if (cargando) {
+
+    <div class="estado-vacio">
+
+      <div
+        class="spinner-border text-primary mb-3"
+        role="status">
+      </div>
+
+      <p>Cargando citas médicas...</p>
+
+    </div>
+
+  } @else {
+
+    <!-- ========================================== -->
+    <!-- TABLA DE CITAS -->
+    <!-- ========================================== -->
+
+    <div class="tabla-citas table-responsive">
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+
+          <tr>
+            <th>N.º</th>
+            <th>Paciente</th>
+            <th>Médico</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Motivo</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+            c of citasFiltradas;
+            track c.idCita;
+            let i = $index
+          ) {
+
+            <tr>
+
+              <!-- NUMERO -->
+              <td>
+                <span class="numero-fila">
+                  {{ i + 1 }}
+                </span>
+              </td>
+
+              <!-- PACIENTE -->
+              <td>
+                <span class="nombre-paciente">
+                  {{ c.paciente || 'Sin paciente' }}
+                </span>
+              </td>
+
+              <!-- MEDICO -->
+              <td>
+                <span class="nombre-medico">
+                  {{ c.medico || 'Sin asignar' }}
+                </span>
+              </td>
+
+              <!-- FECHA -->
+              <td>
+                <span class="fecha-cita">
+                  {{ formatearFecha(c.fechaCita) }}
+                </span>
+              </td>
+
+              <!-- HORA -->
+              <td>
+                <span class="hora-cita">
+                  {{ c.horaCita || '-' }}
+                </span>
+              </td>
+
+              <!-- MOTIVO -->
+              <td>
+
+                <span
+                  class="motivo-cita"
+                  [title]="c.motivoConsulta || ''">
+
+                  {{ c.motivoConsulta || 'Sin motivo registrado' }}
+
+                </span>
+
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+
+                <span
+                  class="estado-badge"
+                  [ngClass]="'estado-' + c.estado?.toLowerCase()">
+
+                  {{ c.estado || 'SIN ESTADO' }}
+
+                </span>
+
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="text-center">
+
+                @if (puedeGestionar(c.estado)) {
+
+                  <div class="acciones-cita">
+
+                    <a
+                      [routerLink]="['/citas/editar', c.idCita]"
+                      class="btn btn-sm btn-editar">
+
+                      <i class="bi bi-pencil-square me-1"></i>
+                    
+
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-sm btn-eliminar"
+                      [disabled]="procesandoId !== null"
+                      (click)="anular(c.idCita!)">
+
+                      <i class="bi bi-x-circle me-1"></i>
+
+                      @if (procesandoId === c.idCita) {
+                        Anulando...
+                      } @else {
+                      
+                      }
+
+                    </button>
+
+                  </div>
+
+                } @else {
+
+                  <span class="texto-sin-acciones">
+
+                    <i class="bi bi-lock me-1"></i>
+
+                    {{ obtenerTextoAccion(c.estado) }}
+
+                  </span>
+
+                }
+
+              </td>
+
+            </tr>
+
+          } @empty {
+
+            <tr>
+
+              <td colspan="8" class="text-center py-5">
+
+                <div class="sin-resultados">
+
+                  <i class="bi bi-calendar-x"></i>
+
+                  @if (busqueda) {
+
+                    <h6>
+                      No se encontraron coincidencias
+                    </h6>
+
+                    <p>
+                      Prueba con otro paciente, médico,
+                      fecha, motivo o estado.
+                    </p>
+
+                  } @else {
+
+                    <h6>
+                      No hay citas registradas
+                    </h6>
+
+                    <p>
+                      Registra una nueva cita médica
+                      para comenzar.
+                    </p>
+
+                  }
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- TEXTO INFORMATIVO -->
+    <!-- ========================================== -->
+
+    <div class="pie-tabla">
+
+      <span>
+        <i class="bi bi-info-circle me-1"></i>
+        Solo se pueden editar o anular citas
+        en recepción o triaje.
+      </span>
+
+      <span>
+        Total registrado:
+        <strong>{{ citas.length }}</strong>
+      </span>
+
+    </div>
+
+  }
 
 </div>
