@@ -106,7 +106,7 @@ public class PagoServiceImpl implements IPagoService {
         // 5. Llamar al procedimiento almacenado Oracle
         StoredProcedureQuery procedimiento =
                 entityManager.createStoredProcedureQuery(
-                        "SP_DESCONTAR_FONDO_ESTUDIANTIL");
+                        "CENTRO_MEDICO.SP_DESCONTAR_FONDO_ESTUDIANTIL");
 
         procedimiento.registerStoredProcedureParameter(
                 1, Long.class, ParameterMode.IN);

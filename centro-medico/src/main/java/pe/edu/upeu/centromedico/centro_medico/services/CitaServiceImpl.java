@@ -271,14 +271,30 @@ public class CitaServiceImpl implements ICitaService {
         // 7. Registrar la cita y obtener su ID
         Cita guardada = citaRepository.saveAndFlush(cita);
 
-        // 8. Descuento automatico para estudiantes
+
+        // ==========================================
+        // COBERTURA AUTOMATICA DEL FONDO ESTUDIANTIL
+        // ==========================================
+
+
+        // 8. COBERTURA AUTOMATICA DEL FONDO ESTUDIANTIL
+
+        BigDecimal precioCita = new BigDecimal("50.00");
+
+        BigDecimal saldoActual = paciente.getSaldoFondo() != null
+                ? paciente.getSaldoFondo()
+                : BigDecimal.ZERO;
+
+        // Solo estudiantes con matricula vigente y fondo suficiente
         if (dto.estado() != EstadoCita.DERIVADO
                 && paciente.getTipoPaciente() == TipoPaciente.ESTUDIANTE
-                && paciente.getMatriculaVigente() == SiNo.SI) {
+                && paciente.getMatriculaVigente() == SiNo.SI
+                && saldoActual.compareTo(precioCita) >= 0) {
 
+            // Ejecutar procedimiento almacenado Oracle
             StoredProcedureQuery procedimiento =
                     entityManager.createStoredProcedureQuery(
-                            "SP_DESCONTAR_FONDO_ESTUDIANTIL");
+                            "CENTRO_MEDICO.SP_DESCONTAR_FONDO_ESTUDIANTIL");
 
             procedimiento.registerStoredProcedureParameter(
                     1, Long.class, ParameterMode.IN);
@@ -294,26 +310,32 @@ public class CitaServiceImpl implements ICitaService {
 
             procedimiento.execute();
 
-            // 9. Consultar cuanto falta pagar
-            Number resultado = (Number)
-                    procedimiento.getOutputParameterValue(3);
+            // 9. Consultar monto pendiente
+            Number resultado =
+                    (Number) procedimiento.getOutputParameterValue(3);
 
             BigDecimal montoCaja =
                     new BigDecimal(resultado.toString());
 
-            // El estudiante no debe pasar por caja
-            if (montoCaja.compareTo(BigDecimal.ZERO) > 0) {
+            // Verificar que la cobertura sea completa
+            if (montoCaja.compareTo(BigDecimal.ZERO) != 0) {
+
                 throw new IllegalStateException(
-                        "Fondo insuficiente para cubrir los S/ 50");
+                        "No se pudo confirmar la cobertura completa del fondo");
             }
 
-            // 10. Cobertura completa: pasa a triaje
+            // 10. Cobertura completa: pasa directamente a triaje
             guardada.setEstado(EstadoCita.TRIAJE);
+
             citaRepository.save(guardada);
 
-            // Actualizar el saldo en memoria
+            // Actualizar saldo del estudiante
             entityManager.refresh(paciente);
         }
+
+        // Estudiantes sin cobertura completa:
+        // permanecen en RECEPCION y pasan a caja.
+        // El descuento parcial se aplicara al confirmar el pago.
 
         // 11. Devolver cita registrada
         return convertirADTO(guardada);
@@ -498,7 +520,7 @@ public class CitaServiceImpl implements ICitaService {
         // Llamar al procedimiento almacenado
         StoredProcedureQuery procedimiento =
                 entityManager.createStoredProcedureQuery(
-                        "SP_ANULAR_CITA"
+                        "CENTRO_MEDICO.SP_ANULAR_CITA"
                 );
 
         procedimiento.registerStoredProcedureParameter(

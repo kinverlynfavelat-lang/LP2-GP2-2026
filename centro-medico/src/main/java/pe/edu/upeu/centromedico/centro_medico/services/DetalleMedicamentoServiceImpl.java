@@ -82,7 +82,7 @@ public class DetalleMedicamentoServiceImpl
         // 2. Llamar al procedimiento almacenado de Oracle
         StoredProcedureQuery procedimiento =
                 entityManager.createStoredProcedureQuery(
-                        "SP_REGISTRAR_ENTREGA_MEDICAMENTO");
+                        "CENTRO_MEDICO.SP_REGISTRAR_ENTREGA_MEDICAMENTO");
 
         procedimiento.registerStoredProcedureParameter(
                 1, Long.class, ParameterMode.IN);
