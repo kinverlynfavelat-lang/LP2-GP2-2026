@@ -1,116 +1,560 @@
 
-/* CONTENEDOR */
-.container {
-  max-width: 1450px;
-  padding-top: 15px;
+/* ==========================================
+   HORARIOS MEDICOS - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --horario-primario: var(--color-primario, #07577A);
+  --horario-secundario: var(--color-secundario, #43A6CC);
+  --horario-celeste: var(--color-celeste, #E8F5FB);
+  --horario-borde: var(--color-borde, #DCEAF1);
+  --horario-texto: var(--color-texto-oscuro, #263E4D);
+  --horario-muted: var(--color-texto-secundario, #526B7A);
 }
 
-/* TITULO */
-h2 {
-  color: #075477;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.horarios-container {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.titulo-pagina {
+  color: var(--horario-primario);
   font-size: 27px;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin: 0;
 }
 
-/* TARJETAS */
-.card {
-  border: 1px solid #dceaf2;
-  border-radius: 10px;
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
 }
 
-/* BOTON NUEVO */
+/* ==========================================
+   BOTON NUEVO HORARIO
+   ========================================== */
+
 .btn-nuevo {
-  background-color: #075477;
-  color: white;
-  border: 1px solid #075477;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
   padding: 10px 17px;
+
+  background-color: var(--horario-primario);
+  color: #FFFFFF;
+
+  border: 1px solid var(--horario-primario);
   border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
+
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .btn-nuevo:hover {
-  background-color: #329BC2;
-  border-color: #329BC2;
-  color: white;
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-/* SELECTOR */
-.form-select {
-  border: 1px solid #c9dce8;
-  padding: 11px;
+/* ==========================================
+   CONTADOR Y FILTROS
+   ========================================== */
+
+.barra-herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  gap: 18px;
+  margin-bottom: 18px;
 }
 
-.form-select:focus {
-  border-color: #329BC2;
-  box-shadow: 0 0 0 0.2rem rgba(50, 155, 194, 0.15);
-}
+/* CONTADOR */
 
-/* TABLA */
-.table {
+.contador-horarios {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--horario-muted);
   font-size: 14px;
-  margin-bottom: 0;
-}
-
-.table thead th {
-  background-color: #E5F4FC;
-  color: #075477;
-  font-weight: 700;
-  padding: 15px 12px;
   white-space: nowrap;
 }
 
-.table tbody td {
-  color: #334e68;
-  padding: 14px 12px;
+.contador-horarios i {
+  color: var(--horario-secundario);
+  font-size: 18px;
 }
 
-/* EDITAR */
-.btn-editar {
-  background-color: #329BC2;
-  color: white;
-  border: 1px solid #329BC2;
-  font-weight: 600;
-}
-
-.btn-editar:hover {
-  background-color: #075477;
-  color: white;
-}
-
-/* ESTADOS */
-.estado {
-  display: inline-block;
-  padding: 5px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+.contador-horarios strong {
+  color: var(--horario-primario);
   font-weight: 700;
 }
 
-.estado.activo {
-  background-color: #e1f5eb;
-  color: #16834a;
+/* CONTROLES */
+
+.controles-horarios {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-left: auto;
 }
 
-.estado.inactivo {
-  background-color: #fce8e8;
-  color: #bd3b45;
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-horarios {
+  position: relative;
+  width: 320px;
+  max-width: 100%;
 }
 
-/* RESPONSIVE */
+.search-icon {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: var(--horario-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 13px 9px 42px;
+
+  background: #FFFFFF;
+  color: var(--horario-texto);
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8BA0AC;
+}
+
+.search-input:focus {
+  outline: none;
+
+  border-color: var(--horario-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   FILTRO POR MEDICO
+   ========================================== */
+
+.selector-medico {
+  width: 300px;
+  max-width: 100%;
+}
+
+.selector-medico .form-select {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 34px 9px 13px;
+
+  background-color: #FFFFFF;
+  color: #344F60;
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+.selector-medico .form-select:focus {
+  border-color: var(--horario-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
+
+.btn-actualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 9px 13px;
+
+  background: #E8F5FB;
+  color: var(--horario-primario);
+
+  border: 1px solid #CFE5F1;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.btn-actualizar:hover {
+  background: var(--horario-primario);
+  border-color: var(--horario-primario);
+  color: #FFFFFF;
+}
+
+.btn-actualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   TABLA DE HORARIOS
+   ========================================== */
+
+.tabla-horarios {
+  width: 100%;
+  max-width: 100%;
+
+  background: #FFFFFF;
+
+  border: 1px solid var(--horario-borde);
+  border-radius: 10px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
+}
+
+.tabla-horarios .table {
+  width: 100%;
+  min-width: 900px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
+}
+
+/* ==========================================
+   ENCABEZADOS DE TABLA
+   ========================================== */
+
+.tabla-horarios .table thead th {
+  background-color: var(--horario-celeste) !important;
+  color: var(--horario-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   FILAS DE TABLA
+   ========================================== */
+
+.tabla-horarios .table tbody td {
+  padding: 14px 12px;
+
+  color: var(--horario-texto);
+
+  border-bottom: 1px solid #E7EFF4;
+  vertical-align: middle;
+}
+
+.tabla-horarios .table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   DATOS DE LA TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
+}
+
+/* NOMBRE DEL MEDICO */
+
+.nombre-medico {
+  color: #263E4D;
+  font-size: 14px;
+  font-weight: 600;
+
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+/* DIA */
+
+.dia-horario {
+  color: #263E4D;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* HORAS */
+
+.hora-horario {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================
+   ESTADOS
+   ========================================== */
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+
+  white-space: nowrap;
+}
+
+/* ACTIVO - AZUL INSTITUCIONAL SUAVE */
+
+.estado-activo {
+  background-color: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
+}
+
+/* INACTIVO - GRIS AZULADO */
+
+.estado-inactivo {
+  background-color: #EDF1F4;
+  color: #647582;
+  border-color: #DCE4E9;
+}
+
+/* ==========================================
+   BOTON EDITAR
+   ========================================== */
+
+.acciones-horario {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 36px;
+  padding: 0;
+
+  background-color: #07577A;
+  color: #FFFFFF;
+
+  border: 1px solid #07577A;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-editar:hover {
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 15px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--horario-primario);
+  font-weight: 700;
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 220px;
+  padding: 30px;
+
+  text-align: center;
+  color: #8296A5;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.estado-vacio h6 {
+  color: var(--horario-primario);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sin-resultados i,
+.icono-vacio {
+  display: block;
+
+  color: #A2B4BF;
+  font-size: 34px;
+
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--horario-primario);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sin-resultados p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 992px) {
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controles-horarios {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+}
+
 @media (max-width: 768px) {
 
-  .container {
+  .horarios-container {
     padding: 12px;
   }
 
-  h2 {
+  .titulo-pagina {
     font-size: 22px;
   }
 
-  .btn-nuevo {
-    padding: 8px 10px;
+  .subtitulo-pagina {
     font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .controles-horarios {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .buscador-horarios,
+  .selector-medico,
+  .btn-actualizar {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .tabla-horarios .table {
+    font-size: 12px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-nuevo {
+    width: 100%;
   }
 
 }

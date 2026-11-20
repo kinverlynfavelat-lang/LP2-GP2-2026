@@ -1,79 +1,125 @@
 
-/* =====================================
-   REGISTRO DE ENTREGAS
-   UPeU SALUD
-===================================== */
+/* ==========================================
+   ENTREGAS DE MEDICAMENTOS - UPeU SALUD
+   ========================================== */
 
 :host {
   display: block;
-  --azul: #075779;
-  --azul-oscuro: #06445f;
-  --azul-medio: #1685ac;
-  --celeste: #eaf4f8;
-  --borde: #dce9f0;
+
+  --entrega-primario: var(--color-primario, #07577A);
+  --entrega-secundario: var(--color-secundario, #43A6CC);
+  --entrega-celeste: var(--color-celeste, #E8F5FB);
+  --entrega-borde: var(--color-borde, #DCEAF1);
+  --entrega-texto: var(--color-texto-oscuro, #263E4D);
+  --entrega-muted: var(--color-texto-secundario, #526B7A);
 }
 
-.container {
-  max-width: 1350px;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.entregas-pagina {
+  width: 100%;
+  padding: 0;
 }
 
-/* ENCABEZADO */
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
 
 .titulo-pagina {
-  color: var(--azul);
+  color: var(--entrega-primario);
   font-size: 27px;
   font-weight: 700;
+  margin: 0;
 }
 
-.titulo-pagina i {
-  color: var(--azul-medio);
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
 }
 
-.text-muted {
-  color: #758697 !important;
-}
-
-/* BOTÓN PRINCIPAL */
+/* ==========================================
+   BOTON REGISTRAR ENTREGA
+   ========================================== */
 
 .btn-principal {
-  background: var(--azul);
-  border: 1px solid var(--azul);
-  color: white;
-  border-radius: 9px;
-  padding: 11px 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 10px 17px;
+
+  background: var(--entrega-primario);
+  color: #FFFFFF;
+
+  border: 1px solid var(--entrega-primario);
+  border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
-  transition: .2s;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
 }
 
 .btn-principal:hover {
-  background: var(--azul-oscuro);
-  border-color: var(--azul-oscuro);
-  color: white;
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-/* TARJETAS RESUMEN */
+/* ==========================================
+   TARJETAS DE RESUMEN
+   ========================================== */
 
 .resumen {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+
   height: 100%;
-  background: white;
-  border: 1px solid #e2edf3;
-  border-radius: 13px;
-  padding: 23px;
-  box-shadow: 0 4px 15px rgba(7,87,121,.05);
-  transition: .2s;
+  min-height: 104px;
+  padding: 20px;
+
+  background: #FFFFFF;
+
+  border: 1px solid var(--entrega-borde);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
-.resumen:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(7,87,121,.09);
-}
+/* ICONOS DE LAS TARJETAS */
 
-.resumen i {
-  font-size: 29px;
-  color: var(--azul-medio) !important;
+.resumen-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 44px;
+  height: 44px;
+
+  background: #E8F5FB;
+  color: var(--entrega-primario);
+
+  border-radius: 10px;
+  font-size: 21px;
 }
 
 .resumen small {
@@ -83,166 +129,398 @@
 }
 
 .resumen h3 {
-  color: var(--azul);
+  color: var(--entrega-primario);
+  font-size: 27px;
   font-weight: 700;
-  font-size: 26px;
   margin: 5px 0 0;
 }
 
-/* TARJETA HISTORIAL */
+/* ==========================================
+   TARJETA DEL HISTORIAL
+   ========================================== */
 
-.card {
-  border: 1px solid #e2edf3 !important;
-  border-radius: 14px;
+.entregas-card {
+  background: #FFFFFF;
+
+  border: 1px solid var(--entrega-borde);
+  border-radius: 10px;
+
   overflow: hidden;
-  background: white;
-  box-shadow: 0 4px 18px rgba(7,87,121,.06) !important;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
-.card-header {
-  background: white !important;
-  padding: 20px 22px;
-  border-bottom: 1px solid #e3edf2;
+/* CABECERA */
+
+.entregas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 15px;
+
+  padding: 18px 20px;
+
+  background: #FFFFFF;
 }
 
-.card-header h5 {
-  color: var(--azul);
+.entregas-header h5 {
+  color: var(--entrega-primario);
   font-size: 16px;
   font-weight: 700;
 }
 
-.card-header h5 i {
-  color: var(--azul-medio);
+.entregas-header p {
+  color: #8195A3;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
-/* FILTROS */
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
 
-.card-header .form-control {
-  border: 1px solid var(--borde);
-  border-radius: 9px;
-  font-size: 13px;
-  padding: 11px 13px;
-  color: #34485b;
-  background-color: white;
-}
+.btn-actualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 
-.card-header .form-control::placeholder {
-  color: #8796a5;
-}
+  min-height: 40px;
+  padding: 8px 13px;
 
-.card-header .form-control:focus {
-  border-color: var(--azul-medio);
-  box-shadow: 0 0 0 3px rgba(22,133,172,.1);
-}
+  background: #E8F5FB;
+  color: var(--entrega-primario);
 
-/* BOTÓN ACTUALIZAR */
-
-.card-header .btn-outline-primary {
-  background: white;
-  border: 1px solid #b7d9e7;
-  color: var(--azul);
+  border: 1px solid #CFE5F1;
   border-radius: 8px;
-  padding: 7px 13px;
+
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
 }
 
-.card-header .btn-outline-primary:hover {
-  background: var(--azul);
-  border-color: var(--azul);
-  color: white;
+.btn-actualizar:hover {
+  background: var(--entrega-primario);
+  border-color: var(--entrega-primario);
+  color: #FFFFFF;
 }
 
-/* BOTÓN LIMPIAR */
+.btn-actualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 
-.card-header .btn-outline-secondary {
-  background: #f4f7f9;
-  border: 1px solid #dce5ec;
-  color: #64748b;
+/* ==========================================
+   BARRA DE FILTROS
+   ========================================== */
+
+.barra-filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  padding: 0 20px 18px;
+
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--entrega-borde);
+}
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-entregas {
+  position: relative;
+
+  flex: 1 1 330px;
+  min-width: 220px;
+}
+
+.search-icon {
+  position: absolute;
+
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
+  color: var(--entrega-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  display: block;
+
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 13px 9px 42px;
+
+  background: #FFFFFF;
+  color: var(--entrega-texto);
+
+  border: 1px solid #CBDCE7;
   border-radius: 8px;
+
+  font-size: 14px;
+}
+
+.search-input::placeholder {
+  color: #8BA0AC;
+}
+
+.search-input:focus {
+  outline: none;
+
+  border-color: var(--entrega-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   FILTRO POR FECHA
+   ========================================== */
+
+.filtro-fecha {
+  flex: 0 1 230px;
+  min-width: 180px;
+}
+
+.fecha-input {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 12px;
+
+  background: #FFFFFF;
+  color: #526B7A;
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  font-size: 14px;
+}
+
+.fecha-input:focus {
+  border-color: var(--entrega-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   BOTON LIMPIAR
+   ========================================== */
+
+.btn-limpiar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 9px 15px;
+
+  background: #F1F6F9;
+  color: #526B7A;
+
+  border: 1px solid #DCE5EC;
+  border-radius: 8px;
+
   font-size: 13px;
   font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
 }
 
-.card-header .btn-outline-secondary:hover {
-  background: #e8eef2;
-  color: var(--azul);
+.btn-limpiar:hover {
+  background: #E8F0F5;
+  border-color: #C7D9E4;
+  color: var(--entrega-primario);
 }
 
-/* TABLA */
+.btn-limpiar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
-.table {
-  margin-bottom: 0;
+/* ==========================================
+   TABLA DE ENTREGAS
+   ========================================== */
+
+.tabla-entregas {
+  width: 100%;
+  min-width: 760px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
+}
+
+/* ENCABEZADO */
+
+.tabla-entregas thead th {
+  background: var(--entrega-celeste) !important;
+  color: var(--entrega-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 13px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
-.table thead th {
-  background: var(--celeste);
-  color: var(--azul);
-  font-size: 12px;
-  font-weight: 700;
-  padding: 16px;
-  border-bottom: 1px solid var(--borde);
-}
+/* FILAS */
 
-.table tbody td {
-  padding: 16px;
-  color: #34485b;
-  font-size: 13px;
+.tabla-entregas tbody td {
+  padding: 14px 12px;
+
+  color: var(--entrega-texto);
+
+  border-bottom: 1px solid #E7EFF4;
   vertical-align: middle;
-  border-bottom: 1px solid #edf1f4;
 }
 
-.table tbody tr:hover td {
-  background: #f4f9fc;
-}
-
-.table tbody tr:last-child td {
+.tabla-entregas tbody tr:last-child td {
   border-bottom: none;
 }
 
-.table tbody td.fw-semibold {
-  color: var(--azul);
-  font-weight: 600;
+/* ==========================================
+   DATOS DE TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
 }
 
-/* IDENTIFICADORES DE RECETA Y CITA */
-
-.table tbody td:nth-child(4),
-.table tbody td:nth-child(5) {
-  color: #60788a;
-  font-weight: 600;
+.fecha-entrega {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
 }
 
-/* CANTIDAD ENTREGADA */
+/* NOMBRE DEL PACIENTE */
 
-.table .badge.bg-success {
-  background: #e2f1f8 !important;
-  color: var(--azul) !important;
-  border: 1px solid #c5e1ed;
-  padding: 7px 12px;
-  border-radius: 8px;
+.nombre-paciente {
+  color: #263E4D;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+/* MEDICAMENTO */
+
+.nombre-medicamento {
+  color: #344F60;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.cantidad-prescrita {
+  color: #526B7A;
+  font-size: 14px;
+}
+
+/* ==========================================
+   CANTIDAD ENTREGADA
+   ========================================== */
+
+.cantidad-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 35px;
+  padding: 6px 10px;
+
+  background: #E6F2F9;
+  color: #176388;
+
+  border: 1px solid #CFE5F1;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 14px 3px;
+
+  color: #718096;
   font-size: 12px;
-  font-weight: 700;
 }
 
-/* CARGANDO */
+.pie-tabla strong {
+  color: var(--entrega-primario);
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 190px;
+  padding: 30px;
+
+  text-align: center;
+  color: #8195A3;
+}
+
+.estado-vacio p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+.estado-vacio h6 {
+  color: var(--entrega-primario);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.icono-vacio {
+  color: #A2B4BF;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
 
 .spinner-border.text-primary {
-  color: var(--azul-medio) !important;
+  color: var(--entrega-primario) !important;
 }
 
-/* SIN RESULTADOS */
-
-.card-body > .text-center {
-  color: #758697;
-}
-
-.card-body > .text-center .bi-inbox {
-  color: #a5bdca;
-}
-
-/* RESPONSIVE */
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 
 @media (max-width: 768px) {
 
@@ -250,25 +528,49 @@
     font-size: 22px;
   }
 
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
   .resumen {
-    padding: 17px;
+    padding: 16px;
   }
 
-  .card-header {
-    padding: 15px;
+  .entregas-header {
+    padding: 16px;
   }
 
-  .card-header h5 {
-    font-size: 14px;
+  .barra-filtros {
+    padding: 0 16px 16px;
   }
 
-  .card-header .row > div {
+  .buscador-entregas {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .filtro-fecha {
+    flex: 1 1 180px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-principal {
     width: 100%;
   }
 
-  .table thead th,
-  .table tbody td {
-    padding: 12px;
+  .filtro-fecha {
+    flex: 1 1 100%;
+  }
+
+  .btn-limpiar {
+    width: 100%;
   }
 
 }

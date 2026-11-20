@@ -1,8 +1,9 @@
 
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { forkJoin } from 'rxjs';
+import { forkJoin, map } from 'rxjs';
 
 import { HorarioMedicoService } from '../../../core/services/horario-medico.service';
 import { MedicoService } from '../../../core/services/medico.service';
@@ -17,10 +18,15 @@ interface MedicoOpcion {
   especialidad: string;
 }
 
+type HorarioVista = HorarioMedico & {
+  medicoId: number;
+  medicoNombre: string;
+};
+
 @Component({
   selector: 'app-horario-medico-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './horario-medico-list.component.html',
   styleUrl: './horario-medico-list.component.css'
 })
@@ -32,17 +38,35 @@ export class HorarioMedicoListComponent implements OnInit {
   private personaService = inject(PersonaService);
   private alertService = inject(AlertService);
 
+  // LISTAS
   medicos: MedicoOpcion[] = [];
-  horarios: HorarioMedico[] = [];
+  horarios: HorarioVista[] = [];
+  horariosFiltrados: HorarioVista[] = [];
 
+  // FILTROS
   medicoSeleccionado: number | null = null;
-  cargando = false;
+  busqueda: string = '';
+
+  // CONTROL
+  cargando: boolean = false;
+  errorCarga: boolean = false;
 
   ngOnInit(): void {
     this.cargarMedicos();
   }
 
+  // ==========================================
+  // CARGAR MEDICOS
+  // ==========================================
+
   cargarMedicos(): void {
+
+    if (this.cargando) {
+      return;
+    }
+
+    this.cargando = true;
+    this.errorCarga = false;
 
     forkJoin({
       medicos: this.medicoService.getMedicos(),
@@ -52,14 +76,14 @@ export class HorarioMedicoListComponent implements OnInit {
 
       next: (data) => {
 
-        this.medicos = [];
+        const resultado: MedicoOpcion[] = [];
 
-        data.medicos.forEach(medico => {
+        for (const medico of data.medicos) {
 
           const id = medico.idEmpleado;
 
           if (id == null) {
-            return;
+            continue;
           }
 
           const empleado = data.empleados.find(
@@ -72,7 +96,7 @@ export class HorarioMedicoListComponent implements OnInit {
               )
             : undefined;
 
-          this.medicos.push({
+          resultado.push({
             idMedico: id,
             nombre: persona
               ? `${persona.nombres} ${persona.apellidos}`
@@ -80,62 +104,252 @@ export class HorarioMedicoListComponent implements OnInit {
             especialidad: medico.especialidad
           });
 
-        });
-
-        if (this.medicos.length > 0) {
-          this.medicoSeleccionado = this.medicos[0].idMedico;
-          this.cargarHorarios(this.medicoSeleccionado);
         }
+
+        // ORDENAR MEDICOS POR NOMBRE
+        this.medicos = resultado.sort((a, b) =>
+          a.nombre.localeCompare(b.nombre)
+        );
+
+        if (this.medicos.length === 0) {
+
+          this.horarios = [];
+          this.horariosFiltrados = [];
+          this.cargando = false;
+
+          return;
+        }
+
+        // CARGAR LOS HORARIOS DE TODOS
+        this.cargarHorarios();
 
       },
 
-      error: () => {
+      error: (err) => {
+
+        console.error(
+          'Error al cargar médicos:',
+          err
+        );
+
+        this.errorCarga = true;
+        this.cargando = false;
+
         this.alertService.error(
           'No se pudieron cargar los médicos'
         );
       }
 
     });
-
   }
 
-  cambiarMedico(event: Event): void {
+  // ==========================================
+  // CARGAR HORARIOS DE TODOS LOS MEDICOS
+  // ==========================================
 
-    const valor = (event.target as HTMLSelectElement).value;
+  cargarHorarios(): void {
 
-    this.medicoSeleccionado = valor ? Number(valor) : null;
-
-    if (this.medicoSeleccionado !== null) {
-      this.cargarHorarios(this.medicoSeleccionado);
-    } else {
-      this.horarios = [];
+    if (this.medicos.length === 0) {
+      return;
     }
 
-  }
-
-  cargarHorarios(idMedico: number): void {
-
     this.cargando = true;
+    this.errorCarga = false;
 
-    this.horarioService.getHorariosByMedico(idMedico).subscribe({
+    const peticiones = this.medicos.map(medico =>
 
-      next: (data) => {
-        this.horarios = data;
+      this.horarioService
+        .getHorariosByMedico(medico.idMedico)
+        .pipe(
+
+          map((lista: HorarioMedico[]) =>
+
+            lista.map(horario => ({
+
+              ...horario,
+
+              medicoId: medico.idMedico,
+              medicoNombre: medico.nombre
+
+            } as HorarioVista))
+
+          )
+
+        )
+
+    );
+
+    forkJoin(peticiones).subscribe({
+
+      next: (resultados) => {
+
+        this.horarios = resultados.flat();
+
+        this.ordenarHorarios();
+        this.filtrarHorarios();
+
         this.cargando = false;
+
       },
 
-      error: () => {
+      error: (err) => {
+
+        console.error(
+          'Error al cargar horarios:',
+          err
+        );
+
         this.horarios = [];
+        this.horariosFiltrados = [];
+
+        this.errorCarga = true;
         this.cargando = false;
 
         this.alertService.error(
-          'No se pudieron cargar los horarios'
+          'No se pudieron cargar los horarios médicos'
         );
+
       }
 
     });
+  }
+
+  // ==========================================
+  // ORDENAR POR DIA Y HORA
+  // ==========================================
+
+  ordenarHorarios(): void {
+
+    this.horarios.sort((a, b) => {
+
+      const diferenciaDias =
+        this.obtenerOrdenDia(a.diaSemana) -
+        this.obtenerOrdenDia(b.diaSemana);
+
+      if (diferenciaDias !== 0) {
+        return diferenciaDias;
+      }
+
+      const diferenciaHoras =
+        String(a.horaInicio ?? '').localeCompare(
+          String(b.horaInicio ?? '')
+        );
+
+      if (diferenciaHoras !== 0) {
+        return diferenciaHoras;
+      }
+
+      return a.medicoNombre.localeCompare(
+        b.medicoNombre
+      );
+
+    });
+  }
+
+  // ==========================================
+  // NORMALIZAR NOMBRE DEL DIA
+  // ==========================================
+
+  private normalizarDia(dia: string): string {
+
+    return String(dia ?? '')
+      .trim()
+      .toUpperCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
 
   }
+
+  // ==========================================
+  // POSICION DEL DIA EN LA SEMANA
+  // ==========================================
+
+  private obtenerOrdenDia(dia: string): number {
+
+    const dias = [
+      'LUNES',
+      'MARTES',
+      'MIERCOLES',
+      'JUEVES',
+      'VIERNES',
+      'SABADO',
+      'DOMINGO'
+    ];
+
+    const posicion = dias.indexOf(
+      this.normalizarDia(dia)
+    );
+
+    return posicion === -1
+      ? 99
+      : posicion;
+
+  }
+
+  // ==========================================
+  // CAMBIAR MEDICO
+  // ==========================================
+
+  cambiarMedico(event: Event): void {
+
+    const valor =
+      (event.target as HTMLSelectElement).value;
+
+    this.medicoSeleccionado = valor === ''
+      ? null
+      : Number(valor);
+
+    this.filtrarHorarios();
+
+  }
+
+  // ==========================================
+  // BUSCAR Y FILTRAR HORARIOS
+  // ==========================================
+
+  filtrarHorarios(): void {
+
+    const texto = this.busqueda
+      .trim()
+      .toLowerCase();
+
+    this.horariosFiltrados = this.horarios.filter(h => {
+
+      const coincideMedico =
+        this.medicoSeleccionado === null ||
+        h.medicoId === this.medicoSeleccionado;
+
+      const medico =
+        h.medicoNombre.toLowerCase();
+
+      const dia =
+        this.obtenerDia(h.diaSemana).toLowerCase();
+
+      const inicio =
+        String(h.horaInicio ?? '').toLowerCase();
+
+      const fin =
+        String(h.horaFin ?? '').toLowerCase();
+
+      const estado =
+        String(h.estado ?? '').toLowerCase();
+
+      const coincideBusqueda =
+        !texto ||
+        medico.includes(texto) ||
+        dia.includes(texto) ||
+        inicio.includes(texto) ||
+        fin.includes(texto) ||
+        estado.includes(texto);
+
+      return coincideMedico && coincideBusqueda;
+
+    });
+  }
+
+  // ==========================================
+  // MOSTRAR DIA
+  // ==========================================
 
   obtenerDia(dia: string): string {
 
@@ -145,15 +359,35 @@ export class HorarioMedicoListComponent implements OnInit {
       MIERCOLES: 'Miércoles',
       JUEVES: 'Jueves',
       VIERNES: 'Viernes',
-      SABADO: 'Sábado'
+      SABADO: 'Sábado',
+      DOMINGO: 'Domingo'
     };
 
-    return dias[dia] || dia;
+    const clave = this.normalizarDia(dia);
+
+    return dias[clave] || dia;
+  }
+
+  // ==========================================
+  // MOSTRAR ESTADO
+  // ==========================================
+
+  obtenerEstado(estado: string): string {
+
+    return String(estado ?? '')
+      .trim()
+      .toUpperCase() === 'ACTIVO'
+        ? 'ACTIVO'
+        : 'INACTIVO';
 
   }
 
-  obtenerEstado(estado: string): string {
-    return estado === 'ACTIVO' ? 'Activo' : 'Inactivo';
+  // ==========================================
+  // ACTUALIZAR LISTADO
+  // ==========================================
+
+  actualizar(): void {
+    this.cargarMedicos();
   }
 
 }

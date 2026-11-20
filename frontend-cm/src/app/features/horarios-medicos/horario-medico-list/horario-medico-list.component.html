@@ -1,138 +1,335 @@
 
-<div class="container mt-4">
+<div class="container horarios-container mt-4 mb-5">
 
-  <!-- Encabezado -->
-  <div class="d-flex justify-content-between align-items-center mb-4">
+  <!-- ========================================== -->
+  <!-- ENCABEZADO -->
+  <!-- ========================================== -->
+
+  <div class="encabezado-pagina">
 
     <div>
-      <h2>Gestión de horarios médicos</h2>
-      <p class="text-muted mb-0">
+
+      <h2 class="titulo-pagina">
+        Gestión de horarios médicos
+      </h2>
+
+      <p class="subtitulo-pagina">
         Administra la disponibilidad de los médicos.
       </p>
+
     </div>
 
     <a
       routerLink="/horarios-medicos/nuevo"
       class="btn btn-nuevo">
-      <i class="bi bi-plus-circle me-1"></i>
+
+      <i class="bi bi-plus-circle me-2"></i>
       Nuevo horario
+
     </a>
 
   </div>
 
-  <!-- Seleccionar médico -->
-  <div class="card shadow-sm mb-4">
+  <!-- ========================================== -->
+  <!-- CONTADOR Y FILTROS -->
+  <!-- ========================================== -->
 
-    <div class="card-body">
+  <div class="barra-herramientas">
 
-      <label class="form-label fw-bold">
-        Seleccionar médico
-      </label>
+    <!-- CONTADOR -->
+    <div class="contador-horarios">
 
-      <select
-        class="form-select"
-        [value]="medicoSeleccionado ?? ''"
-        (change)="cambiarMedico($event)">
+      <i class="bi bi-calendar-week"></i>
 
-        <option value="">Seleccione un médico</option>
-
-        @for (medico of medicos; track medico.idMedico) {
-          <option [value]="medico.idMedico">
-            {{ medico.nombre }} - {{ medico.especialidad }}
-          </option>
-        }
-
-      </select>
+      <span>
+        <strong>{{ horariosFiltrados.length }}</strong>
+        horarios encontrados
+      </span>
 
     </div>
 
-  </div>
+    <div class="controles-horarios">
 
-  <!-- Tabla -->
-  <div class="card shadow-sm">
+      <!-- BUSCADOR -->
+      <div class="buscador-horarios">
 
-    <div class="card-body">
+        <i class="bi bi-search search-icon"></i>
 
-      <h5 class="mb-3">Horarios registrados</h5>
-
-      <div class="table-responsive">
-
-        <table class="table table-hover align-middle">
-
-          <thead>
-            <tr>
-              <th>Día</th>
-              <th>Hora de inicio</th>
-              <th>Hora de fin</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-
-          <tbody>
-
-            @if (cargando) {
-
-              <tr>
-                <td colspan="5" class="text-center py-4">
-                  Cargando horarios...
-                </td>
-              </tr>
-
-            } @else {
-
-              @for (h of horarios; track h.idHorario) {
-
-                <tr>
-
-                  <td class="fw-semibold">
-                    {{ obtenerDia(h.diaSemana) }}
-                  </td>
-
-                  <td>{{ h.horaInicio }}</td>
-
-                  <td>{{ h.horaFin }}</td>
-
-                  <td>
-                    <span
-                      class="estado"
-                      [class.activo]="h.estado === 'ACTIVO'"
-                      [class.inactivo]="h.estado === 'INACTIVO'">
-                      {{ obtenerEstado(h.estado) }}
-                    </span>
-                  </td>
-
-                  <td>
-                    <a
-                      [routerLink]="['/horarios-medicos/editar', h.idHorario]"
-                      class="btn btn-sm btn-editar">
-                      <i class="bi bi-pencil-square me-1"></i>
-                      Editar
-                    </a>
-                  </td>
-
-                </tr>
-
-              } @empty {
-
-                <tr>
-                  <td colspan="5" class="text-center py-4 text-muted">
-                    No hay horarios registrados para este médico.
-                  </td>
-                </tr>
-
-              }
-
-            }
-
-          </tbody>
-
-        </table>
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar médico, día u hora..."
+          aria-label="Buscar horarios médicos"
+          [(ngModel)]="busqueda"
+          (input)="filtrarHorarios()">
 
       </div>
 
+      <!-- FILTRAR POR MEDICO -->
+      <div class="selector-medico">
+
+        <select
+          class="form-select"
+          aria-label="Filtrar horarios por médico"
+          [value]="medicoSeleccionado ?? ''"
+          (change)="cambiarMedico($event)">
+
+          <option value="">
+            Todos los médicos
+          </option>
+
+          @for (
+            medico of medicos;
+            track medico.idMedico
+          ) {
+
+            <option [value]="medico.idMedico">
+              {{ medico.nombre }} - {{ medico.especialidad }}
+            </option>
+
+          }
+
+        </select>
+
+      </div>
+
+      <!-- ACTUALIZAR -->
+      <button
+        type="button"
+        class="btn btn-actualizar"
+        title="Actualizar horarios"
+        (click)="actualizar()"
+        [disabled]="cargando">
+
+        <i class="bi bi-arrow-clockwise me-1"></i>
+        Actualizar
+
+      </button>
+
     </div>
 
   </div>
+
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
+
+  @if (cargando) {
+
+    <div class="estado-vacio">
+
+      <div
+        class="spinner-border text-primary mb-3"
+        role="status">
+      </div>
+
+      <p>Cargando horarios médicos...</p>
+
+    </div>
+
+  } @else if (errorCarga) {
+
+    <!-- ERROR -->
+    <div class="estado-vacio">
+
+      <i class="bi bi-exclamation-circle icono-vacio"></i>
+
+      <h6>No se pudo cargar la información</h6>
+
+      <p>
+        Intenta consultar nuevamente los horarios.
+      </p>
+
+      <button
+        type="button"
+        class="btn btn-nuevo mt-3"
+        (click)="actualizar()">
+
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Reintentar
+
+      </button>
+
+    </div>
+
+  } @else {
+
+    <!-- ========================================== -->
+    <!-- TABLA DE HORARIOS -->
+    <!-- ========================================== -->
+
+    <div class="tabla-horarios table-responsive">
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+
+          <tr>
+            <th>N.º</th>
+            <th>Médico</th>
+            <th>Día</th>
+            <th>Hora de inicio</th>
+            <th>Hora de fin</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+            h of horariosFiltrados;
+            track h.idHorario;
+            let i = $index
+          ) {
+
+            <tr>
+
+              <!-- NUMERO -->
+              <td>
+                <span class="numero-fila">
+                  {{ i + 1 }}
+                </span>
+              </td>
+
+              <!-- MEDICO -->
+              <td>
+                <span class="nombre-medico">
+                  {{ h.medicoNombre }}
+                </span>
+              </td>
+
+              <!-- DIA -->
+              <td>
+                <span class="dia-horario">
+                  {{ obtenerDia(h.diaSemana) }}
+                </span>
+              </td>
+
+              <!-- HORA DE INICIO -->
+              <td>
+                <span class="hora-horario">
+                  {{ h.horaInicio }}
+                </span>
+              </td>
+
+              <!-- HORA DE FIN -->
+              <td>
+                <span class="hora-horario">
+                  {{ h.horaFin }}
+                </span>
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+
+                <span
+                  class="estado-badge"
+                  [ngClass]="
+                    h.estado === 'ACTIVO'
+                      ? 'estado-activo'
+                      : 'estado-inactivo'
+                  ">
+
+                  {{ obtenerEstado(h.estado) }}
+
+                </span>
+
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="text-center">
+
+                <div class="acciones-horario">
+
+                  <a
+                    [routerLink]="[
+                      '/horarios-medicos/editar',
+                      h.idHorario
+                    ]"
+                    class="btn btn-sm btn-editar"
+                    title="Editar horario médico"
+                    [attr.aria-label]="
+                      'Editar horario de ' +
+                      h.medicoNombre
+                    ">
+
+                    <i
+                      class="bi bi-pencil-square"
+                      aria-hidden="true">
+                    </i>
+
+                  </a>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          } @empty {
+
+            <tr>
+
+              <td colspan="7" class="text-center py-5">
+
+                <div class="sin-resultados">
+
+                  <i class="bi bi-calendar-x"></i>
+
+                  @if (busqueda || medicoSeleccionado !== null) {
+
+                    <h6>No se encontraron horarios</h6>
+
+                    <p>
+                      Prueba cambiando el médico
+                      o los términos de búsqueda.
+                    </p>
+
+                  } @else {
+
+                    <h6>No hay horarios registrados</h6>
+
+                    <p>
+                      Registra un nuevo horario
+                      para comenzar.
+                    </p>
+
+                  }
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PIE DE TABLA -->
+    <!-- ========================================== -->
+
+    <div class="pie-tabla">
+
+      <span>
+        <i class="bi bi-info-circle me-1"></i>
+        Horarios ordenados por día y hora de inicio.
+      </span>
+
+      <span>
+        Total registrado:
+        <strong>{{ horarios.length }}</strong>
+      </span>
+
+    </div>
+
+  }
 
 </div>

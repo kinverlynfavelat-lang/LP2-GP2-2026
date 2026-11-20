@@ -1,3 +1,4 @@
+
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ interface PagoPendiente {
   fechaCita: string;
   horaCita: string;
   estado: string;
+  fondoElegible: boolean;
   saldoFondo: number;
   descuentoFondo: number;
   montoTotal: number;
@@ -39,15 +41,19 @@ export class PagoListComponent implements OnInit {
   private pagoService = inject(PagoService);
   private alertService = inject(AlertService);
 
+  // LISTAS
   citasPendientes: PagoPendiente[] = [];
   citasFiltradas: PagoPendiente[] = [];
   resumenPagos: ResumenPago[] = [];
 
-  busqueda = '';
+  // BUSQUEDA
+  busqueda: string = '';
 
-  cargando = false;
-  errorCarga = false;
+  // CONTROL
+  cargando: boolean = false;
+  errorCarga: boolean = false;
 
+  // PRECIO DE LA ATENCION
   readonly PRECIO_CITA = 50;
 
   ngOnInit(): void {
@@ -55,22 +61,49 @@ export class PagoListComponent implements OnInit {
     this.cargarResumenPagos();
   }
 
+  // ==========================================
+  // RESUMEN POR MEDIO DE PAGO
+  // ==========================================
+
   cargarResumenPagos(): void {
+
     this.pagoService.getResumenMedioPago().subscribe({
+
       next: (data) => {
-        this.resumenPagos = data;
+        this.resumenPagos = data ?? [];
       },
-      error: () => {
-        // Silencioso si aún no hay pagos registrados
+
+      error: (err) => {
+        console.error(
+          'No se pudo cargar el resumen de pagos:',
+          err
+        );
+
+        this.resumenPagos = [];
       }
+
     });
+
   }
+
+  // ==========================================
+  // TOTAL YA RECAUDADO
+  // ==========================================
 
   get totalRecaudado(): number {
-    return this.resumenPagos.reduce((acc, curr) => acc + (Number(curr.totalRecaudado) || 0), 0);
+
+    return this.resumenPagos.reduce(
+      (total, pago) =>
+        total + (Number(pago.totalRecaudado) || 0),
+      0
+    );
+
   }
 
-  // Cargar citas y pacientes
+  // ==========================================
+  // CARGAR CITAS EN RECEPCION
+  // ==========================================
+
   listarPendientes(): void {
 
     if (this.cargando) {
@@ -87,67 +120,85 @@ export class PagoListComponent implements OnInit {
 
       next: (data) => {
 
-        this.citasPendientes = [];
+        const resultado: PagoPendiente[] = [];
 
-        // Filtrar solamente las citas en recepción
-        const citasRecepcion = data.citas.filter(cita =>
-          String(cita.estado ?? '').trim().toUpperCase() === 'RECEPCION'
+        // SOLO CITAS EN RECEPCION
+        const citasRecepcion = data.citas.filter(
+          cita =>
+            String(cita.estado ?? '')
+              .trim()
+              .toUpperCase() === 'RECEPCION'
         );
 
-        citasRecepcion.forEach((cita: Cita) => {
+        for (const cita of citasRecepcion) {
 
-          if (cita.idCita == null || cita.idPersona == null) {
-            console.warn('Cita sin identificadores:', cita);
-            return;
+          if (
+            cita.idCita == null ||
+            cita.idPersona == null
+          ) {
+            continue;
           }
 
-          // Buscar al paciente correspondiente
-          const persona = data.personas.find(p =>
-            Number(p.idPersona) === Number(cita.idPersona)
+          // BUSCAR PACIENTE
+          const persona = data.personas.find(
+            p =>
+              Number(p.idPersona) ===
+              Number(cita.idPersona)
           );
 
           if (!persona) {
             console.warn(
-              'No se encontró el paciente de la cita:',
-              cita.idCita,
-              'ID persona:',
-              cita.idPersona
+              'Paciente no encontrado para la cita:',
+              cita.idCita
             );
-            return;
+
+            continue;
           }
 
+          // SALDO DEL FONDO
           const saldo = Math.max(
             0,
             Number(persona.saldoFondo ?? 0)
           );
 
-          // Comprobar derecho al fondo universitario
-          const tieneFondo =
-            String(persona.tipoPaciente ?? '').trim().toUpperCase() === 'ESTUDIANTE' &&
-            String(persona.matriculaVigente ?? '').trim().toUpperCase() === 'SI';
+          // VERIFICAR COBERTURA DEL FONDO
+          const fondoElegible =
+            String(persona.tipoPaciente ?? '')
+              .trim()
+              .toUpperCase() === 'ESTUDIANTE' &&
 
-          // Calcular cobertura del fondo
-          const descuento = tieneFondo
+            String(persona.matriculaVigente ?? '')
+              .trim()
+              .toUpperCase() === 'SI';
+
+          // DESCUENTO ESTIMADO
+          const descuento = fondoElegible
             ? Math.min(saldo, this.PRECIO_CITA)
             : 0;
 
-          // Calcular importe pendiente en caja
-          const montoPagar = this.PRECIO_CITA - descuento;
+          // IMPORTE ESTIMADO EN CAJA
+          const montoPagar =
+            this.PRECIO_CITA - descuento;
 
-          this.citasPendientes.push({
+          resultado.push({
 
             idCita: Number(cita.idCita),
             idPersona: Number(cita.idPersona),
 
-            paciente: `${persona.nombres} ${persona.apellidos}`.trim(),
+            paciente:
+              `${persona.nombres} ${persona.apellidos}`.trim(),
 
-            tipoPaciente: persona.tipoPaciente ?? 'NO REGISTRADO',
+            tipoPaciente:
+              String(persona.tipoPaciente ?? 'NO REGISTRADO')
+                .trim()
+                .toUpperCase(),
 
             fechaCita: cita.fechaCita,
             horaCita: cita.horaCita,
 
             estado: String(cita.estado ?? ''),
 
+            fondoElegible: fondoElegible,
             saldoFondo: saldo,
             descuentoFondo: descuento,
 
@@ -156,32 +207,35 @@ export class PagoListComponent implements OnInit {
 
           });
 
-        });
+        }
 
-        // Ordenar por fecha y hora
-        this.citasPendientes.sort((a, b) => {
+        // ORDENAR POR FECHA Y HORA
+        resultado.sort((a, b) => {
 
-          const fechaA = `${a.fechaCita} ${a.horaCita}`;
-          const fechaB = `${b.fechaCita} ${b.horaCita}`;
+          const fechaA =
+            `${a.fechaCita} ${a.horaCita}`;
+
+          const fechaB =
+            `${b.fechaCita} ${b.horaCita}`;
 
           return fechaA.localeCompare(fechaB);
 
         });
 
+        this.citasPendientes = resultado;
+
         this.filtrarCitas();
 
         this.cargando = false;
-
-        console.log(
-          'Citas pendientes de pago:',
-          this.citasPendientes
-        );
 
       },
 
       error: (err) => {
 
-        console.error('Error al cargar citas pendientes:', err);
+        console.error(
+          'Error al cargar citas pendientes:',
+          err
+        );
 
         this.errorCarga = true;
         this.cargando = false;
@@ -199,50 +253,90 @@ export class PagoListComponent implements OnInit {
 
   }
 
-  // Buscar por paciente, tipo o número de cita
+  // ==========================================
+  // BUSCAR CITAS
+  // ==========================================
+
   filtrarCitas(): void {
 
-    const texto = this.busqueda.trim().toLowerCase();
+    const texto = this.busqueda
+      .trim()
+      .toLowerCase();
 
-    this.citasFiltradas = this.citasPendientes.filter(cita => {
+    if (!texto) {
 
-      return (
-        cita.paciente.toLowerCase().includes(texto) ||
-        String(cita.idCita).includes(texto) ||
-        cita.tipoPaciente.toLowerCase().includes(texto)
-      );
+      this.citasFiltradas = [
+        ...this.citasPendientes
+      ];
 
-    });
+      return;
+    }
+
+    this.citasFiltradas =
+      this.citasPendientes.filter(cita => {
+
+        const paciente =
+          cita.paciente.toLowerCase();
+
+        const tipo =
+          cita.tipoPaciente.toLowerCase();
+
+        const numero =
+          String(cita.idCita);
+
+        return (
+          paciente.includes(texto) ||
+          numero.includes(texto) ||
+          tipo.includes(texto)
+        );
+
+      });
 
   }
 
-  // Limpiar búsqueda
+  // ==========================================
+  // LIMPIAR BUSQUEDA
+  // ==========================================
+
   limpiarBusqueda(): void {
+
     this.busqueda = '';
     this.filtrarCitas();
+
   }
 
-  // Total pendiente en caja
+  // ==========================================
+  // TOTAL ESTIMADO PENDIENTE EN CAJA
+  // ==========================================
+
   obtenerTotalPendiente(): number {
 
     return this.citasPendientes.reduce(
-      (total, cita) => total + cita.montoPagar,
+      (total, cita) =>
+        total + cita.montoPagar,
       0
     );
 
   }
 
-  // Total estimado cubierto por el fondo
+  // ==========================================
+  // TOTAL ESTIMADO DE COBERTURA
+  // ==========================================
+
   obtenerTotalFondo(): number {
 
     return this.citasPendientes.reduce(
-      (total, cita) => total + cita.descuentoFondo,
+      (total, cita) =>
+        total + cita.descuentoFondo,
       0
     );
 
   }
 
-  // Cantidad de citas que necesitan pasar por caja
+  // ==========================================
+  // CITAS QUE REQUIEREN CAJA
+  // ==========================================
+
   obtenerCitasCaja(): number {
 
     return this.citasPendientes.filter(
@@ -251,7 +345,10 @@ export class PagoListComponent implements OnInit {
 
   }
 
-  // Cantidad de citas cubiertas completamente por el fondo
+  // ==========================================
+  // CITAS CUBIERTAS POR EL FONDO
+  // ==========================================
+
   obtenerCitasCubiertas(): number {
 
     return this.citasPendientes.filter(
@@ -260,10 +357,15 @@ export class PagoListComponent implements OnInit {
 
   }
 
-  // Actualizar información
+  // ==========================================
+  // ACTUALIZAR INFORMACION
+  // ==========================================
+
   actualizar(): void {
+
     this.listarPendientes();
     this.cargarResumenPagos();
+
   }
 
 }

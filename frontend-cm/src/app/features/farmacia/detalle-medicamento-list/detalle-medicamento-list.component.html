@@ -1,23 +1,27 @@
 
-<div class="container py-4">
+<div class="entregas-pagina">
 
+  <!-- ========================================== -->
   <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+  <!-- ========================================== -->
+
+  <div class="encabezado-pagina">
 
     <div>
-      <h2 class="titulo-pagina mb-1">
-        <i class="bi bi-box-arrow-up me-2"></i>
+
+      <h2 class="titulo-pagina">
         Registro de entregas
       </h2>
 
-      <p class="text-muted mb-0">
+      <p class="subtitulo-pagina">
         Control de medicamentos entregados a los pacientes.
       </p>
+
     </div>
 
     <button
-      class="btn btn-principal"
       type="button"
+      class="btn btn-principal"
       (click)="nuevo()">
 
       <i class="bi bi-plus-circle me-2"></i>
@@ -27,175 +31,290 @@
 
   </div>
 
-  <!-- TARJETAS RESUMEN -->
+  <!-- ========================================== -->
+  <!-- TARJETAS DE RESUMEN -->
+  <!-- ========================================== -->
+
   <div class="row g-3 mb-4">
 
+    <!-- TOTAL DE ENTREGAS -->
     <div class="col-md-4">
+
       <div class="resumen">
-        <i class="bi bi-clipboard-check text-primary"></i>
+
+        <div class="resumen-icono">
+          <i class="bi bi-clipboard-check"></i>
+        </div>
+
         <div>
+
           <small>Total de entregas</small>
+
           <h3>{{ totalEntregas }}</h3>
+
         </div>
+
       </div>
+
     </div>
 
+    <!-- UNIDADES ENTREGADAS -->
     <div class="col-md-4">
+
       <div class="resumen">
-        <i class="bi bi-capsule text-success"></i>
+
+        <div class="resumen-icono">
+          <i class="bi bi-capsule"></i>
+        </div>
+
         <div>
+
           <small>Unidades entregadas</small>
+
           <h3>{{ unidadesEntregadas }}</h3>
+
         </div>
+
       </div>
+
     </div>
 
+    <!-- PACIENTES ATENDIDOS -->
     <div class="col-md-4">
+
       <div class="resumen">
-        <i class="bi bi-people text-info"></i>
-        <div>
-          <small>Pacientes atendidos</small>
-          <h3>{{ pacientesAtendidos }}</h3>
+
+        <div class="resumen-icono">
+          <i class="bi bi-people"></i>
         </div>
+
+        <div>
+
+          <small>Pacientes atendidos</small>
+
+          <h3>{{ pacientesAtendidos }}</h3>
+
+        </div>
+
       </div>
+
     </div>
 
   </div>
 
-  <!-- TABLA DE ENTREGAS -->
-  <div class="card border-0 shadow-sm">
+  <!-- ========================================== -->
+  <!-- HISTORIAL DE ENTREGAS -->
+  <!-- ========================================== -->
 
-    <div class="card-header bg-white">
+  <div class="entregas-card">
 
-      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+<!-- CABECERA -->
+<div class="entregas-header">
 
-        <h5 class="mb-0">
-          <i class="bi bi-list-ul me-2"></i>
-          Historial de medicamentos entregados
-        </h5>
+  <div>
+    <h5 class="mb-1">
+      Historial de medicamentos entregados
+    </h5>
 
-        <button
-          class="btn btn-outline-primary btn-sm"
-          type="button"
-          (click)="cargar()"
-          [disabled]="cargando">
+    <p class="mb-0">
+      Consulta los registros de dispensación de medicamentos.
+    </p>
+  </div>
 
-          <i class="bi bi-arrow-clockwise"></i>
-          Actualizar
+</div>
 
-        </button>
+<!-- BUSCADOR Y FILTROS -->
+<div class="barra-filtros">
 
-      </div>
+  <!-- BUSCADOR -->
+  <div class="buscador-entregas">
 
-      <!-- FILTROS -->
-      <div class="row g-2 mt-2">
+    <i class="bi bi-search search-icon"></i>
 
-        <div class="col-md-6">
-          <input
-            type="text"
-            class="form-control"
-            [(ngModel)]="busqueda"
-            placeholder="Buscar paciente, medicamento o receta...">
-        </div>
+    <input
+      type="text"
+      class="form-control search-input"
+      [(ngModel)]="busqueda"
+      placeholder="Buscar paciente, medicamento o receta..."
+      aria-label="Buscar por paciente, medicamento o receta">
 
-        <div class="col-md-4">
-          <input
-            type="date"
-            class="form-control"
-            [(ngModel)]="fechaFiltro">
-        </div>
+  </div>
 
-        <div class="col-md-2">
-          <button
-            class="btn btn-outline-secondary w-100"
-            type="button"
-            (click)="limpiarFiltros()">
+  <!-- FECHA -->
+  <div class="filtro-fecha">
 
-            Limpiar
+    <input
+      type="date"
+      class="form-control fecha-input"
+      [(ngModel)]="fechaFiltro"
+      aria-label="Filtrar por fecha de entrega">
 
-          </button>
-        </div>
+  </div>
 
-      </div>
+  <!-- LIMPIAR -->
+  <button
+    type="button"
+    class="btn btn-limpiar"
+    (click)="limpiarFiltros()">
 
-    </div>
+    <i class="bi bi-x-circle me-1"></i>
+    Limpiar
 
-    <div class="card-body p-0">
+  </button>
 
-      <!-- CARGANDO -->
-      <div *ngIf="cargando" class="text-center py-5">
-        <div class="spinner-border text-primary"></div>
-        <p class="text-muted mt-2">Cargando entregas...</p>
-      </div>
+  <!-- ACTUALIZAR -->
+  <button
+    type="button"
+    class="btn btn-actualizar"
+    (click)="cargar()"
+    [disabled]="cargando">
 
-      <!-- SIN RESULTADOS -->
-      <div
-        *ngIf="!cargando && filtrados.length === 0"
-        class="text-center py-5 text-muted">
+    <i class="bi bi-arrow-clockwise me-1"></i>
+    Actualizar
 
-        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+  </button>
 
-        No se encontraron registros de entregas.
+</div>
 
-      </div>
 
-      <!-- TABLA -->
-      <div
-        *ngIf="!cargando && filtrados.length > 0"
-        class="table-responsive">
+    <!-- ========================================== -->
+    <!-- TABLA DE ENTREGAS -->
+    <!-- ========================================== -->
 
-        <table class="table table-hover align-middle mb-0">
+    <div
+      *ngIf="!cargando"
+      class="table-responsive">
 
-          <thead>
-            <tr>
-              <th>N.º</th>
-              <th>Fecha</th>
-              <th>Paciente</th>
-              <th>Medicamento</th>
-              <th>Prescrito</th>
-              <th>Entregado</th>
-            </tr>
-          </thead>
+      <table class="table table-hover align-middle tabla-entregas mb-0">
 
-          <tbody>
+        <thead>
 
-            <tr *ngFor="let e of filtrados; let i = index">
+          <tr>
+            <th>N.º</th>
+            <th>Fecha</th>
+            <th>Paciente</th>
+            <th>Medicamento</th>
+            <th>Prescrito</th>
+            <th>Entregado</th>
+          </tr>
 
-              <td>
+        </thead>
+
+        <tbody>
+
+          <tr *ngFor="let e of filtrados; let i = index">
+
+            <!-- NUMERO -->
+            <td>
+
+              <span class="numero-fila">
                 {{ i + 1 }}
-              <td>
-                
+              </span>
+
+            </td>
+
+            <!-- FECHA -->
+            <td>
+
+              <span class="fecha-entrega">
                 {{ formatearFecha(e.fechaSalida) }}
-              </td>
+              </span>
 
-              <td class="fw-semibold">
+            </td>
+
+            <!-- PACIENTE -->
+            <td>
+
+              <span class="nombre-paciente">
                 {{ e.paciente }}
-              </td>
+              </span>
 
-              <td>
+            </td>
+
+            <!-- MEDICAMENTO -->
+            <td>
+
+              <span class="nombre-medicamento">
                 {{ e.nombreMedicamento }}
-              </td>
+              </span>
 
+            </td>
 
-              <td>
+            <!-- CANTIDAD PRESCRITA -->
+            <td>
+
+              <span class="cantidad-prescrita">
                 {{ e.cantidadPrescrita }}
-              </td>
+              </span>
 
-              <td>
-                <span class="badge bg-success">
-                  {{ e.cantidadEntregada }}
-                </span>
-              </td>
+            </td>
 
-            </tr>
+            <!-- CANTIDAD ENTREGADA -->
+            <td>
 
-          </tbody>
+              <span class="cantidad-badge">
+                {{ e.cantidadEntregada }}
+              </span>
 
-        </table>
+            </td>
 
-      </div>
+          </tr>
+
+          <!-- SIN RESULTADOS -->
+          <tr *ngIf="filtrados.length === 0">
+
+            <td colspan="6">
+
+              <div class="estado-vacio">
+
+                <i class="bi bi-inbox icono-vacio"></i>
+
+                <h6>
+                  No se encontraron entregas
+                </h6>
+
+                <p *ngIf="busqueda || fechaFiltro">
+                  No hay registros que coincidan
+                  con los filtros seleccionados.
+                </p>
+
+                <p *ngIf="!busqueda && !fechaFiltro">
+                  Todavía no se registraron entregas
+                  de medicamentos.
+                </p>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        </tbody>
+
+      </table>
 
     </div>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- PIE INFORMATIVO -->
+  <!-- ========================================== -->
+
+  <div class="pie-tabla">
+
+    <span>
+      <i class="bi bi-info-circle me-1"></i>
+      Registro de medicamentos dispensados a los pacientes.
+    </span>
+
+    <span>
+      Mostrando
+      <strong>{{ filtrados.length }}</strong>
+      de
+      <strong>{{ entregas.length }}</strong>
+      entregas
+    </span>
 
   </div>
 

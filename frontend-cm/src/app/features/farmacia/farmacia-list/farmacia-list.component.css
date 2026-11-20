@@ -1,439 +1,1012 @@
 
-/* =====================================
+/* ==========================================
    FARMACIA - UPeU SALUD
-===================================== */
+   ========================================== */
 
 :host {
   display: block;
-  --azul: #075779;
-  --azul-oscuro: #06445f;
-  --azul-medio: #1685ac;
-  --celeste: #eaf4f8;
-  --borde: #dce9f0;
+
+  --farmacia-primario: var(--color-primario, #07577A);
+  --farmacia-secundario: var(--color-secundario, #43A6CC);
+  --farmacia-celeste: var(--color-celeste, #E8F5FB);
+  --farmacia-borde: var(--color-borde, #DCEAF1);
+  --farmacia-texto: var(--color-texto-oscuro, #263E4D);
+  --farmacia-muted: var(--color-texto-secundario, #526B7A);
 }
 
-.container {
-  max-width: 1350px;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.farmacia-pagina {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
 }
 
-/* PESTAÑAS */
+/* ==========================================
+   PESTAÑAS
+   ========================================== */
 
-.nav-tabs {
-  border-bottom: 1px solid var(--borde);
+.pestanas-farmacia {
+  border-bottom: 1px solid var(--farmacia-borde);
   gap: 5px;
 }
 
-.nav-tabs .nav-link {
-  color: #647b8d;
+.pestanas-farmacia .nav-link {
+  color: #647B8D;
+
   border: 1px solid transparent;
   border-radius: 9px 9px 0 0;
-  padding: 13px 20px;
+
+  padding: 12px 18px;
+
   font-size: 14px;
   font-weight: 600;
+
   background: transparent;
-  transition: .2s;
+  transition: all 0.2s ease;
 }
 
-.nav-tabs .nav-link:hover {
-  color: var(--azul);
-  background: #f0f7fa;
-  border-color: transparent;
+.pestanas-farmacia .nav-link:hover {
+  color: var(--farmacia-primario);
+  background: #F0F7FA;
 }
 
-.nav-tabs .nav-link.active {
-  color: var(--azul);
-  background: white;
-  border-color: var(--borde) var(--borde) white;
+.pestanas-farmacia .nav-link.active {
+  color: var(--farmacia-primario);
+  background: #FFFFFF;
+
+  border-color:
+    var(--farmacia-borde)
+    var(--farmacia-borde)
+    #FFFFFF;
 }
 
-.nav-tabs .nav-link i {
-  color: var(--azul-medio);
+.pestanas-farmacia .nav-link i {
+  color: var(--farmacia-secundario);
 }
 
-/* ENCABEZADO */
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
 
 .titulo-pagina {
-  color: var(--azul);
+  color: var(--farmacia-primario);
   font-size: 27px;
   font-weight: 700;
+  margin: 0;
 }
 
-.titulo-pagina i {
-  color: var(--azul-medio);
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
 }
 
-.text-muted {
-  color: #758697 !important;
-}
-
-/* BOTÓN PRINCIPAL */
+/* ==========================================
+   BOTON NUEVO MEDICAMENTO
+   ========================================== */
 
 .btn-principal {
-  background: var(--azul);
-  border: 1px solid var(--azul);
-  color: white;
-  border-radius: 9px;
-  padding: 11px 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  padding: 10px 17px;
+
+  background: var(--farmacia-primario);
+  color: #FFFFFF;
+
+  border: 1px solid var(--farmacia-primario);
+  border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
+
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .btn-principal:hover {
-  background: var(--azul-oscuro);
-  border-color: var(--azul-oscuro);
-  color: white;
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-/* TARJETAS RESUMEN */
+/* ==========================================
+   TARJETAS DE RESUMEN
+   ========================================== */
 
 .resumen {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 16px;
+
   height: 100%;
-  background: white;
-  border: 1px solid #e2edf3;
-  border-radius: 13px;
-  padding: 23px;
-  box-shadow: 0 4px 15px rgba(7,87,121,.05);
+  min-height: 104px;
+
+  padding: 20px;
+
+  background: #FFFFFF;
+  border: 1px solid var(--farmacia-borde);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
-.resumen i {
-  font-size: 29px;
-  color: var(--azul-medio) !important;
+.resumen-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 44px;
+  height: 44px;
+
+  background: #E8F5FB;
+  color: var(--farmacia-primario);
+
+  border-radius: 10px;
+  font-size: 21px;
+}
+
+.resumen-icono.icono-alerta {
+  background: #FCEBED;
+  color: #B54755;
 }
 
 .resumen small {
+  display: block;
+
   color: #758697;
   font-size: 12px;
 }
 
 .resumen h3 {
-  color: var(--azul);
+  color: var(--farmacia-primario);
+  font-size: 27px;
   font-weight: 700;
+
   margin: 5px 0 0;
 }
 
-/* TARJETA INVENTARIO */
+/* ==========================================
+   TARJETA DE INVENTARIO
+   ========================================== */
 
-.card {
-  border: 1px solid #e2edf3;
-  border-radius: 14px;
+.inventario-card {
+  background: #FFFFFF;
+
+  border: 1px solid var(--farmacia-borde);
+  border-radius: 10px;
+
   overflow: hidden;
-  background: white;
-  box-shadow: 0 4px 18px rgba(7,87,121,.06) !important;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
-.card-header {
-  background: white !important;
-  padding: 20px 22px;
-  border-bottom: 1px solid #e3edf2;
+.inventario-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 15px;
+
+  padding: 18px 20px;
+
+  background: #FFFFFF;
+  border-bottom: 1px solid var(--farmacia-borde);
 }
 
-.card-header h5 {
-  color: var(--azul);
+.inventario-header h5 {
+  color: var(--farmacia-primario);
   font-size: 16px;
   font-weight: 700;
 }
 
-/* TABLA */
-
-.table {
-  margin-bottom: 0;
+.inventario-header p {
+  color: #8195A3;
+  font-size: 12px;
+  margin-top: 5px;
 }
 
-.table thead th {
-  background: var(--celeste);
-  color: var(--azul);
+/* ==========================================
+   CONTROLES DEL INVENTARIO
+   ========================================== */
+
+.controles-inventario {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+  gap: 9px;
+
+  margin-left: auto;
+}
+
+/* ==========================================
+   FILTRO DE STOCK BAJO
+   ========================================== */
+
+.btn-stock-bajo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 41px;
+  padding: 9px 12px;
+
+  background: #FCEBED;
+  color: #A54953;
+
+  border: 1px solid #EEC9CE;
+  border-radius: 8px;
+
   font-size: 12px;
+  font-weight: 600;
+
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.btn-stock-bajo:hover {
+  background: #F7DDE1;
+  color: #963D48;
+  border-color: #E7A4AE;
+}
+
+.btn-stock-bajo.filtro-activo {
+  background: #B94D5C;
+  color: #FFFFFF;
+  border-color: #B94D5C;
+}
+
+.btn-stock-bajo.filtro-activo:hover {
+  background: #A23E4D;
+  color: #FFFFFF;
+}
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-medicamentos {
+  position: relative;
+
+  width: 300px;
+  max-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
+  color: var(--farmacia-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 41px;
+
+  padding: 9px 13px 9px 42px;
+
+  background: #FFFFFF;
+  color: var(--farmacia-texto);
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  font-size: 14px;
+
+  transition: all 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8BA0AC;
+}
+
+.search-input:focus {
+  outline: none;
+
+  border-color: var(--farmacia-secundario);
+
+  box-shadow:
+    0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
+
+/* BOTÓN ACTUALIZAR */
+
+.btn-actualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: auto;
+  min-height: 40px;
+  padding: 8px 13px;
+
+  background: #E8F5FB;
+  color: var(--farmacia-primario);
+
+  border: 1px solid #CFE5F1;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.btn-actualizar:hover {
+  background: var(--farmacia-primario);
+  border-color: var(--farmacia-primario);
+  color: #FFFFFF;
+}
+
+.btn-actualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   TABLA DE INVENTARIO
+   ========================================== */
+
+.tabla-inventario {
+  width: 100%;
+  min-width: 850px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
+}
+
+.tabla-inventario thead th {
+  background: var(--farmacia-celeste) !important;
+  color: var(--farmacia-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 13px;
   font-weight: 700;
-  padding: 16px;
+
   white-space: nowrap;
 }
 
-.table tbody td {
-  padding: 17px 16px;
-  color: #34485b;
+.tabla-inventario tbody td {
+  padding: 14px 12px;
+
+  color: var(--farmacia-texto);
+
+  border-bottom: 1px solid #E7EFF4;
+  vertical-align: middle;
+}
+
+.tabla-inventario tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ==========================================
+   DATOS DE INVENTARIO
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
   font-size: 13px;
-  border-bottom: 1px solid #edf1f4;
 }
 
-.table tbody tr:hover td {
-  background: #f4f9fc;
-}
-
-.table tbody td.fw-semibold {
-  color: var(--azul);
-}
-
-/* STOCK */
-
-.table .badge {
-  background: #e2f1f8 !important;
-  color: var(--azul) !important;
-  border: 1px solid #c5e1ed;
-  padding: 7px 12px;
-  border-radius: 8px;
-  font-weight: 700;
-}
-
-.table .badge.bg-danger {
-  background: #fdebea !important;
-  color: #b33b3b !important;
-  border-color: #f4c6c3;
-}
-
-.table .badge.bg-warning {
-  background: #fff1e8 !important;
-  color: #b56634 !important;
-  border-color: #f4d7c4;
-}
-
-/* BOTONES DE ACCIÓN */
-
-.table .btn {
-  width: 34px;
-  height: 34px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  transition: .2s;
-}
-
-.table .btn-outline-success,
-.table .btn-outline-primary {
-  background: #eaf4f8;
-  border: 1px solid #b7d9e7;
-  color: var(--azul);
-}
-
-.table .btn-outline-success:hover,
-.table .btn-outline-primary:hover {
-  background: var(--azul);
-  border-color: var(--azul);
-  color: white;
-}
-
-.table .btn-outline-danger {
-  background: #fff2f1;
-  border: 1px solid #edc7c4;
-  color: #bd4a43;
-}
-
-.table .btn-outline-danger:hover {
-  background: #bd4a43;
-  color: white;
-}
-
-/* BUSCADOR */
-
-.form-control {
-  border: 1px solid var(--borde);
-  border-radius: 9px;
+.nombre-medicamento {
+  color: #263E4D;
   font-size: 14px;
-  padding: 10px 13px;
+  font-weight: 600;
 }
 
-.form-control:focus {
-  border-color: var(--azul-medio);
-  box-shadow: 0 0 0 3px rgba(22,133,172,.1);
+.descripcion-medicamento {
+  color: #526B7A;
+  font-size: 14px;
 }
 
-.card-header .btn-outline-primary {
-  background: white;
-  border: 1px solid #b7d9e7;
-  color: var(--azul);
-  border-radius: 9px;
+.precio-medicamento {
+  color: #344F60;
+  font-size: 14px;
+
+  white-space: nowrap;
 }
 
-.card-header .btn-outline-primary:hover {
-  background: var(--azul);
-  color: white;
+/* ==========================================
+   ETIQUETAS DE STOCK
+   ========================================== */
+
+.stock-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 35px;
+  padding: 6px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
 }
 
-/* =====================================
-   MODAL DE INGRESO DE STOCK
-===================================== */
+/* STOCK NORMAL */
+
+.stock-disponible {
+  background: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
+}
+
+/* STOCK LIMITADO */
+
+.stock-limitado {
+  background: #F8F0DE;
+  color: #8B682A;
+  border-color: #EEDFBF;
+}
+
+/* SIN STOCK */
+
+.stock-agotado {
+  background: #F8E9EB;
+  color: #A54953;
+  border-color: #F0D5D9;
+}
+
+/* ==========================================
+   ESTADOS DEL MEDICAMENTO
+   ========================================== */
+
+.estado-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ACTIVO */
+
+.estado-activo {
+  background: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
+}
+
+/* INACTIVO */
+
+.estado-inactivo {
+  background: #EDF1F4;
+  color: #647582;
+  border-color: #DCE4E9;
+}
+
+/* ==========================================
+   BOTONES DE ACCION
+   ========================================== */
+
+.acciones-medicamento {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  white-space: nowrap;
+}
+
+.acciones-medicamento .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 35px;
+
+  padding: 0;
+
+  border-radius: 7px;
+  font-size: 14px;
+
+  transition: all 0.2s ease;
+}
+
+/* INGRESAR STOCK */
+
+.btn-ingresar-stock {
+  background: #E8F5FB;
+  color: #176388;
+
+  border: 1px solid #CFE5F1;
+}
+
+.btn-ingresar-stock:hover {
+  background: #D4EBF6;
+  border-color: #9ECEDB;
+  color: #07577A;
+}
+
+/* EDITAR */
+
+.btn-editar {
+  background: #07577A;
+  color: #FFFFFF;
+
+  border: 1px solid #07577A;
+}
+
+.btn-editar:hover {
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
+}
+
+/* ELIMINAR */
+
+.btn-eliminar {
+  background: #F7DDE1;
+  color: #A63F4C;
+
+  border: 1px solid #E7A4AE;
+}
+
+.btn-eliminar:hover {
+  background: #EFC5CB;
+  color: #8F303D;
+  border-color: #D78591;
+}
+
+.acciones-medicamento .btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 14px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--farmacia-primario);
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 190px;
+  padding: 30px;
+
+  text-align: center;
+  color: #8195A3;
+}
+
+.estado-vacio p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+.estado-vacio h6 {
+  color: var(--farmacia-primario);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.icono-vacio {
+  color: #A2B4BF;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.spinner-border.text-primary {
+  color: var(--farmacia-primario) !important;
+}
+
+/* ==========================================
+   MODAL: INGRESO DE STOCK
+   ========================================== */
 
 .modal-stock-overlay {
   position: fixed;
   inset: 0;
   z-index: 2000;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(12,39,57,.55);
+
   padding: 20px;
+
+  background: rgba(12, 39, 57, 0.55);
 }
 
 .modal-stock {
+  display: flex;
+  flex-direction: column;
+
   width: 100%;
   max-width: 490px;
-  background: white;
-  border-radius: 15px;
+  max-height: calc(100dvh - 40px);
+
+  background: #FFFFFF;
+
+  border-radius: 13px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,.18);
+
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
 }
+
+/* ==========================================
+   CABECERA DEL MODAL
+   ========================================== */
 
 .modal-stock-header {
   display: flex;
   align-items: center;
   gap: 13px;
-  padding: 22px;
-  background: var(--celeste);
-  border-bottom: 1px solid var(--borde);
+
+  flex-shrink: 0;
+
+  padding: 20px 22px;
+
+  background: var(--farmacia-celeste);
+  border-bottom: 1px solid var(--farmacia-borde);
 }
 
 .modal-stock-icon {
-  width: 43px;
-  height: 43px;
-  border-radius: 11px;
-  background: #d5eaf4;
-  color: var(--azul);
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 43px;
+  height: 43px;
+
+  background: #D5EAF4;
+  color: var(--farmacia-primario);
+
+  border-radius: 10px;
   font-size: 21px;
 }
 
 .modal-stock-header h5 {
   margin: 0 0 4px;
+
+  color: var(--farmacia-primario);
+
   font-size: 17px;
   font-weight: 700;
-  color: var(--azul);
 }
 
 .modal-stock-header p {
   margin: 0;
-  font-size: 12px;
+
   color: #758697;
+  font-size: 12px;
 }
 
+/* ==========================================
+   CUERPO DEL MODAL
+   ========================================== */
+
 .modal-stock-body {
-  padding: 25px;
+  flex: 1 1 auto;
+
+  padding: 24px;
+
+  overflow-y: auto;
 }
 
 .medicamento-info {
   display: flex;
   justify-content: space-between;
   gap: 15px;
-  padding: 17px;
-  background: #f4f9fc;
-  border: 1px solid #e2edf3;
-  border-radius: 10px;
+
+  padding: 16px;
+
+  background: #F6FAFC;
+  border: 1px solid #E2EDF3;
+  border-radius: 9px;
 }
 
 .medicamento-info small {
   display: block;
-  color: #78899a;
+
+  color: #78899A;
   font-size: 11px;
+
   margin-bottom: 6px;
 }
 
 .medicamento-info strong {
   display: block;
-  color: #263b4e;
+
+  color: #263E4D;
   font-size: 14px;
+  font-weight: 600;
+}
+
+.stock-actual-contenedor {
+  text-align: right;
 }
 
 .medicamento-info .stock-actual {
-  color: var(--azul);
+  color: var(--farmacia-primario);
 }
 
+/* ==========================================
+   CAMPO DE CANTIDAD
+   ========================================== */
+
 .modal-stock-body .form-label {
+  color: #344F60;
   font-size: 13px;
   font-weight: 600;
-  color: #34485b;
 }
 
 .modal-stock-body .input-group-text {
-  background: #edf5f9;
-  border-color: var(--borde);
-  color: var(--azul);
+  background: #EDF5F9;
+  border-color: var(--farmacia-borde);
+  color: var(--farmacia-primario);
 }
 
 .modal-stock-body .form-control {
-  padding: 12px;
-  border-color: var(--borde);
+  border: 1px solid var(--farmacia-borde);
+  border-radius: 8px;
+
+  color: #344F60;
+  font-size: 14px;
 }
 
-/* VISTA PREVIA */
+.modal-stock-body .form-control:focus {
+  border-color: var(--farmacia-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   VISTA PREVIA DEL STOCK
+   ========================================== */
 
 .stock-preview {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
+
   margin-top: 20px;
   padding: 14px;
+
+  background: #EDF6FA;
+
+  border: 1px solid #D6E8F1;
   border-radius: 9px;
-  background: #edf6fa;
-  border: 1px solid #d6e8f1;
 }
 
 .stock-preview span {
-  color: #56798a;
+  color: #56798A;
   font-size: 12px;
 }
 
 .stock-preview strong {
-  color: var(--azul);
+  color: var(--farmacia-primario);
   font-size: 15px;
+  font-weight: 700;
 }
 
-/* BOTONES MODAL */
+/* ==========================================
+   PIE DEL MODAL
+   ========================================== */
 
 .modal-stock-footer {
   display: flex;
+  align-items: center;
   justify-content: flex-end;
+
+  flex-shrink: 0;
+
   gap: 10px;
-  padding: 18px 25px;
-  background: #fafcfd;
-  border-top: 1px solid #edf0f3;
+  padding: 16px 24px;
+
+  background: #FAFCFD;
+  border-top: 1px solid #EDF0F3;
 }
 
 .modal-stock-footer .btn {
+  min-height: 40px;
+
   border-radius: 8px;
-  padding: 10px 16px;
+  padding: 9px 15px;
+
   font-size: 13px;
   font-weight: 600;
 }
 
+.modal-stock-footer .btn-outline-secondary {
+  background: #FFFFFF;
+  border: 1px solid #D7E1E8;
+  color: #64748B;
+}
+
+.modal-stock-footer .btn-outline-secondary:hover {
+  background: #EDF3F7;
+  color: #344F60;
+}
+
+/* CONFIRMAR INGRESO */
+
 .btn-confirmar-ingreso {
-  background: var(--azul);
-  border: 1px solid var(--azul);
-  color: white;
+  background: var(--farmacia-primario);
+  color: #FFFFFF;
+
+  border: 1px solid var(--farmacia-primario);
 }
 
 .btn-confirmar-ingreso:hover {
-  background: var(--azul-oscuro);
-  color: white;
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-.modal-stock-footer .btn-outline-secondary {
-  background: white;
-  border: 1px solid #d7e1e8;
-  color: #64748b;
+.btn-confirmar-ingreso:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
 }
 
-/* RESPONSIVE */
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
+@media (max-width: 992px) {
+
+  .inventario-header {
+    align-items: stretch;
+  }
+
+  .controles-inventario {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .buscador-medicamentos {
+    width: 300px;
+  }
+
+}
 
 @media (max-width: 768px) {
+
+  .farmacia-pagina {
+    padding: 12px;
+  }
+
   .titulo-pagina {
     font-size: 22px;
   }
 
-  .resumen {
-    padding: 17px;
+  .subtitulo-pagina {
+    font-size: 13px;
   }
 
-  .card-header {
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .resumen {
     padding: 16px;
   }
 
-  .nav-tabs .nav-link {
-    padding: 10px;
-    font-size: 12px;
+  .inventario-header {
+    padding: 16px;
+  }
+
+  .controles-inventario {
+    justify-content: flex-start;
+  }
+
+  .buscador-medicamentos {
+    flex: 1 1 220px;
+    width: auto;
+  }
+
+  .modal-stock-body {
+    padding: 18px;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-principal {
+    width: 100%;
+  }
+
+  .pestanas-farmacia .nav-item {
+    width: 100%;
+  }
+
+  .pestanas-farmacia .nav-link {
+    width: 100%;
+    border-radius: 8px;
+    text-align: left;
+  }
+
+  .btn-stock-bajo {
+    flex: 1;
+  }
+
+  .buscador-medicamentos {
+    flex: 1 1 100%;
+  }
+
+  .stock-actual-contenedor {
+    text-align: left;
+  }
+
+  .medicamento-info {
+    flex-direction: column;
   }
 
   .modal-stock-footer {
@@ -444,7 +1017,4 @@
     width: 100%;
   }
 
-  .medicamento-info {
-    flex-direction: column;
-  }
 }

@@ -1,494 +1,869 @@
 
-/* =====================================
-   CONTENEDOR GENERAL
-===================================== */
+/* ==========================================
+   GESTION DE PAGOS - UPeU SALUD
+   ========================================== */
 
-.pagos-container {
-  background: #f4f7fa;
-  min-height: calc(100vh - 80px);
-  padding-left: 30px;
-  padding-right: 30px;
+:host {
+  display: block;
+
+  --pago-primario: var(--color-primario, #07577A);
+  --pago-secundario: var(--color-secundario, #43A6CC);
+  --pago-celeste: var(--color-celeste, #E8F5FB);
+  --pago-borde: var(--color-borde, #DCEAF1);
+  --pago-texto: var(--color-texto-oscuro, #263E4D);
+  --pago-muted: var(--color-texto-secundario, #526B7A);
 }
 
-.titulo-pagina {
-  color: #183b50;
-  font-size: 27px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+/* ==========================================
+   CONTENEDOR GENERAL
+   ========================================== */
+
+.pagos-container {
+  max-width: 1550px;
+  margin: 0 auto;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 18px;
+
+  margin-bottom: 25px;
+}
+
+.titulo-grupo {
+  display: flex;
+  align-items: center;
+  gap: 13px;
 }
 
 .titulo-icono {
-  width: 43px;
-  height: 43px;
-  background: #e3f0f6;
-  color: #075779;
-  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+
+  flex-shrink: 0;
+
+  width: 44px;
+  height: 44px;
+
+  background: var(--pago-celeste);
+  color: var(--pago-primario);
+
+  border-radius: 10px;
+  font-size: 21px;
 }
 
-/* =====================================
-   BOTÓN ACTUALIZAR
-===================================== */
+.titulo-pagina {
+  color: var(--pago-primario);
+  font-size: 27px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin: 6px 0 0;
+}
+
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
 
 .btn-actualizar {
-  background: #075779;
-  color: #ffffff;
-  border: 1px solid #075779;
-  border-radius: 9px;
-  padding: 11px 19px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 9px 14px;
+
+  background: #E8F5FB;
+  color: var(--pago-primario);
+
+  border: 1px solid #CFE5F1;
+  border-radius: 8px;
+
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
+  white-space: nowrap;
+
   transition: all 0.2s ease;
-  box-shadow: 0 3px 8px rgba(7, 87, 121, 0.13);
 }
 
 .btn-actualizar:hover {
-  background: #06445f;
-  border-color: #06445f;
-  color: #ffffff;
-  transform: translateY(-1px);
+  background: var(--pago-primario);
+  border-color: var(--pago-primario);
+  color: #FFFFFF;
 }
 
 .btn-actualizar:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
-  transform: none;
 }
 
-/* =====================================
+/* ==========================================
    TARJETAS DE RESUMEN
-===================================== */
+   ========================================== */
 
 .resumen-card {
-  background: #ffffff;
-  border: 1px solid #edf0f3;
-  border-radius: 13px;
-  min-height: 125px;
   height: 100%;
-  box-shadow: 0 3px 10px rgba(30, 55, 75, 0.045);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+  min-height: 130px;
 
-.resumen-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 7px 18px rgba(30, 55, 75, 0.08);
-}
-
-.resumen-card .card-body {
   padding: 20px;
+
+  background: #FFFFFF;
+
+  border: 1px solid var(--pago-borde);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
 .resumen-contenido {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  height: 100%;
   gap: 12px;
 }
 
 .resumen-label {
   display: block;
-  color: #64748b;
+
+  color: #718096;
   font-size: 13px;
   font-weight: 500;
-  margin-bottom: 9px;
+
+  margin-bottom: 8px;
 }
 
 .resumen-card h3 {
-  color: #183b50;
-  font-size: 25px;
+  color: var(--pago-primario);
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 5px;
-  letter-spacing: -0.5px;
+
+  margin: 0 0 5px;
+
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.resumen-card .monto-resumen {
+  font-size: 23px;
 }
 
 .resumen-card small {
-  color: #94a3b8;
+  display: block;
+  color: #8195A3;
   font-size: 12px;
 }
 
+/* ICONOS DE LAS TARJETAS */
+
 .resumen-icono {
-  width: 47px;
-  height: 47px;
-  min-width: 47px;
-  border-radius: 12px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 22px;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 44px;
+  height: 44px;
+
+  background: var(--pago-celeste);
+  color: var(--pago-primario);
+
+  border-radius: 10px;
+  font-size: 21px;
 }
 
-.icono-azul {
-  background: #e8f1ff;
-  color: #2875d9;
-}
+/* ==========================================
+   RESUMEN DE PAGOS REGISTRADOS
+   ========================================== */
 
-.icono-naranja {
-  background: #fff3df;
-  color: #e29a18;
-}
+.resumen-pagos-card {
+  background: #FFFFFF;
 
-.icono-rojo {
-  background: #ffeded;
-  color: #dc5555;
-}
+  border: 1px solid var(--pago-borde);
+  border-radius: 12px;
 
-.icono-verde {
-  background: #e5f7ef;
-  color: #159568;
-}
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 
-.texto-verde {
-  color: #159568 !important;
-}
-
-/* =====================================
-   CONTENEDOR DEL LISTADO
-===================================== */
-
-.listado-card {
-  background: #ffffff;
-  border: 1px solid #edf0f3;
-  border-radius: 13px;
   overflow: hidden;
-  box-shadow: 0 3px 12px rgba(30, 55, 75, 0.05);
 }
 
-.listado-header {
-  padding: 21px 22px;
+/* CABECERA */
+
+.resumen-pagos-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 20px;
+
   flex-wrap: wrap;
+  gap: 18px;
+
+  padding: 18px 20px;
+
+  border-bottom: 1px solid var(--pago-borde);
+}
+
+.resumen-pagos-header h5 {
+  color: var(--pago-primario);
+  font-size: 16px;
+  font-weight: 700;
+
+  margin: 0;
+}
+
+.resumen-pagos-header p {
+  color: #8195A3;
+  font-size: 12px;
+
+  margin: 5px 0 0;
+}
+
+/* TOTAL RECAUDADO */
+
+.total-recaudado {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  gap: 4px;
+}
+
+.total-recaudado small {
+  color: #718096;
+  font-size: 12px;
+}
+
+.total-recaudado strong {
+  color: var(--pago-primario);
+
+  font-size: 21px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* MEDIOS DE PAGO */
+
+.resumen-medios {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fit, minmax(230px, 1fr));
+
+  gap: 14px;
+
+  padding: 17px 20px;
+}
+
+.medio-pago-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 15px;
+  padding: 16px;
+
+  background: #F8FBFD;
+
+  border: 1px solid #E1ECF2;
+  border-radius: 10px;
+}
+
+.medio-pago-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 5px;
+}
+
+/* NOMBRE DEL MEDIO */
+
+.medio-pago-nombre {
+  color: #526B7A;
+  font-size: 12px;
+  font-weight: 600;
+
+  text-transform: uppercase;
+}
+
+/* MONTO RECAUDADO */
+
+.medio-pago-info strong {
+  color: var(--pago-primario);
+  font-size: 19px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+/* TRANSACCIONES */
+
+.medio-pago-info small {
+  color: #8195A3;
+  font-size: 12px;
+}
+
+/* ICONO */
+
+.medio-pago-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  background: #E8F5FB;
+  color: #1685AC;
+
+  border-radius: 10px;
+  font-size: 21px;
+}
+
+/* ==========================================
+   TARJETA DEL LISTADO
+   ========================================== */
+
+.listado-card {
+  background: #FFFFFF;
+
+  border: 1px solid var(--pago-borde);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
+
+  overflow: hidden;
+}
+
+/* ==========================================
+   ENCABEZADO DEL LISTADO
+   ========================================== */
+
+.listado-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 18px;
+
+  padding: 20px;
 }
 
 .listado-header h5 {
-  color: #183b50;
+  color: var(--pago-primario);
   font-size: 17px;
   font-weight: 700;
+
+  margin: 0 0 5px;
 }
 
 .listado-header p {
+  color: #8195A3;
   font-size: 13px;
+
+  margin: 0;
 }
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
 
 .buscador-container {
-  width: 48%;
-  min-width: 270px;
+  width: 100%;
+  max-width: 410px;
+
+  margin-left: auto;
 }
 
-.buscador .input-group-text {
-  background: #ffffff;
-  border: 1px solid #dce4eb;
-  border-right: 0;
-  color: #64748b;
-  padding-left: 15px;
+.buscador {
+  position: relative;
+  width: 100%;
 }
 
-.buscador .form-control {
-  border: 1px solid #dce4eb;
-  border-left: 0;
-  height: 43px;
-  font-size: 13px;
-  box-shadow: none;
+.buscador-icono {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: var(--pago-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
 }
 
-.buscador .form-control:focus {
-  border-color: #075779;
-  box-shadow: none;
+.buscador-input {
+  width: 100%;
+  min-height: 43px;
+
+  padding: 10px 42px;
+
+  background: #FFFFFF;
+  color: var(--pago-texto);
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  font-size: 14px;
 }
 
-.buscador .input-group-text:has(+ .form-control:focus) {
-  border-color: #075779;
+.buscador-input::placeholder {
+  color: #8BA0AC;
 }
 
-.buscador .form-control::placeholder {
-  color: #9aa8b5;
+.buscador-input:focus {
+  border-color: var(--pago-secundario);
+
+  box-shadow:
+    0 0 0 3px rgba(67, 166, 204, 0.12);
 }
+
+/* LIMPIAR BUSQUEDA */
 
 .btn-limpiar {
-  background: #ffffff;
-  border: 1px solid #dce4eb;
-  color: #64748b;
+  position: absolute;
+
+  right: 5px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 32px;
+  height: 32px;
+
+  background: #F1F6F9;
+  color: #718096;
+
+  border: none;
+  border-radius: 6px;
+
+  font-size: 12px;
+  cursor: pointer;
 }
 
 .btn-limpiar:hover {
-  background: #f1f5f9;
+  background: #E6F0F5;
+  color: var(--pago-primario);
 }
 
-/* =====================================
+/* ==========================================
    BARRA DE RESULTADOS
-===================================== */
+   ========================================== */
 
 .resultados-barra {
-  background: #f8fafc;
-  border-top: 1px solid #edf0f3;
-  border-bottom: 1px solid #edf0f3;
-  padding: 11px 22px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 10px;
-  color: #64748b;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 11px 20px;
+
+  background: #F8FBFD;
+
+  border-top: 1px solid var(--pago-borde);
+  border-bottom: 1px solid var(--pago-borde);
+
+  color: #718096;
   font-size: 12px;
 }
 
-.costo-atencion strong {
-  color: #075779;
+.contador-resultados {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
 }
 
-/* =====================================
-   TABLA
-===================================== */
+.contador-resultados i {
+  color: var(--pago-secundario);
+  font-size: 15px;
+}
+
+.contador-resultados strong {
+  color: var(--pago-primario);
+  font-weight: 700;
+}
+
+.costo-atencion strong {
+  color: var(--pago-primario);
+  font-weight: 700;
+
+  margin-left: 4px;
+}
+
+/* ==========================================
+   TABLA DE PAGOS
+   ========================================== */
 
 .tabla-pagos {
+  width: 100%;
   min-width: 1050px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
 }
+
+/* ENCABEZADO */
 
 .tabla-pagos thead th {
-  background: #f4f7fa;
-  color: #526477;
-  font-size: 11px;
+  background: var(--pago-celeste) !important;
+  color: var(--pago-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 12px;
   font-weight: 700;
-  padding: 15px 13px;
   white-space: nowrap;
-  border-bottom: 1px solid #e5eaf0;
-  letter-spacing: 0.3px;
 }
+
+/* FILAS */
 
 .tabla-pagos tbody td {
-  padding: 14px 13px;
-  border-bottom: 1px solid #edf0f3;
-  color: #334155;
-  font-size: 13px;
+  padding: 14px 12px;
+
+  color: var(--pago-texto);
+
+  border-bottom: 1px solid #E7EFF4;
   vertical-align: middle;
-}
-
-.tabla-pagos tbody tr {
-  transition: background 0.15s ease;
-}
-
-.tabla-pagos tbody tr:hover {
-  background: #f8fbfd;
 }
 
 .tabla-pagos tbody tr:last-child td {
   border-bottom: none;
 }
 
-/* Número de cita */
+/* ==========================================
+   NUMERACION
+   ========================================== */
 
-.numero-cita {
-  color: #075779;
-  background: #eaf3f8;
-  padding: 6px 9px;
-  border-radius: 7px;
-  font-size: 12px;
-  font-weight: 700;
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
 }
 
-/* Paciente */
+/* ==========================================
+   PACIENTE
+   ========================================== */
 
 .paciente-info {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-width: 210px;
+
+  min-width: 180px;
 }
 
 .paciente-avatar {
-  width: 35px;
-  height: 35px;
-  min-width: 35px;
-  border-radius: 50%;
-  background: #e9f2f7;
-  color: #075779;
   display: flex;
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  background: #E8F5FB;
+  color: var(--pago-primario);
+
+  border-radius: 50%;
   font-size: 16px;
 }
 
 .paciente-info strong {
   display: block;
-  color: #263d50;
-  font-size: 12px;
+
+  color: #263E4D;
+  font-size: 13px;
   font-weight: 600;
+
+  text-transform: capitalize;
 }
 
-.paciente-info small,
-.fecha-info small,
-.pendiente-info small {
+.paciente-info small {
   display: block;
-  color: #94a3b8;
+
+  color: #8195A3;
   font-size: 11px;
+
   margin-top: 4px;
 }
 
-/* Tipo de paciente */
+/* ==========================================
+   TIPO DE PACIENTE
+   ========================================== */
 
 .tipo-badge {
-  display: inline-block;
-  padding: 5px 9px;
-  border-radius: 6px;
-  font-size: 10px;
-  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+
   white-space: nowrap;
 }
 
 .tipo-estudiante {
-  color: #2563a8;
-  background: #eaf2ff;
+  background: #E6F2F9;
+  color: #176388;
+  border-color: #CFE5F1;
 }
 
-.tipo-externo {
-  color: #8b5e25;
-  background: #fff3df;
+.tipo-otro {
+  background: #EDF1F4;
+  color: #526B7A;
+  border-color: #DCE4E9;
 }
 
-/* Fecha */
+/* ==========================================
+   FECHA Y HORA
+   ========================================== */
 
 .fecha-info strong {
-  color: #334155;
-  font-size: 12px;
+  color: #344F60;
+  font-size: 13px;
   font-weight: 600;
-}
 
-/* Importes */
-
-.importe-normal {
-  color: #475569;
-  font-weight: 600;
   white-space: nowrap;
 }
 
+.fecha-info small {
+  display: block;
+
+  color: #8195A3;
+  font-size: 11px;
+
+  margin-top: 5px;
+}
+
+/* ==========================================
+   IMPORTES
+   ========================================== */
+
+.importe-normal {
+  color: #344F60;
+  font-size: 13px;
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+.sin-fondo {
+  color: #8798A4;
+  font-size: 12px;
+}
+
 .importe-descuento {
-  color: #159568;
-  font-weight: 700;
+  color: #26805A;
+  font-size: 13px;
+  font-weight: 600;
+
   white-space: nowrap;
 }
 
 .importe-pendiente {
-  color: #dc4545;
+  color: var(--pago-primario);
   font-size: 13px;
+  font-weight: 700;
+
   white-space: nowrap;
 }
 
 .importe-cubierto {
-  color: #159568;
+  color: #26805A;
   font-size: 13px;
+  font-weight: 700;
+
   white-space: nowrap;
 }
 
 .pendiente-info small {
-  font-size: 10px;
+  display: block;
+
+  color: #8195A3;
+  font-size: 11px;
+
+  margin-top: 4px;
 }
 
-/* =====================================
-   BOTONES DE ACCIÓN
-===================================== */
+/* ==========================================
+   BOTONES DE ACCION
+   ========================================== */
 
 .btn-accion {
-  padding: 8px 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 36px;
+  padding: 8px 13px;
+
+  border: 1px solid transparent;
   border-radius: 7px;
-  font-size: 11px;
+
+  font-size: 12px;
   font-weight: 600;
   white-space: nowrap;
+
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
+/* PROCESAR PAGO */
+
 .accion-pagar {
-  background: #075779;
-  color: #ffffff;
-  border: 1px solid #075779;
+  background: var(--pago-primario);
+  border-color: var(--pago-primario);
+  color: #FFFFFF;
 }
 
 .accion-pagar:hover {
-  background: #06445f;
-  border-color: #06445f;
-  color: #ffffff;
-  transform: translateY(-1px);
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
+/* APLICAR FONDO */
+
 .accion-fondo {
-  background: #e7f7ef;
-  color: #148457;
-  border: 1px solid #c6ead7;
+  background: #E5F4EC;
+  border-color: #C7E7D5;
+  color: #24764C;
 }
 
 .accion-fondo:hover {
-  background: #148457;
-  color: #ffffff;
-  border-color: #148457;
+  background: #D0EBDE;
+  border-color: #A6D7BF;
+  color: #185B3B;
 }
 
-/* =====================================
-   ESTADOS DE TABLA
-===================================== */
+/* ==========================================
+   CARGA, ERROR Y SIN RESULTADOS
+   ========================================== */
 
 .estado-tabla {
+  padding: 45px 20px !important;
+
   text-align: center !important;
-  padding: 55px 20px !important;
-  color: #64748b !important;
+  color: #8195A3 !important;
 }
 
-.estado-tabla i {
+.estado-tabla i.estado-vacio,
+.estado-tabla i.estado-error {
   display: block;
-  font-size: 35px;
+
+  font-size: 32px;
   margin-bottom: 12px;
 }
 
-.estado-tabla h6 {
-  color: #334155;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
-.estado-tabla p {
-  font-size: 12px;
-  margin-bottom: 0;
-  color: #94a3b8;
-}
-
 .estado-vacio {
-  color: #94a3b8;
+  color: #A2B4BF;
 }
 
 .estado-error {
-  color: #dc5555;
+  color: #C75B65;
 }
 
-/* =====================================
+.estado-tabla h6 {
+  color: var(--pago-primario);
+  font-size: 14px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.estado-tabla p {
+  color: #8195A3;
+  font-size: 13px;
+
+  margin: 0;
+}
+
+.spinner-border.text-primary {
+  color: var(--pago-primario) !important;
+}
+
+/* ==========================================
    PIE DEL LISTADO
-===================================== */
+   ========================================== */
 
 .listado-footer {
-  background: #f8fafc;
-  border-top: 1px solid #edf0f3;
-  padding: 13px 20px;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+
   flex-wrap: wrap;
-  gap: 8px;
-  color: #64748b;
-  font-size: 11px;
+  gap: 12px;
+
+  padding: 15px 20px;
+
+  background: #F8FBFD;
+  border-top: 1px solid var(--pago-borde);
+
+  color: #718096;
+  font-size: 12px;
 }
 
 .listado-footer i {
-  color: #075779;
+  color: var(--pago-secundario);
 }
 
 .listado-footer span {
-  color: #94a3b8;
+  white-space: nowrap;
 }
 
-/* =====================================
+/* ==========================================
    RESPONSIVE
-===================================== */
+   ========================================== */
+
+@media (max-width: 992px) {
+
+  .resumen-card {
+    min-height: 120px;
+  }
+
+  .resumen-card .monto-resumen {
+    font-size: 22px;
+  }
+
+}
 
 @media (max-width: 768px) {
 
@@ -501,22 +876,36 @@
     font-size: 22px;
   }
 
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
   .listado-header {
     align-items: stretch;
   }
 
   .buscador-container {
-    width: 100%;
-    min-width: 0;
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .resumen-pagos-header {
+    align-items: flex-start;
+  }
+
+  .total-recaudado {
+    align-items: flex-start;
   }
 
   .resultados-barra {
-    flex-direction: column;
     align-items: flex-start;
   }
 
   .listado-footer {
-    flex-direction: column;
     align-items: flex-start;
   }
 
@@ -524,23 +913,45 @@
 
 @media (max-width: 480px) {
 
-  .resumen-card .card-body {
-    padding: 15px;
+  .titulo-grupo {
+    align-items: flex-start;
+  }
+
+  .btn-actualizar {
+    width: 100%;
+  }
+
+  .resumen-card {
+    min-height: 105px;
+    padding: 16px;
   }
 
   .resumen-card h3 {
+    font-size: 23px;
+  }
+
+  .resumen-card .monto-resumen {
     font-size: 21px;
   }
 
   .resumen-icono {
     width: 40px;
     height: 40px;
-    min-width: 40px;
     font-size: 19px;
   }
 
-  .btn-actualizar {
-    width: 100%;
+  .resumen-pagos-header,
+  .listado-header {
+    padding: 16px;
+  }
+
+  .resumen-medios {
+    padding: 16px;
+    grid-template-columns: 1fr;
+  }
+
+  .listado-footer span {
+    white-space: normal;
   }
 
 }

@@ -1,121 +1,307 @@
 
-<div class="container mt-4">
+<div class="container empleados-container mt-4 mb-5">
 
+  <!-- ========================================== -->
   <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- ========================================== -->
+
+  <div class="encabezado-pagina">
 
     <div>
-      <h2>Gestión de empleados</h2>
-      <p class="subtitulo">
+
+      <h2 class="titulo-pagina">
+        Gestión de empleados
+      </h2>
+
+      <p class="subtitulo-pagina">
         Consulta y administra la información del personal.
       </p>
+
     </div>
 
-    <a routerLink="/empleados/nuevo" class="btn btn-nuevo">
-      <i class="bi bi-plus-circle me-1"></i>
+    <a
+      routerLink="/empleados/nuevo"
+      class="btn btn-nuevo">
+
+      <i class="bi bi-plus-circle me-2"></i>
       Nuevo empleado
+
     </a>
 
   </div>
 
-  <!-- BUSCADOR -->
-  <div class="d-flex justify-content-end mb-3">
-  <div class="search-container" style="width: 100%; max-width: 350px;">
-    
-    <i class="bi bi-search search-icon"></i>
-    
-    <input
-      type="text"
-      class="form-control search-input"
-      placeholder="Buscar por DNI, nombres o apellidos..."
-      [(ngModel)]="busqueda"
-      (input)="filtrarEmpleados()">
-      
-  </div>
-</div>
+  <!-- ========================================== -->
+  <!-- CONTADOR Y BUSCADOR -->
+  <!-- ========================================== -->
 
-  <!-- TABLA -->
-  <div class="table-responsive">
+  <div class="barra-herramientas">
 
-    <table class="table table-hover shadow-sm align-middle">
+    <div class="contador-empleados">
 
-      <thead>
-        <tr>
-          <th>N.º</th>
-          <th>DNI</th>
-          <th>Empleado</th>
-          <th>Correo</th>
-          <th>Teléfono</th>
-          <th>Fecha de ingreso</th>
-          <th>Sueldo</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+      <i class="bi bi-people"></i>
 
-      <tbody>
+      <span>
+        <strong>{{ empleadosFiltrados.length }}</strong>
+        empleados encontrados
+      </span>
 
-        @for (e of empleadosFiltrados; track e.idPersona; let i = $index) {
+    </div>
 
-          <tr>
+    <div class="buscador-empleados">
 
-            <td>{{ i + 1 }}</td>
+      <div class="search-container">
 
-            <td>{{ e.dni }}</td>
+        <i class="bi bi-search search-icon"></i>
 
-            <td>{{ e.nombres }} {{ e.apellidos }}</td>
+        <input
+          type="text"
+          class="form-control search-input"
+          placeholder="Buscar por DNI, nombres o apellidos..."
+          aria-label="Buscar empleados por DNI, nombres o apellidos"
+          [(ngModel)]="busqueda"
+          (input)="filtrarEmpleados()">
 
-            <td>{{ e.correo }}</td>
+      </div>
 
-            <td>{{ e.telefono }}</td>
-
-            <td>{{ e.fechaIngreso | date:'dd/MM/yyyy' }}</td>
-
-            <td>{{ e.sueldo | currency:'PEN':'symbol':'1.2-2' }}</td>
-
-            <td>
-              <span
-                class="estado-badge"
-                [ngClass]="e.estado === 'ACTIVO'
-                  ? 'estado-activo'
-                  : 'estado-inactivo'">
-                {{ e.estado }}
-              </span>
-            </td>
-
-            <td>
-              <a
-                [routerLink]="['/empleados/editar', e.idPersona]"
-                class="btn btn-sm btn-editar">
-
-                <i class="bi bi-pencil-square me-1"></i>
-                Editar
-
-              </a>
-            </td>
-
-          </tr>
-
-        } @empty {
-
-          <tr>
-            <td colspan="8" class="text-center py-4">
-
-              @if (busqueda) {
-                No se encontraron empleados con "{{ busqueda }}".
-              } @else {
-                No hay empleados registrados.
-              }
-
-            </td>
-          </tr>
-
-        }
-
-      </tbody>
-
-    </table>
+    </div>
 
   </div>
+
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
+
+  @if (cargando) {
+
+    <div class="estado-vacio">
+
+      <div
+        class="spinner-border text-primary mb-3"
+        role="status">
+      </div>
+
+      <p>Cargando empleados...</p>
+
+    </div>
+
+  } @else if (errorCarga) {
+
+    <div class="estado-vacio">
+
+      <i class="bi bi-exclamation-circle icono-vacio"></i>
+
+      <h6>No se pudo cargar la información</h6>
+
+      <p>Intenta consultar nuevamente el listado.</p>
+
+      <button
+        type="button"
+        class="btn btn-nuevo mt-3"
+        (click)="listEmpleados()">
+
+        <i class="bi bi-arrow-clockwise me-2"></i>
+        Reintentar
+
+      </button>
+
+    </div>
+
+  } @else {
+
+    <!-- ========================================== -->
+    <!-- TABLA DE EMPLEADOS -->
+    <!-- ========================================== -->
+
+    <div class="tabla-empleados table-responsive">
+
+      <table class="table table-hover align-middle mb-0">
+
+        <thead>
+
+          <tr>
+            <th>N.º</th>
+            <th>DNI</th>
+            <th>Empleado</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Fecha de ingreso</th>
+            <th>Sueldo</th>
+            <th>Estado</th>
+            <th class="text-center">Acciones</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+            e of empleadosFiltrados;
+            track e.idPersona;
+            let i = $index
+          ) {
+
+            <tr>
+
+              <!-- NUMERO -->
+              <td>
+                <span class="numero-fila">
+                  {{ i + 1 }}
+                </span>
+              </td>
+
+              <!-- DNI -->
+              <td>
+                <span class="dni-empleado">
+                  {{ e.dni || '-' }}
+                </span>
+              </td>
+
+              <!-- EMPLEADO -->
+              <td>
+                <span class="nombre-empleado">
+                  {{ e.nombres }} {{ e.apellidos }}
+                </span>
+              </td>
+
+              <!-- CORREO -->
+              <td>
+                <span class="correo-empleado">
+                  {{ e.correo || '-' }}
+                </span>
+              </td>
+
+              <!-- TELEFONO -->
+              <td>
+                <span class="telefono-empleado">
+                  {{ e.telefono || '-' }}
+                </span>
+              </td>
+
+              <!-- FECHA -->
+              <td>
+                <span class="fecha-ingreso">
+                  {{ formatearFecha(e.fechaIngreso) }}
+                </span>
+              </td>
+
+              <!-- SUELDO -->
+              <td>
+                <span class="sueldo-empleado">
+                  S/ {{ e.sueldo | number:'1.2-2' }}
+                </span>
+              </td>
+
+              <!-- ESTADO -->
+              <td>
+
+                <span
+                  class="estado-badge"
+                  [ngClass]="e.estado === 'ACTIVO'
+                    ? 'estado-activo'
+                    : 'estado-inactivo'">
+
+                  {{ e.estado || 'SIN ESTADO' }}
+
+                </span>
+
+              </td>
+
+              <!-- ACCIONES -->
+              <td class="text-center">
+
+                <div class="acciones-empleado">
+
+                  <a
+                    [routerLink]="[
+                      '/empleados/editar',
+                      e.idPersona
+                    ]"
+                    class="btn btn-sm btn-editar"
+                    title="Editar empleado"
+                    [attr.aria-label]="
+                      'Editar empleado ' +
+                      e.nombres + ' ' + e.apellidos
+                    ">
+
+                    <i
+                      class="bi bi-pencil-square"
+                      aria-hidden="true">
+                    </i>
+
+                  </a>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          } @empty {
+
+            <tr>
+
+              <td colspan="9" class="text-center py-5">
+
+                <div class="sin-resultados">
+
+                  <i class="bi bi-people"></i>
+
+                  @if (busqueda) {
+
+                    <h6>
+                      No se encontraron coincidencias
+                    </h6>
+
+                    <p>
+                      Prueba buscando con otro DNI,
+                      nombre o apellido.
+                    </p>
+
+                  } @else {
+
+                    <h6>
+                      No hay empleados registrados
+                    </h6>
+
+                    <p>
+                      Registra un nuevo empleado
+                      para comenzar.
+                    </p>
+
+                  }
+
+                </div>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PIE DE TABLA -->
+    <!-- ========================================== -->
+
+    <div class="pie-tabla">
+
+      <span>
+        <i class="bi bi-info-circle me-1"></i>
+        Directorio administrativo del personal.
+      </span>
+
+      <span>
+        Total registrado:
+        <strong>{{ empleados.length }}</strong>
+      </span>
+
+    </div>
+
+  }
 
 </div>

@@ -1,114 +1,265 @@
+<div class="container medicos-container mt-4 mb-5">
 
-<div class="container mt-4">
-
+  <!-- ========================================== -->
   <!-- ENCABEZADO -->
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <!-- ========================================== -->
+
+  <div class="encabezado-pagina">
 
     <div>
-      <h2>Gestión de médicos</h2>
-      <p class="subtitulo">
+
+      <h2 class="titulo-pagina">
+        Gestión de médicos
+      </h2>
+
+      <p class="subtitulo-pagina">
         Consulta y administra la información del personal médico.
       </p>
+
     </div>
 
     <a routerLink="/medicos/nuevo" class="btn btn-nuevo">
-      <i class="bi bi-plus-circle me-1"></i>
+
+      <i class="bi bi-plus-circle me-2"></i>
       Nuevo médico
+
     </a>
 
   </div>
 
-  <!-- BUSCADOR -->
-  <div class="d-flex justify-content-end mb-3">
-  <div class="search-container" style="width: 100%; max-width: 350px;">
+  <!-- ========================================== -->
+  <!-- CONTADOR Y BUSCADOR -->
+  <!-- ========================================== -->
 
-    <i class="bi bi-search search-icon"></i>
+  <div class="barra-herramientas">
 
-    <input
-      type="text"
-      class="form-control search-input"
-      placeholder="Buscar por DNI, nombre, especialidad o colegiatura..."
-      [(ngModel)]="busqueda"
-      (input)="filtrarMedicos()">
+    <div class="contador-medicos">
+
+      <i class="bi bi-people"></i>
+
+      <span>
+        <strong>{{ medicosFiltrados.length }}</strong>
+        médicos encontrados
+      </span>
+
+    </div>
+
+    <div class="buscador-medicos">
+
+      <div class="search-container">
+
+        <i class="bi bi-search search-icon"></i>
+
+        <input type="text" class="form-control search-input" placeholder="Buscar médico, DNI o especialidad..."
+          aria-label="Buscar por DNI, nombres, apellidos, especialidad o colegiatura" [(ngModel)]="busqueda"
+          (input)="filtrarMedicos()">
+
+      </div>
+
+    </div>
 
   </div>
-</div>
 
-  <!-- TABLA -->
-  <div class="table-responsive">
+  <!-- ========================================== -->
+  <!-- CARGANDO -->
+  <!-- ========================================== -->
 
-    <table class="table table-hover shadow-sm align-middle">
+  @if (cargando) {
+
+  <div class="estado-vacio">
+
+    <div class="spinner-border text-primary mb-3" role="status">
+    </div>
+
+    <p>Cargando médicos...</p>
+
+  </div>
+
+  } @else if (errorCarga) {
+
+  <div class="estado-vacio">
+
+    <i class="bi bi-exclamation-circle icono-vacio"></i>
+
+    <h6>No se pudo cargar la información</h6>
+
+    <p>Intenta consultar nuevamente el listado.</p>
+
+    <button type="button" class="btn btn-nuevo mt-3" (click)="listMedicos()">
+
+      <i class="bi bi-arrow-clockwise me-2"></i>
+      Reintentar
+
+    </button>
+
+  </div>
+
+  } @else {
+
+  <!-- ========================================== -->
+  <!-- TABLA DE MEDICOS -->
+  <!-- ========================================== -->
+
+  <div class="tabla-medicos table-responsive">
+
+    <table class="table table-hover align-middle mb-0">
 
       <thead>
+
         <tr>
           <th>N.º</th>
           <th>DNI</th>
           <th>Médico</th>
           <th>Especialidad</th>
           <th>Colegiatura</th>
-          <th>Citas Asignadas</th>
+          <th>Citas asignadas</th>
           <th>Correo</th>
           <th>Teléfono</th>
-          <th>Acciones</th>
+          <th class="text-center">Acciones</th>
         </tr>
+
       </thead>
 
       <tbody>
 
-        @for (m of medicosFiltrados; track m.idEmpleado; let i = $index) {
+        @for (
+        m of medicosFiltrados;
+        track m.idEmpleado;
+        let i = $index
+        ) {
 
-          <tr>
+        <tr>
 
-            <td>{{ i + 1 }}</td>
+          <!-- NUMERO -->
+          <td>
 
-            <td>{{ m.dni }}</td>
+            <span class="numero-fila">
+              {{ i + 1 }}
+            </span>
 
-            <td>{{ m.nombres }} {{ m.apellidos }}</td>
+          </td>
 
-            <td>{{ m.especialidad }}</td>
+          <!-- DNI -->
+          <td>
 
-            <td>{{ m.codigoCol }}</td>
+            <span class="dni-medico">
+              {{ m.dni || '-' }}
+            </span>
 
-            <td>
-              <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1 font-monospace"
-                    title="Productividad calculada con SQL GROUP BY">
-                <i class="bi bi-calendar2-check me-1"></i>
-                {{ obtenerTotalCitas(m.idEmpleado) }} cita(s)
-              </span>
-            </td>
+          </td>
 
-            <td>{{ m.correo }}</td>
+          <!-- MEDICO -->
+          <td>
 
-            <td>{{ m.telefono }}</td>
+            <span class="nombre-medico">
+              {{ m.nombres }} {{ m.apellidos }}
+            </span>
 
-            <td>
+          </td>
 
-              <a
-                [routerLink]="['/medicos/editar', m.idEmpleado]"
-                class="btn btn-sm btn-editar">
+          <!-- ESPECIALIDAD -->
+          <td>
 
-                <i class="bi bi-pencil-square me-1"></i>
-                Editar
+            <span class="especialidad-medico">
+              {{ m.especialidad || '-' }}
+            </span>
+
+          </td>
+
+          <!-- COLEGIATURA -->
+          <td>
+
+            <span class="colegiatura-medico">
+              {{ m.codigoCol || '-' }}
+            </span>
+
+          </td>
+
+          <!-- CITAS ASIGNADAS -->
+          <td class="text-center">
+            <span class="citas-badge" title="Total de citas registradas para este médico">
+
+              {{ obtenerTotalCitas(m.idEmpleado) }}
+
+            </span>
+          </td>
+
+          <!-- CORREO -->
+          <td>
+
+            <span class="correo-medico">
+              {{ m.correo || '-' }}
+            </span>
+
+          </td>
+
+          <!-- TELEFONO -->
+          <td>
+
+            <span class="telefono-medico">
+              {{ m.telefono || '-' }}
+            </span>
+
+          </td>
+
+          <!-- ACCIONES -->
+          <td class="text-center">
+
+            <div class="acciones-medico">
+
+              <a [routerLink]="[
+                      '/medicos/editar',
+                      m.idEmpleado
+                    ]" class="btn btn-sm btn-editar" title="Editar médico" [attr.aria-label]="
+                      'Editar médico ' +
+                      m.nombres + ' ' + m.apellidos
+                    ">
+
+                <i class="bi bi-pencil-square" aria-hidden="true">
+                </i>
 
               </a>
 
-            </td>
+            </div>
 
-          </tr>
+          </td>
+
+        </tr>
 
         } @empty {
 
-          <tr>
-            <td colspan="7" class="text-center py-4">
+        <tr>
+
+          <td colspan="9" class="text-center py-5">
+
+            <div class="sin-resultados">
+
+              <i class="bi bi-person-vcard"></i>
 
               @if (busqueda) {
-                No se encontraron médicos con "{{ busqueda }}".
+
+              <h6>No se encontraron coincidencias</h6>
+
+              <p>
+                Prueba con otro DNI, nombre,
+                especialidad o código de colegiatura.
+              </p>
+
               } @else {
-                No hay médicos registrados.
+
+              <h6>No hay médicos registrados</h6>
+
+              <p>
+                Registra un nuevo médico para comenzar.
+              </p>
+
               }
 
-            </td>
-          </tr>
+            </div>
+
+          </td>
+
+        </tr>
 
         }
 
@@ -117,5 +268,25 @@
     </table>
 
   </div>
+
+  <!-- ========================================== -->
+  <!-- PIE DE TABLA -->
+  <!-- ========================================== -->
+
+  <div class="pie-tabla">
+
+    <span>
+      <i class="bi bi-info-circle me-1"></i>
+      Directorio administrativo del personal médico.
+    </span>
+
+    <span>
+      Total registrado:
+      <strong>{{ medicos.length }}</strong>
+    </span>
+
+  </div>
+
+  }
 
 </div>

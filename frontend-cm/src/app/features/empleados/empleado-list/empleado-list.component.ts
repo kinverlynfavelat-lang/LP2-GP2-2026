@@ -38,13 +38,21 @@ export class EmpleadoListComponent implements OnInit {
   empleadosFiltrados: EmpleadoVista[] = [];
 
   busqueda: string = '';
+  cargando: boolean = false;
+  errorCarga: boolean = false;
 
   ngOnInit(): void {
     this.listEmpleados();
   }
 
-  // Listar empleados
-  listEmpleados() {
+  // ==========================================
+  // LISTAR EMPLEADOS
+  // ==========================================
+
+  listEmpleados(): void {
+
+    this.cargando = true;
+    this.errorCarga = false;
 
     forkJoin({
       personas: this.personaService.getPersonas(),
@@ -85,37 +93,80 @@ export class EmpleadoListComponent implements OnInit {
         }
 
         this.empleados = resultado;
-
         this.filtrarEmpleados();
+        this.cargando = false;
 
       },
 
       error: (err) => {
+
         console.error('Error al cargar empleados:', err);
+
+        this.errorCarga = true;
+        this.cargando = false;
+
         this.alertService.error(
           'No se pudieron cargar los empleados'
         );
+
       }
 
     });
 
   }
 
-  // Buscar empleados
-  filtrarEmpleados() {
+  // ==========================================
+  // BUSCAR EMPLEADOS
+  // ==========================================
+
+  filtrarEmpleados(): void {
 
     const texto = this.busqueda.trim().toLowerCase();
 
+    if (!texto) {
+      this.empleadosFiltrados = [...this.empleados];
+      return;
+    }
+
     this.empleadosFiltrados = this.empleados.filter(e => {
 
+      const dni = (e.dni || '').toLowerCase();
+      const nombres = (e.nombres || '').toLowerCase();
+      const apellidos = (e.apellidos || '').toLowerCase();
+
+      const nombreCompleto =
+        `${nombres} ${apellidos}`.trim();
+
       return (
-        e.dni.toLowerCase().includes(texto) ||
-        e.nombres.toLowerCase().includes(texto) ||
-        e.apellidos.toLowerCase().includes(texto)
+        dni.includes(texto) ||
+        nombres.includes(texto) ||
+        apellidos.includes(texto) ||
+        nombreCompleto.includes(texto)
       );
 
     });
 
+  }
+
+  // ==========================================
+  // FORMATEAR FECHA
+  // ==========================================
+
+  formatearFecha(
+    fecha: string | null | undefined
+  ): string {
+
+    if (!fecha) {
+      return '-';
+    }
+
+    const partes = fecha.substring(0, 10).split('-');
+
+    if (partes.length !== 3) {
+      return fecha;
+    }
+
+    return `${partes[2]}/${partes[1]}/${partes[0]}`;
   }
 
 }

@@ -1,119 +1,517 @@
 
-.container {
-  max-width: 1450px;
-  padding-top: 15px;
+/* ==========================================
+   GESTION DE MEDICOS - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --medico-primario: var(--color-primario, #07577A);
+  --medico-secundario: var(--color-secundario, #43A6CC);
+  --medico-celeste: var(--color-celeste, #E8F5FB);
+  --medico-borde: var(--color-borde, #DCEAF1);
+  --medico-texto: var(--color-texto-oscuro, #263E4D);
+  --medico-muted: var(--color-texto-secundario, #526B7A);
 }
 
-h2 {
-  color: #075477;
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.medicos-container {
+  max-width: 1450px;
+  padding: 15px 18px 30px;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.titulo-pagina {
+  color: var(--medico-primario);
   font-size: 27px;
   font-weight: 700;
   margin: 0;
 }
 
-.subtitulo {
+.subtitulo-pagina {
   color: #718096;
   font-size: 14px;
-  margin-top: 6px;
-  margin-bottom: 0;
+  margin: 6px 0 0;
 }
 
-/* BOTÓN NUEVO */
+/* ==========================================
+   BOTON NUEVO MEDICO
+   ========================================== */
+
 .btn-nuevo {
-  background-color: #075477;
-  color: white;
-  border: 1px solid #075477;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
   padding: 10px 17px;
+
+  background-color: var(--medico-primario);
+  color: #FFFFFF;
+
+  border: 1px solid var(--medico-primario);
   border-radius: 7px;
+
+  font-size: 14px;
   font-weight: 600;
+
+  white-space: nowrap;
+  transition: all 0.2s ease;
 }
 
 .btn-nuevo:hover {
-  background-color: #329BC2;
-  border-color: #329BC2;
-  color: white;
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-/* BUSCADOR */
+/* ==========================================
+   CONTADOR Y BUSCADOR
+   ========================================== */
+
+.barra-herramientas {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+/* CONTADOR */
+
+.contador-medicos {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+
+  color: var(--medico-muted);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.contador-medicos i {
+  color: var(--medico-secundario);
+  font-size: 18px;
+}
+
+.contador-medicos strong {
+  color: var(--medico-primario);
+  font-weight: 700;
+}
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-medicos {
+  width: 100%;
+  max-width: 410px;
+  margin-left: auto;
+}
+
 .search-container {
   position: relative;
-  max-width: 480px;
+  width: 100%;
 }
 
 .search-icon {
   position: absolute;
-  left: 13px;
+
+  left: 14px;
   top: 50%;
+
   transform: translateY(-50%);
-  color: #329BC2;
+
+  color: var(--medico-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
 }
 
 .search-input {
-  padding: 11px 12px 11px 40px;
-  border: 1px solid #cbdce7;
-  border-radius: 7px;
+  display: block;
+  width: 100%;
+  min-height: 44px;
+
+  padding: 10px 14px 10px 42px;
+
+  background-color: #FFFFFF;
+  color: var(--medico-texto);
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
   font-size: 14px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.search-input::placeholder {
+  color: #8BA0AC;
 }
 
 .search-input:focus {
-  border-color: #329BC2;
-  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
+  outline: none;
+
+  border-color: var(--medico-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
 }
 
-/* TABLA */
-.table {
-  background-color: white;
-  border: 1px solid #dceaf2;
-  border-radius: 8px;
-  overflow: hidden;
+/* ==========================================
+   TABLA DE MEDICOS
+   ========================================== */
+
+.tabla-medicos {
+  width: 100%;
+  max-width: 100%;
+
+  background-color: #FFFFFF;
+
+  border: 1px solid var(--medico-borde);
+  border-radius: 10px;
+
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
+}
+
+.tabla-medicos .table {
+  width: 100%;
+  min-width: 1120px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
   font-size: 14px;
 }
 
-.table thead th {
-  background-color: #E5F4FC !important;
-  color: #075477;
-  font-weight: 700;
+/* ==========================================
+   ENCABEZADOS DE TABLA
+   ========================================== */
+
+.tabla-medicos .table thead th {
+  background-color: var(--medico-celeste) !important;
+  color: var(--medico-primario) !important;
+
   padding: 15px 12px;
-  border-bottom: 2px solid #c9e4f2;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 13px;
+  font-weight: 700;
+
   white-space: nowrap;
 }
 
-.table tbody td {
-  color: #334e68;
-  padding: 13px 12px;
+/* ==========================================
+   FILAS
+   ========================================== */
+
+.tabla-medicos .table tbody td {
+  padding: 14px 12px;
+
+  color: var(--medico-texto);
+
+  border-bottom: 1px solid #E7EFF4;
   vertical-align: middle;
 }
 
-.table tbody tr:hover {
-  background-color: #f1f8fc;
+.tabla-medicos .table tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* EDITAR */
-.btn-editar {
-  background-color: #329BC2;
-  color: white;
-  border: 1px solid #329BC2;
+/* ==========================================
+   DATOS DE TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
+}
+
+/* DNI */
+
+.dni-medico {
+  color: #344F60;
+  font-size: 14px;
+  font-weight: 500;
+
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* NOMBRE DEL MEDICO */
+
+.nombre-medico {
+  color: #263E4D;
+  font-size: 14px;
   font-weight: 600;
+
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+/* ESPECIALIDAD */
+
+.especialidad-medico {
+  color: #526B7A;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* COLEGIATURA */
+
+.colegiatura-medico {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* ==========================================
+   CITAS ASIGNADAS
+   ========================================== */
+
+.citas-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+  padding: 6px 10px;
+
+  background-color: #E6F2F9;
+  color: #176388;
+
+  border: 1px solid #CFE5F1;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* CANTIDAD DE CITAS */
+
+.citas-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 38px;
+  padding: 6px 11px;
+
+  background-color: #E6F2F9;
+  color: #176388;
+
+  border: 1px solid #CFE5F1;
+  border-radius: 7px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+/* ==========================================
+   CORREO
+   ========================================== */
+
+.correo-medico {
+  color: #526B7A;
+  font-size: 14px;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   TELEFONO
+   ========================================== */
+
+.telefono-medico {
+  color: #526B7A;
+  font-size: 14px;
+
+  white-space: nowrap;
+}
+
+/* ==========================================
+   BOTON EDITAR
+   ========================================== */
+
+.acciones-medico {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-editar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 36px;
+
+  padding: 0;
+
+  background-color: #07577A;
+  color: #FFFFFF;
+
+  border: 1px solid #07577A;
+  border-radius: 7px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
 .btn-editar:hover {
-  background-color: #075477;
-  color: white;
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
-/* RESPONSIVE */
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 15px 3px;
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--medico-primario);
+  font-weight: 700;
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 220px;
+  padding: 30px;
+
+  text-align: center;
+  color: #8296A5;
+}
+
+.estado-vacio p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.estado-vacio h6 {
+  color: var(--medico-primario);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.sin-resultados i,
+.icono-vacio {
+  display: block;
+
+  color: #A2B4BF;
+  font-size: 34px;
+
+  margin-bottom: 12px;
+}
+
+.sin-resultados h6 {
+  color: var(--medico-primario);
+  font-size: 14px;
+  font-weight: 700;
+
+  margin-bottom: 8px;
+}
+
+.sin-resultados p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
+
 @media (max-width: 768px) {
 
-  .container {
+  .medicos-container {
     padding: 12px;
   }
 
-  h2 {
+  .titulo-pagina {
     font-size: 22px;
   }
 
-  .table {
+  .subtitulo-pagina {
+    font-size: 13px;
+  }
+
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .barra-herramientas {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .buscador-medicos {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .tabla-medicos .table {
     font-size: 12px;
+  }
+
+  .pie-tabla {
+    align-items: flex-start;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-nuevo {
+    width: 100%;
   }
 
 }

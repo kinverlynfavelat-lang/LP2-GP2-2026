@@ -39,21 +39,46 @@ export class MedicoListComponent implements OnInit {
 
   medicos: MedicoVista[] = [];
   medicosFiltrados: MedicoVista[] = [];
+
   productividadMap = new Map<number, number>();
 
   busqueda: string = '';
+  cargando: boolean = false;
+  errorCarga: boolean = false;
 
   ngOnInit(): void {
     this.listMedicos();
     this.cargarProductividad();
   }
 
+  // ==========================================
+  // PRODUCTIVIDAD DE MEDICOS
+  // ==========================================
+
   cargarProductividad(): void {
+
     this.citaService.getProductividadMedicos().subscribe({
+
       next: (lista) => {
-        lista.forEach(p => this.productividadMap.set(p.idMedico, p.totalCitas));
+
+        this.productividadMap.clear();
+
+        lista.forEach(p => {
+          this.productividadMap.set(
+            p.idMedico,
+            p.totalCitas
+          );
+        });
+
       },
-      error: () => {}
+
+      error: (err) => {
+        console.error(
+          'No se pudo cargar la productividad médica:',
+          err
+        );
+      }
+
     });
   }
 
@@ -61,8 +86,18 @@ export class MedicoListComponent implements OnInit {
     return this.productividadMap.get(idMedico) || 0;
   }
 
-  // Listar médicos combinando los tres servicios
-  listMedicos() {
+  // ==========================================
+  // LISTAR MEDICOS
+  // ==========================================
+
+  listMedicos(): void {
+
+    if (this.cargando) {
+      return;
+    }
+
+    this.cargando = true;
+    this.errorCarga = false;
 
     forkJoin({
       medicos: this.medicoService.getMedicos(),
@@ -113,35 +148,63 @@ export class MedicoListComponent implements OnInit {
 
         this.medicos = resultado;
         this.filtrarMedicos();
+        this.cargando = false;
 
       },
 
       error: (err) => {
-        console.error('Error al cargar médicos:', err);
-        this.alertService.error('No se pudieron cargar los médicos');
+
+        console.error(
+          'Error al cargar médicos:',
+          err
+        );
+
+        this.errorCarga = true;
+        this.cargando = false;
+
+        this.alertService.error(
+          'No se pudieron cargar los médicos'
+        );
+
       }
 
     });
-
   }
 
-  // Buscar por DNI, nombres, apellidos o especialidad
-  filtrarMedicos() {
+  // ==========================================
+  // BUSCAR MEDICOS
+  // ==========================================
+
+  filtrarMedicos(): void {
 
     const texto = this.busqueda.trim().toLowerCase();
 
+    if (!texto) {
+      this.medicosFiltrados = [...this.medicos];
+      return;
+    }
+
     this.medicosFiltrados = this.medicos.filter(m => {
 
+      const dni = (m.dni || '').toLowerCase();
+      const nombres = (m.nombres || '').toLowerCase();
+      const apellidos = (m.apellidos || '').toLowerCase();
+      const especialidad = (m.especialidad || '').toLowerCase();
+      const colegiatura = (m.codigoCol || '').toLowerCase();
+
+      const nombreCompleto =
+        `${nombres} ${apellidos}`.trim();
+
       return (
-        m.dni.toLowerCase().includes(texto) ||
-        m.nombres.toLowerCase().includes(texto) ||
-        m.apellidos.toLowerCase().includes(texto) ||
-        m.especialidad.toLowerCase().includes(texto) ||
-        m.codigoCol.toLowerCase().includes(texto)
+        dni.includes(texto) ||
+        nombres.includes(texto) ||
+        apellidos.includes(texto) ||
+        nombreCompleto.includes(texto) ||
+        especialidad.includes(texto) ||
+        colegiatura.includes(texto)
       );
 
     });
-
   }
 
 }

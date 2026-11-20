@@ -1,42 +1,117 @@
 
+/* ==========================================
+   RECETAS MEDICAS - UPeU SALUD
+   ========================================== */
+
 :host {
   display: block;
-  --color-principal: #075779;
-  --color-secundario: #eaf4f8;
+
+  --receta-primario: var(--color-primario, #07577A);
+  --receta-secundario: var(--color-secundario, #43A6CC);
+  --receta-celeste: var(--color-celeste, #E8F5FB);
+  --receta-borde: var(--color-borde, #DCEAF1);
+  --receta-texto: var(--color-texto-oscuro, #263E4D);
 }
 
-/* TÍTULO */
+/* ==========================================
+   CONTENEDOR
+   ========================================== */
+
+.pagina-recetas {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
+
+.encabezado-pagina {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 18px;
+  margin-bottom: 25px;
+}
 
 .titulo-pagina {
-  color: #075779;
+  color: var(--receta-primario);
   font-size: 27px;
   font-weight: 700;
+  margin: 0;
 }
 
-/* BOTONES PRINCIPALES */
+.subtitulo-pagina {
+  color: #718096;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+/* ==========================================
+   BOTONES PRINCIPALES
+   ========================================== */
 
 .btn-primary {
-  background-color: #075779;
-  border-color: #075779;
-  font-weight: 600;
+  background-color: var(--receta-primario);
+  border: 1px solid var(--receta-primario);
+
+  color: #FFFFFF;
   border-radius: 8px;
+
+  padding: 10px 17px;
+  font-size: 14px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover,
 .btn-primary:focus {
-  background-color: #064560;
-  border-color: #064560;
+  background-color: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
+}
+
+.btn-nueva {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 44px;
+  white-space: nowrap;
 }
 
 .btn-outline-secondary {
+  background: #FFFFFF;
+  color: #526B7A;
+
+  border: 1px solid #BECED8;
   border-radius: 8px;
+
+  padding: 9px 16px;
+
+  font-size: 13px;
+  font-weight: 600;
 }
 
-/* TARJETAS DE RESUMEN */
+.btn-outline-secondary:hover {
+  background: #F1F6F9;
+  color: #344F60;
+  border-color: #A9BFCC;
+}
+
+/* ==========================================
+   TARJETAS DE RESUMEN
+   ========================================== */
 
 .tarjeta-resumen {
-  border: 1px solid #e0edf3;
+  background: #FFFFFF;
+
+  border: 1px solid var(--receta-borde);
   border-radius: 13px;
+
   box-shadow: 0 3px 12px rgba(7, 87, 121, 0.05);
 }
 
@@ -44,154 +119,435 @@
   padding: 23px;
 }
 
+.tarjeta-resumen .text-muted {
+  color: #718096 !important;
+  font-size: 15px;
+}
+
 .tarjeta-resumen h3 {
-  color: #075779;
+  color: var(--receta-primario);
   font-size: 30px;
   font-weight: 700;
 }
 
-/* TABLA */
+/* ==========================================
+   TARJETA DE RECETAS
+   ========================================== */
 
 .tarjeta-tabla {
-  border: 1px solid #e0edf3;
+  background: #FFFFFF;
+
+  border: 1px solid var(--receta-borde);
   border-radius: 13px;
+
   overflow: hidden;
+
   box-shadow: 0 3px 12px rgba(7, 87, 121, 0.05);
 }
 
 .tarjeta-tabla .card-header {
-  padding: 20px;
-  border-bottom: 1px solid #e4edf2;
+  background: #FFFFFF !important;
+
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--receta-borde);
 }
 
 .tarjeta-tabla .card-header h5 {
-  color: #075779;
+  color: var(--receta-primario);
+  font-size: 17px;
   font-weight: 700;
 }
 
-.tarjeta-tabla .form-control {
-  min-width: 260px;
+/* ==========================================
+   CABECERA Y CONTROLES
+   ========================================== */
+
+.cabecera-listado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.controles-listado {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-left: auto;
+}
+
+/* ==========================================
+   BUSCADOR
+   ========================================== */
+
+.buscador-recetas {
+  position: relative;
+
+  width: 350px;
+  max-width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+
+  top: 50%;
+  left: 14px;
+
+  transform: translateY(-50%);
+
+  color: var(--receta-secundario);
+  font-size: 16px;
+
+  pointer-events: none;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  min-height: 42px;
+
+  padding: 9px 13px 9px 42px;
+
+  background: #FFFFFF;
+  color: var(--receta-texto);
+
+  border: 1px solid #CBDCE7;
   border-radius: 8px;
-  border-color: #d1e2ea;
-}
 
-.tarjeta-tabla .form-control:focus {
-  border-color: #258db7;
-  box-shadow: 0 0 0 3px rgba(37, 141, 183, 0.12);
-}
-
-.table {
   font-size: 14px;
 }
 
-.table thead th {
-  background: #eaf4f8;
-  color: #075779;
+.search-input::placeholder {
+  color: #8BA0AC;
+}
+
+.search-input:focus {
+  border-color: var(--receta-secundario);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   BOTON ACTUALIZAR
+   ========================================== */
+
+.btn-actualizar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 42px;
+  padding: 9px 13px;
+
+  background: #E8F5FB;
+  color: var(--receta-primario);
+
+  border: 1px solid #CFE5F1;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.btn-actualizar:hover {
+  background: var(--receta-primario);
+  border-color: var(--receta-primario);
+  color: #FFFFFF;
+}
+
+.btn-actualizar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   TABLA DE RECETAS
+   ========================================== */
+
+.tabla-recetas {
+  width: 100%;
+  min-width: 900px;
+
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F3F9FC;
+
+  font-size: 14px;
+}
+
+.tabla-recetas thead th {
+  background: var(--receta-celeste) !important;
+  color: var(--receta-primario) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 13px;
   font-weight: 700;
-  padding: 15px;
-  border-bottom: 1px solid #d5e6ee;
   white-space: nowrap;
 }
 
-.table tbody td {
-  padding: 15px;
+.tabla-recetas tbody td {
+  padding: 14px 12px;
+
+  color: var(--receta-texto);
+
+  border-bottom: 1px solid #E7EFF4;
   vertical-align: middle;
-  color: #385769;
 }
 
-.table tbody tr:hover td {
-  background: #f6fafc;
+.tabla-recetas tbody tr:last-child td {
+  border-bottom: none;
 }
 
-/* MEDICAMENTOS */
+/* ==========================================
+   DATOS DE LA TABLA
+   ========================================== */
+
+.numero-fila {
+  color: #526B7A;
+  font-size: 13px;
+}
+
+/* PACIENTE */
+
+.nombre-paciente {
+  color: #263E4D;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-transform: capitalize;
+  line-height: 1.5;
+}
+
+/* FECHA */
+
+.fecha-receta {
+  color: #526B7A;
+  font-size: 14px;
+  font-weight: 500;
+
+  white-space: nowrap;
+}
+
+/* DIAGNOSTICO */
+
+.diagnostico-receta {
+  display: block;
+  max-width: 390px;
+
+  color: #526B7A;
+  font-size: 14px;
+  line-height: 1.5;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ==========================================
+   CONTADOR DE MEDICAMENTOS
+   ========================================== */
 
 .badge-medicamentos {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 31px;
+
+  min-width: 35px;
   padding: 6px 10px;
-  border-radius: 20px;
-  background: #eaf4f8;
-  color: #075779;
-  font-weight: 700;
+
+  background: #E6F2F9;
+  color: #176388;
+
+  border: 1px solid #CFE5F1;
+  border-radius: 7px;
+
+  font-size: 12px;
+  font-weight: 600;
 }
 
-/* BOTONES DE ACCIONES */
+/* ==========================================
+   BOTONES DE ACCIONES
+   ========================================== */
 
 .acciones {
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  gap: 6px;
+
+  gap: 7px;
+  white-space: nowrap;
 }
 
 .btn-accion {
-  padding: 7px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 37px;
+  height: 36px;
+  padding: 0;
+
   border: 1px solid transparent;
   border-radius: 7px;
-  font-size: 12px;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
 }
 
+/* VER RECETA */
+
 .btn-accion.ver {
-  background: #eaf4f8;
-  color: #075779;
+  background: #E8F5FB;
+  color: #176388;
+
+  border-color: #CFE5F1;
 }
 
 .btn-accion.ver:hover {
-  background: #d3eaf4;
+  background: #D4EBF6;
+  color: #07577A;
 }
 
+/* IMPRIMIR RECETA */
+
 .btn-accion.imprimir {
-  background: #edf2ff;
-  color: #3b5ba8;
+  background: #EDF1FA;
+  color: #526C9B;
+
+  border-color: #D9E2F3;
 }
 
 .btn-accion.imprimir:hover {
-  background: #dce5ff;
+  background: #DFE8F8;
+  color: #385685;
 }
 
+/* EDITAR RECETA */
+
 .btn-accion.editar {
-  background: #fff5df;
-  color: #966400;
+  background: #07577A;
+  color: #FFFFFF;
+
+  border-color: #07577A;
 }
 
 .btn-accion.editar:hover {
-  background: #ffe9b5;
+  background: #096A91;
+  border-color: #096A91;
+  color: #FFFFFF;
 }
 
+/* ELIMINAR RECETA */
+
 .btn-accion.eliminar {
-  background: #fff0f0;
-  color: #ba3333;
+  background: #F7DDE1;
+  color: #A63F4C;
+
+  border-color: #E7A4AE;
 }
 
 .btn-accion.eliminar:hover {
-  background: #ffdddd;
+  background: #EFC5CB;
+  color: #8F303D;
 }
 
-/* MODALES */
+/* ACCESIBILIDAD DE BOTONES */
+
+.btn-accion:focus-visible {
+  outline: 3px solid #43A6CC;
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   CARGANDO Y SIN RESULTADOS
+   ========================================== */
+
+.estado-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 190px;
+  padding: 30px;
+
+  text-align: center;
+  color: #8195A3;
+}
+
+.estado-vacio p {
+  color: #8195A3;
+  font-size: 13px;
+  margin: 0;
+}
+
+.estado-vacio h6 {
+  color: var(--receta-primario);
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.icono-vacio {
+  color: #A2B4BF;
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.spinner-border.text-primary {
+  color: var(--receta-primario) !important;
+}
+
+/* ==========================================
+   FONDO DE MODALES
+   ========================================== */
 
 .modal-fondo {
   position: fixed;
   inset: 0;
   z-index: 1050;
-  background: rgba(14, 36, 49, 0.58);
+
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+
+  padding: 18px;
+
+  background: rgba(14, 36, 49, 0.58);
 }
 
+/* ==========================================
+   CONTENEDOR DEL MODAL
+   ========================================== */
+
 .modal-contenido {
+  display: flex;
+  flex-direction: column;
+
   width: 100%;
   max-width: 780px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: #fff;
-  border-radius: 14px;
+
+  max-height: calc(100vh - 36px);
+  max-height: calc(100dvh - 36px);
+
+  overflow: hidden;
+
+  background: #FFFFFF;
+  border-radius: 13px;
+
   box-shadow: 0 15px 50px rgba(0, 0, 0, 0.18);
 }
 
@@ -199,80 +555,184 @@
   max-width: 480px;
 }
 
+/* ==========================================
+   CABECERA DEL MODAL
+   ========================================== */
+
 .modal-cabecera {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  border-bottom: 1px solid #e0edf3;
+
+  flex-shrink: 0;
+  gap: 15px;
+
+  padding: 18px 24px;
+
+  border-bottom: 1px solid var(--receta-borde);
 }
 
 .modal-cabecera h4 {
   margin: 0;
-  color: #075779;
+
+  color: var(--receta-primario);
   font-size: 19px;
   font-weight: 700;
 }
 
+/* CERRAR */
+
 .cerrar {
-  border: 0;
-  background: transparent;
-  color: #7d94a0;
-  font-size: 28px;
-  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  width: 34px;
+  height: 34px;
+
+  background: #F1F6F9;
+  color: #718B99;
+
+  border: none;
+  border-radius: 8px;
+
+  font-size: 15px;
+  cursor: pointer;
 }
 
 .cerrar:hover {
-  color: #075779;
+  background: #E4F0F6;
+  color: var(--receta-primario);
 }
 
+/* ==========================================
+   CUERPO DEL MODAL
+   ========================================== */
+
 .modal-cuerpo {
+  flex: 1 1 auto;
+  min-height: 0;
+
   padding: 24px;
+
+  overflow-y: auto;
+
   color: #385769;
   font-size: 14px;
 }
 
 .modal-cuerpo p {
   margin-bottom: 12px;
+  line-height: 1.6;
+}
+
+.modal-cuerpo strong {
+  color: #26485A;
+  font-weight: 600;
 }
 
 .modal-cuerpo h5 {
-  color: #075779;
+  color: var(--receta-primario);
   font-size: 16px;
   font-weight: 700;
+
+  margin-bottom: 15px;
 }
+
+/* ==========================================
+   TABLA DE MEDICAMENTOS DEL MODAL
+   ========================================== */
+
+.tabla-detalle {
+  font-size: 13px;
+  margin-bottom: 0;
+}
+
+.tabla-detalle thead th {
+  background: var(--receta-celeste);
+  color: var(--receta-primario);
+
+  padding: 12px;
+  font-weight: 700;
+}
+
+.tabla-detalle tbody td {
+  padding: 12px;
+
+  color: #385769;
+  vertical-align: middle;
+
+  overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   PIE DE LOS MODALES
+   ========================================== */
 
 .modal-pie {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+
+  flex-shrink: 0;
+
   gap: 10px;
-  padding: 17px 24px;
-  border-top: 1px solid #e0edf3;
+  padding: 15px 24px;
+
+  background: #FFFFFF;
+  border-top: 1px solid var(--receta-borde);
 }
 
-/* RESPONSIVE */
+.modal-pie .btn {
+  min-height: 39px;
+  font-size: 13px;
+}
+
+/* ==========================================
+   RESPONSIVE
+   ========================================== */
 
 @media (max-width: 768px) {
+
   .titulo-pagina {
     font-size: 23px;
   }
 
+  .encabezado-pagina {
+    align-items: flex-start;
+  }
+
+  .tarjeta-resumen .card-body {
+    padding: 18px;
+  }
+
   .tarjeta-tabla .card-header {
-    align-items: stretch !important;
+    padding: 16px;
   }
 
-  .tarjeta-tabla .card-header .d-flex {
+  .cabecera-listado {
+    align-items: stretch;
+  }
+
+  .controles-listado {
     width: 100%;
-    flex-wrap: wrap;
+    margin-left: 0;
   }
 
-  .tarjeta-tabla .form-control {
-    min-width: 0;
-    flex: 1;
+  .buscador-recetas {
+    flex: 1 1 250px;
+    width: auto;
+  }
+
+  .modal-fondo {
+    padding: 10px;
   }
 
   .modal-contenido {
-    max-height: 95vh;
+    max-height: calc(100dvh - 20px);
   }
 
   .modal-cabecera,
@@ -280,4 +740,25 @@
   .modal-pie {
     padding: 16px;
   }
+
+}
+
+@media (max-width: 480px) {
+
+  .btn-nueva {
+    width: 100%;
+  }
+
+  .buscador-recetas {
+    flex: 1 1 100%;
+  }
+
+  .btn-actualizar {
+    width: 100%;
+  }
+
+  .modal-pie .btn {
+    width: 100%;
+  }
+
 }
