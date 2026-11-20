@@ -243,26 +243,32 @@ export class ReportesComponent implements OnInit {
         fecha.setDate(1);
       }
 
+
       const cantidadDias = this.tipoReporte === 'semanal'
-        ? 7
+        ? 6
         : new Date(
-            fecha.getFullYear(),
-            fecha.getMonth() + 1,
-            0
-          ).getDate();
+          fecha.getFullYear(),
+          fecha.getMonth() + 1,
+          0
+        ).getDate();
+
 
       for (let i = 0; i < cantidadDias; i++) {
 
         const dia = new Date(fecha);
         dia.setDate(fecha.getDate() + i);
+        // No mostrar domingos porque la universidad no atiende
+        if (dia.getDay() === 0) {
+          continue;
+        }
 
         const clave = this.fechaISO(dia);
 
         const etiqueta = this.tipoReporte === 'semanal'
           ? dia.toLocaleDateString('es-PE', {
-              weekday: 'short',
-              day: '2-digit'
-            })
+            weekday: 'short',
+            day: '2-digit'
+          })
           : String(dia.getDate());
 
         this.barras.push({
@@ -348,42 +354,43 @@ export class ReportesComponent implements OnInit {
   // PERIODO DEL REPORTE
   // ==========================================
 
-  obtenerPeriodo(): string {
 
-    if (this.reportes.length > 0 &&
-        this.reportes[0].periodo) {
-      return this.reportes[0].periodo;
-    }
+obtenerPeriodo(): string {
 
-    if (!this.fechaSeleccionada) {
-      return 'Sin periodo seleccionado';
-    }
-
-    const fecha = this.convertirFecha(this.fechaSeleccionada);
-
-    if (this.tipoReporte === 'diario') {
-      return this.formatearFecha(this.fechaSeleccionada);
-    }
-
-    if (this.tipoReporte === 'mensual') {
-
-      return fecha.toLocaleDateString('es-PE', {
-        month: 'long',
-        year: 'numeric'
-      });
-    }
-
-    const diaSemana = (fecha.getDay() + 6) % 7;
-
-    const lunes = new Date(fecha);
-    lunes.setDate(fecha.getDate() - diaSemana);
-
-    const domingo = new Date(lunes);
-    domingo.setDate(lunes.getDate() + 6);
-
-    return `Del ${this.formatearFecha(this.fechaISO(lunes))} al ` +
-           this.formatearFecha(this.fechaISO(domingo));
+  if (this.reportes.length > 0 &&
+      this.reportes[0].periodo) {
+    return this.reportes[0].periodo;
   }
+
+  if (!this.fechaSeleccionada) {
+    return 'Sin periodo seleccionado';
+  }
+
+  const fecha = this.convertirFecha(this.fechaSeleccionada);
+
+  if (this.tipoReporte === 'diario') {
+    return this.formatearFecha(this.fechaSeleccionada);
+  }
+
+  if (this.tipoReporte === 'mensual') {
+    return fecha.toLocaleDateString('es-PE', {
+      month: 'long',
+      year: 'numeric'
+    });
+  }
+
+  // Semana de lunes a sabado
+  const diaSemana = (fecha.getDay() + 6) % 7;
+
+  const lunes = new Date(fecha);
+  lunes.setDate(fecha.getDate() - diaSemana);
+
+  const sabado = new Date(lunes);
+  sabado.setDate(lunes.getDate() + 5);
+
+  return `Del ${this.formatearFecha(this.fechaISO(lunes))} al ` +
+         this.formatearFecha(this.fechaISO(sabado));
+}
 
   obtenerTituloGrafico(): string {
 
