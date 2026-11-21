@@ -10,12 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import pe.edu.upeu.centromedico.centro_medico.dto.AuthResponse;
 import pe.edu.upeu.centromedico.centro_medico.dto.LoginRequest;
 import pe.edu.upeu.centromedico.centro_medico.dto.RegistroUsuarioDTO;
+import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
 import pe.edu.upeu.centromedico.centro_medico.entity.Usuario;
 import pe.edu.upeu.centromedico.centro_medico.exceptions.DuplicateResourceExeption;
+import pe.edu.upeu.centromedico.centro_medico.exceptions.ResourceNotFoundException;
+import pe.edu.upeu.centromedico.centro_medico.repository.PersonaRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.UsuarioRepository;
 import pe.edu.upeu.centromedico.centro_medico.security.JwtService;
 import pe.edu.upeu.centromedico.centro_medico.security.UsuarioPrincipal;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @RestController
@@ -24,16 +28,19 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final UsuarioRepository usuarioRepository;
+    private final PersonaRepository personaRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
     public AuthController(
             AuthenticationManager authenticationManager,
             UsuarioRepository usuarioRepository,
+            PersonaRepository personaRepository,
             PasswordEncoder passwordEncoder,
             JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.usuarioRepository = usuarioRepository;
+        this.personaRepository = personaRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -46,12 +53,14 @@ public class AuthController {
 
         Usuario user = usuarioRepository.findByUsuario(request.usuario()).orElseThrow();
         String jwtToken = jwtService.generateToken(new UsuarioPrincipal(user));
+        Long idPersona = user.getPersona() != null ? user.getPersona().getIdPersona() : null;
 
         return ResponseEntity.ok(new AuthResponse(
                 jwtToken,
                 user.getUsuario(),
                 user.getRol().name(),
-                user.getIdUsuario()
+                user.getIdUsuario(),
+                idPersona
         ));
     }
 
@@ -66,16 +75,24 @@ public class AuthController {
         nuevo.setPassword(passwordEncoder.encode(dto.password()));
         nuevo.setRol(dto.rol());
 
+        if (dto.idPersona() != null) {
+            if (usuarioRepository.existsByPersonaIdPersona(dto.idPersona())) {
+                throw new DuplicateResourceExeption("La persona con Id " + dto.idPersona() + " ya tiene un usuario asignado.");
+            }
+            Persona persona = personaRepository.findById(dto.idPersona())
+                    .orElseThrow(() -> new ResourceNotFoundException("Persona no encontrada con Id: " + dto.idPersona()));
+            nuevo.setPersona(persona);
+        }
+
         Usuario guardado = usuarioRepository.save(nuevo);
 
-        return new ResponseEntity<>(
-                Map.of(
-                        "idUsuario", guardado.getIdUsuario(),
-                        "usuario", guardado.getUsuario(),
-                        "rol", guardado.getRol().name(),
-                        "mensaje", "Usuario registrado correctamente"
-                ),
-                HttpStatus.CREATED
-        );
+        Map<String, Object> respuesta = new LinkedHashMap<>();
+        respuesta.put("idUsuario", guardado.getIdUsuario());
+        respuesta.put("usuario", guardado.getUsuario());
+        respuesta.put("rol", guardado.getRol().name());
+        respuesta.put("idPersona", guardado.getPersona() != null ? guardado.getPersona().getIdPersona() : null);
+        respuesta.put("mensaje", "Usuario registrado correctamente");
+
+        return new ResponseEntity<>(respuesta, HttpStatus.CREATED);
     }
 }

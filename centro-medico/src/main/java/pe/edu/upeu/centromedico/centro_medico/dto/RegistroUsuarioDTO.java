@@ -10,6 +10,7 @@ public record RegistroUsuarioDTO(
         @NotBlank(message = "La contraseña es obligatoria")
         String password,
         @NotNull(message = "El rol es obligatorio")
-        Rol rol
+        Rol rol,
+        Long idPersona
 ) {
 }

@@ -15,4 +15,5 @@ export interface ILoginResponse {
   usuario: string;
   rol: RolUsuario;
   idUsuario: number;
+  idPersona: number | null;
 }

@@ -9,6 +9,7 @@ const TOKEN_KEY = 'token_centro_medico';
 const USER_KEY = 'cm_user_name';
 const ROLE_KEY = 'cm_user_role';
 const ID_KEY = 'cm_user_id';
+const PERSONA_ID_KEY = 'cm_user_id_persona';
 
 @Injectable({
   providedIn: 'root'
@@ -36,6 +37,11 @@ export class AuthService {
           localStorage.setItem(USER_KEY, response.usuario);
           localStorage.setItem(ROLE_KEY, response.rol);
           localStorage.setItem(ID_KEY, String(response.idUsuario));
+          if (response.idPersona != null) {
+            localStorage.setItem(PERSONA_ID_KEY, String(response.idPersona));
+          } else {
+            localStorage.removeItem(PERSONA_ID_KEY);
+          }
 
           this.loggedInSubject.next(true);
           this.isAuthenticated.set(true);
@@ -58,6 +64,7 @@ export class AuthService {
     localStorage.removeItem(USER_KEY);
     localStorage.removeItem(ROLE_KEY);
     localStorage.removeItem(ID_KEY);
+    localStorage.removeItem(PERSONA_ID_KEY);
 
     this.loggedInSubject.next(false);
     this.isAuthenticated.set(false);
