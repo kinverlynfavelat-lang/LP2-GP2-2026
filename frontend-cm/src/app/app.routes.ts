@@ -1,7 +1,8 @@
-
 import { Routes } from '@angular/router';
 import { MainLayoutComponent } from './shared/layouts/main-layout/main-layout.component';
 import { HomeComponent } from './features/home/home.component';
+import { LoginComponent } from './features/login/login.component';
+import { authGuard } from './core/guards/auth.guard';
 
 import { PacienteListComponent } from './features/pacientes/paciente-list/paciente-list.component';
 import { PacienteFormComponent } from './features/pacientes/paciente-form/paciente-form.component';
@@ -26,190 +27,262 @@ import { RecetaFormComponent } from './features/recetas/receta-form/receta-form.
 import { RecetaListComponent } from './features/recetas/receta-list/receta-list.component';
 import { DerivacionListComponent } from './features/derivaciones/derivacion-list/derivacion-list.component';
 import { DerivacionFormComponent } from './features/derivaciones/derivacion-form/derivacion-form.component';
-import { DetalleMedicamentoListComponent } from './features/farmacia/detalle-medicamento-list/detalle-medicamento-list.component';
 import { DetalleMedicamentoFormComponent } from './features/farmacia/detalle-medicamento-form/detalle-medicamento-form.component';
 import { PacienteHistorialComponent } from './features/pacientes/paciente-historial/paciente-historial.component';
 import { BandejaSyncComponent } from './features/sincronizacion/bandeja-sync/bandeja-sync.component';
+
 export const routes: Routes = [
-    {
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      // Ruta pública: Portal del Paciente (sin inicio de sesión)
+      {
+        path: 'portal-paciente',
+        component: PortalPaciente
+      },
+
+      // Panel interno (requiere autenticación)
+      {
+        path: 'home',
+        component: HomeComponent,
+        canActivate: [authGuard]
+      },
+
+      // Pacientes (ADMIN, RECEPCION)
+      {
+        path: 'pacientes',
+        component: PacienteListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'historial-pacientes',
+        component: PacienteHistorialComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION', 'MEDICO', 'TRIAJE'] }
+      },
+      {
+        path: 'pacientes/nuevo',
+        component: PacienteFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'pacientes/editar/:id',
+        component: PacienteFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+
+      // Empleados, Médicos y Horarios (ADMIN)
+      {
+        path: 'empleados',
+        component: EmpleadoListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'empleados/nuevo',
+        component: EmpleadoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'empleados/editar/:id',
+        component: EmpleadoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'medicos',
+        component: MedicoListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'medicos/nuevo',
+        component: MedicoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'medicos/editar/:id',
+        component: MedicoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'horarios-medicos',
+        component: HorarioMedicoListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'horarios-medicos/nuevo',
+        component: HorarioMedicoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+      {
+        path: 'horarios-medicos/editar/:id',
+        component: HorarioMedicoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
+      },
+
+      // Citas y Pagos (ADMIN, RECEPCION)
+      {
+        path: 'citas',
+        component: CitaListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'citas/nuevo',
+        component: CitaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'citas/editar/:id',
+        component: CitaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'pagos',
+        component: PagoListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+      {
+        path: 'pagos/registrar/:id',
+        component: PagoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'RECEPCION'] }
+      },
+
+      // Triaje (ADMIN, TRIAJE)
+      {
+        path: 'triaje',
+        component: TriajeListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'TRIAJE'] }
+      },
+      {
+        path: 'triaje/registrar/:id',
+        component: TriajeFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'TRIAJE'] }
+      },
+
+      // Atención Médica, Recetas y Derivaciones (ADMIN, MEDICO)
+      {
+        path: 'atencion',
+        component: AtencionListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+      {
+        path: 'atencion/registrar/:id',
+        component: AtencionFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+      {
+        path: 'recetas',
+        component: RecetaListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO', 'FARMACIA'] }
+      },
+      {
+        path: 'recetas/nuevo',
+        component: RecetaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+      {
+        path: 'recetas/editar/:id',
+        component: RecetaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+      {
+        path: 'derivaciones',
+        component: DerivacionListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO', 'RECEPCION'] }
+      },
+      {
+        path: 'derivaciones/nuevo',
+        component: DerivacionFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+      {
+        path: 'derivaciones/editar/:id',
+        component: DerivacionFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'MEDICO'] }
+      },
+
+      // Farmacia (ADMIN, FARMACIA)
+      {
+        path: 'farmacia',
+        component: FarmaciaListComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'FARMACIA'] }
+      },
+      {
+        path: 'farmacia/nuevo',
+        component: FarmaciaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'FARMACIA'] }
+      },
+      {
+        path: 'farmacia/editar/:id',
+        component: FarmaciaFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'FARMACIA'] }
+      },
+      {
+        path: 'farmacia/entregas/nuevo',
+        component: DetalleMedicamentoFormComponent,
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'FARMACIA'] }
+      },
+
+      // Sincronización Offline (cualquier usuario autenticado)
+      {
+        path: 'sincronizacion',
+        component: BandejaSyncComponent,
+        canActivate: [authGuard]
+      },
+
+      // Reportes (ADMIN)
+      {
+        path: 'reportes',
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+          import('./features/reportes/reportes.component')
+            .then(m => m.ReportesComponent)
+      },
+
+      {
         path: '',
-        component: MainLayoutComponent,
-        children: [
-
-            {
-                path: 'home',
-                component: HomeComponent
-            },
-
-            {
-                path: 'pacientes',
-                component: PacienteListComponent
-            },
-            {
-                path: 'historial-pacientes',
-                component: PacienteHistorialComponent
-            },
-            {
-                path: 'pacientes/nuevo',
-                component: PacienteFormComponent
-            },
-            {
-                path: 'pacientes/editar/:id',
-                component: PacienteFormComponent
-            },
-
-            {
-                path: 'empleados',
-                component: EmpleadoListComponent
-            },
-            {
-                path: 'empleados/nuevo',
-                component: EmpleadoFormComponent
-            },
-            {
-                path: 'empleados/editar/:id',
-                component: EmpleadoFormComponent
-            },
-            {
-                path: 'medicos',
-                component: MedicoListComponent
-            },
-            {
-                path: 'medicos/nuevo',
-                component: MedicoFormComponent
-            },
-            {
-                path: 'medicos/editar/:id',
-                component: MedicoFormComponent
-            },
-            {
-                path: 'citas',
-                component: CitaListComponent
-            },
-            {
-                path: 'citas/nuevo',
-                component: CitaFormComponent
-            },
-            {
-                path: 'citas/editar/:id',
-                component: CitaFormComponent
-            },
-            {
-                path: 'horarios-medicos',
-                component: HorarioMedicoListComponent
-            },
-            {
-                path: 'horarios-medicos/nuevo',
-                component: HorarioMedicoFormComponent
-            },
-            {
-                path: 'horarios-medicos/editar/:id',
-                component: HorarioMedicoFormComponent
-            },
-            {
-                path: 'pagos',
-                component: PagoListComponent
-            },
-            {
-                path: 'pagos/registrar/:id',
-                component: PagoFormComponent
-            },
-            {
-                path: 'triaje',
-                component: TriajeListComponent
-            },
-            {
-                path: 'triaje/registrar/:id',
-                component: TriajeFormComponent
-            },
-            {
-                path: 'atencion',
-                component: AtencionListComponent
-            },
-            {
-                path: 'atencion/registrar/:id',
-                component: AtencionFormComponent
-            },
-            {
-                path: 'farmacia',
-                component: FarmaciaListComponent
-            },
-            {
-                path: 'farmacia/nuevo',
-                component: FarmaciaFormComponent
-            },
-            {
-                path: 'farmacia/editar/:id',
-                component: FarmaciaFormComponent
-            },
-            {
-                path: 'portal-paciente',
-                component: PortalPaciente
-            },
-            {
-                path: 'recetas',
-                component: RecetaListComponent
-            },
-            {
-                path: 'recetas/nuevo',
-                component: RecetaFormComponent
-            },
-            {
-                path: 'recetas/editar/:id',
-                component: RecetaFormComponent
-            },
-            {
-                path: 'derivaciones',
-                component: DerivacionListComponent
-            },
-            {
-                path: 'derivaciones/nuevo',
-                component: DerivacionFormComponent
-            },
-            {
-                path: 'derivaciones/editar/:id',
-                component: DerivacionFormComponent
-            },
-            {
-                path: 'farmacia',
-                component: FarmaciaListComponent
-            },
-            {
-                path: 'farmacia/nuevo',
-                component: FarmaciaFormComponent
-            },
-            {
-                path: 'farmacia/editar/:id',
-                component: FarmaciaFormComponent
-            },
-            {
-                path: 'farmacia/entregas/nuevo',
-                component: DetalleMedicamentoFormComponent
-            },
-            {
-                path: 'sincronizacion',
-                component: BandejaSyncComponent
-            },
-
-            {
-                path: 'reportes',
-                loadComponent: () =>
-                    import('./features/reportes/reportes.component')
-                        .then(m => m.ReportesComponent)
-            },
-
-
-            {
-                path: '',
-                redirectTo: 'home',
-                pathMatch: 'full'
-            }
-
-        ]
-    },
-
-    {
-        path: '**',
-        redirectTo: 'home'
-    }
+        redirectTo: 'portal-paciente',
+        pathMatch: 'full'
+      }
+    ]
+  },
+  {
+    path: '**',
+    redirectTo: 'portal-paciente'
+  }
 ];

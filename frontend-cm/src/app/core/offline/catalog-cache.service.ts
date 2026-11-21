@@ -24,9 +24,13 @@ export class CatalogCacheService {
   readonly ultimaActualizacion = signal<Date | null>(null);
 
   async sincronizarCatalogos(): Promise<boolean> {
-    if (!this.network.isOnline() || this.actualizando()) {
+    const token = localStorage.getItem('token_centro_medico');
+    if (!token || !this.network.isOnline() || this.actualizando()) {
       return false;
     }
+
+    const rol = localStorage.getItem('cm_user_role');
+    const puedeVerMedicamentos = rol === 'ADMIN' || rol === 'FARMACIA' || rol === 'MEDICO';
 
     this.actualizando.set(true);
     try {
@@ -35,7 +39,9 @@ export class CatalogCacheService {
           personas: this.personaService.getPersonas().pipe(catchError(() => of([]))),
           empleados: this.empleadoService.getEmpleados().pipe(catchError(() => of([]))),
           medicos: this.medicoService.getMedicos().pipe(catchError(() => of([]))),
-          medicamentos: this.medicamentoService.getMedicamentos().pipe(catchError(() => of([]))),
+          medicamentos: puedeVerMedicamentos
+            ? this.medicamentoService.getMedicamentos().pipe(catchError(() => of([])))
+            : of([]),
           citas: this.citaService.getCitas().pipe(catchError(() => of([])))
         })
       );
