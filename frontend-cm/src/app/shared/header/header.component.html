@@ -2,7 +2,7 @@
     <div class="container-fluid px-4">
 
         <!-- LOGO -->
-        <a class="navbar-brand d-flex align-items-center" routerLink="/home">
+        <a class="navbar-brand d-flex align-items-center" [routerLink]="auth.isAuthenticated() ? '/home' : '/portal-paciente'">
             <i class="bi bi-heart-pulse-fill me-2 fs-3"></i>
             <span class="fw-bold">UPeU Salud</span>
         </a>
@@ -17,158 +17,199 @@
 
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
 
-                <!-- INICIO -->
+                <!-- PORTAL DEL PACIENTE (siempre visible / público) -->
                 <li class="nav-item">
-                    <a class="nav-link" routerLink="/home" routerLinkActive="active-link"
-                        [routerLinkActiveOptions]="{exact:true}">
-                        <i class="bi bi-house-door me-1"></i>
-                        Inicio
+                    <a class="nav-link" routerLink="/portal-paciente" routerLinkActive="active-link">
+                        <i class="bi bi-calendar-check me-1"></i>
+                        Portal del Paciente
                     </a>
                 </li>
 
-                <!-- MENÚ DESPLEGABLE -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                        aria-expanded="false">
-                        <i class="bi bi-grid me-1"></i>
-                        Gestión
-                    </a>
-
-                    <ul class="dropdown-menu">
-
-                        <li>
-                            <a class="dropdown-item" routerLink="/pacientes">
-                                <i class="bi bi-people me-2"></i>
-                                Pacientes
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="/historial-pacientes">
-                                <i class="bi bi-journal-medical me-2"></i>
-                                Historial de pacientes
-                            </a>
-                        </li>
-                        <a class="dropdown-item" routerLink="/portal-paciente">
-                            <i class="bi bi-calendar-check me-2"></i>
-                            Portal del Paciente
+                @if (auth.isAuthenticated()) {
+                    <!-- INICIO -->
+                    <li class="nav-item">
+                        <a class="nav-link" routerLink="/home" routerLinkActive="active-link"
+                            [routerLinkActiveOptions]="{exact:true}">
+                            <i class="bi bi-house-door me-1"></i>
+                            Inicio
                         </a>
-                        <li>
-                            <a class="dropdown-item" routerLink="/citas">
-                                <i class="bi bi-calendar-check me-2"></i>
-                                Citas médicas
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="/triaje">
-                                <i class="bi bi-heart-pulse me-2"></i>
-                                Triaje
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="/atencion">
-                                <i class="bi bi-clipboard2-pulse me-2"></i>
-                                Atención médica
-                            </a>
-                        </li>
+                    </li>
 
-                        <a class="dropdown-item" routerLink="/derivaciones">
-                            <i class="bi bi-arrow-left-right me-2"></i>
-                            Derivaciones Médicas
-                        </a>
-                        <li>
-                            <a class="dropdown-item" routerLink="/farmacia">
-                                <i class="bi bi-capsule-pill me-2"></i>
-                                Farmacia
-                            </a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" routerLink="/empleados">
-                                <i class="bi bi-person-workspace me-2"></i>
-                                Empleados
-                            </a>
-                        </li>
-
-                        <li>
-                            <a class="dropdown-item" routerLink="/medicos">
-                                <i class="bi bi-person-badge me-2"></i>
-                                Médicos
-                            </a>
-                        </li>
-
-                        <a class="dropdown-item" routerLink="/horarios-medicos">
-                            <i class="bi bi-calendar-week me-2"></i>
-                            Horarios médicos
+                    <!-- MENÚ DESPLEGABLE FILTRADO POR ROL -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            <i class="bi bi-grid me-1"></i>
+                            Gestión
                         </a>
 
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                        <ul class="dropdown-menu">
 
-                        <a class="dropdown-item" routerLink="/recetas">
-                            <i class="bi bi-file-earmark-medical"></i>
-                            <span>Recetas Médicas</span>
-                        </a>
+                            @if (puedeVer(['ADMIN', 'RECEPCION'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/pacientes">
+                                        <i class="bi bi-people me-2"></i>
+                                        Pacientes
+                                    </a>
+                                </li>
+                            }
 
-                        <li>
-                            <a class="dropdown-item" routerLink="/pagos">
-                                <i class="bi bi-cash-coin me-2"></i>
-                                Pagos
-                            </a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
+                            @if (puedeVer(['ADMIN', 'RECEPCION', 'MEDICO', 'TRIAJE'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/historial-pacientes">
+                                        <i class="bi bi-journal-medical me-2"></i>
+                                        Historial de pacientes
+                                    </a>
+                                </li>
+                            }
 
-                        <a class="dropdown-item" routerLink="/reportes" routerLinkActive="activo">
+                            @if (puedeVer(['ADMIN', 'RECEPCION'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/citas">
+                                        <i class="bi bi-calendar-check me-2"></i>
+                                        Citas médicas
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" routerLink="/pagos">
+                                        <i class="bi bi-cash-coin me-2"></i>
+                                        Pagos
+                                    </a>
+                                </li>
+                            }
 
-                            <i class="bi bi-bar-chart-line me-2"></i>
-                            Reportes de gestión
+                            @if (puedeVer(['ADMIN', 'TRIAJE'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/triaje">
+                                        <i class="bi bi-heart-pulse me-2"></i>
+                                        Triaje
+                                    </a>
+                                </li>
+                            }
 
-                        </a>
+                            @if (puedeVer(['ADMIN', 'MEDICO'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/atencion">
+                                        <i class="bi bi-clipboard2-pulse me-2"></i>
+                                        Atención médica
+                                    </a>
+                                </li>
+                            }
 
+                            @if (puedeVer(['ADMIN', 'MEDICO', 'RECEPCION'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/derivaciones">
+                                        <i class="bi bi-arrow-left-right me-2"></i>
+                                        Derivaciones Médicas
+                                    </a>
+                                </li>
+                            }
 
-                        <li>
-                            <a class="dropdown-item" routerLink="/sincronizacion">
-                                <i class="bi bi-cloud-arrow-up me-2"></i>
-                                Sincronización Offline
-                            </a>
-                        </li>
+                            @if (puedeVer(['ADMIN', 'MEDICO', 'FARMACIA'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/recetas">
+                                        <i class="bi bi-file-earmark-medical me-2"></i>
+                                        Recetas Médicas
+                                    </a>
+                                </li>
+                            }
 
-                    </ul>
-                </li>
+                            @if (puedeVer(['ADMIN', 'FARMACIA'])) {
+                                <li>
+                                    <a class="dropdown-item" routerLink="/farmacia">
+                                        <i class="bi bi-capsule-pill me-2"></i>
+                                        Farmacia
+                                    </a>
+                                </li>
+                            }
+
+                            @if (puedeVer(['ADMIN'])) {
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" routerLink="/empleados">
+                                        <i class="bi bi-person-workspace me-2"></i>
+                                        Empleados
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" routerLink="/medicos">
+                                        <i class="bi bi-person-badge me-2"></i>
+                                        Médicos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" routerLink="/horarios-medicos">
+                                        <i class="bi bi-calendar-week me-2"></i>
+                                        Horarios médicos
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" routerLink="/reportes" routerLinkActive="activo">
+                                        <i class="bi bi-bar-chart-line me-2"></i>
+                                        Reportes de gestión
+                                    </a>
+                                </li>
+                            }
+
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" routerLink="/sincronizacion">
+                                    <i class="bi bi-cloud-arrow-up me-2"></i>
+                                    Sincronización Offline
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+                }
 
             </ul>
-            <!-- ESTADO DE RED Y COLA OFFLINE -->
-            <div class="d-flex align-items-center gap-2 me-3">
-                <a routerLink="/sincronizacion" class="badge text-decoration-none px-2 py-2"
-                    [ngClass]="network.isOnline() ? 'bg-success' : 'bg-danger'"
-                    title="Ver estado offline y cola de sincronización">
-                    <i class="bi me-1" [ngClass]="network.isOnline() ? 'bi-wifi' : 'bi-wifi-off'"></i>
-                    {{ network.isOnline() ? 'En línea' : 'Sin conexión' }}
-                </a>
 
-                @if (sync.pendientesCount() > 0) {
-                <a routerLink="/sincronizacion" class="badge bg-warning text-dark text-decoration-none px-2 py-2"
-                    title="Operaciones en cola esperando conexión">
-                    <i class="bi bi-cloud-upload me-1"></i>
-                    {{ sync.pendientesCount() }} pend.
-                </a>
-                }
+            <!-- ESTADO DE RED Y COLA OFFLINE (solo personal autenticado) -->
+            @if (auth.isAuthenticated()) {
+                <div class="d-flex align-items-center gap-2 me-3">
+                    <a routerLink="/sincronizacion" class="badge text-decoration-none px-2 py-2"
+                        [ngClass]="network.isOnline() ? 'bg-success' : 'bg-danger'"
+                        title="Ver estado offline y cola de sincronización">
+                        <i class="bi me-1" [ngClass]="network.isOnline() ? 'bi-wifi' : 'bi-wifi-off'"></i>
+                        {{ network.isOnline() ? 'En línea' : 'Sin conexión' }}
+                    </a>
 
-                @if (sync.conflictosCount() > 0) {
-                <a routerLink="/sincronizacion" class="badge bg-danger text-white text-decoration-none px-2 py-2"
-                    title="Citas con conflicto 409 por reubicar">
-                    <i class="bi bi-exclamation-octagon-fill me-1"></i>
-                    {{ sync.conflictosCount() }} por reubicar
-                </a>
-                }
-            </div>
+                    @if (sync.pendientesCount() > 0) {
+                        <a routerLink="/sincronizacion" class="badge bg-warning text-dark text-decoration-none px-2 py-2"
+                            title="Operaciones en cola esperando conexión">
+                            <i class="bi bi-cloud-upload me-1"></i>
+                            {{ sync.pendientesCount() }} pend.
+                        </a>
+                    }
 
-            <!-- IDENTIFICACIÓN -->
-            <div class="d-flex align-items-center system-info">
-                <i class="bi bi-hospital me-2"></i>
-                <span>Centro Médico Universitario</span>
-            </div>
+                    @if (sync.conflictosCount() > 0) {
+                        <a routerLink="/sincronizacion" class="badge bg-danger text-white text-decoration-none px-2 py-2"
+                            title="Citas con conflicto 409 por reubicar">
+                            <i class="bi bi-exclamation-octagon-fill me-1"></i>
+                            {{ sync.conflictosCount() }} por reubicar
+                        </a>
+                    }
+                </div>
+
+                <!-- USUARIO ACTUAL Y LOGOUT -->
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-dark px-2 py-2">
+                        <i class="bi bi-person-circle me-1"></i>
+                        {{ auth.currentUser() }}
+                        <span class="text-primary fw-bold ms-1">({{ auth.currentRole() }})</span>
+                    </span>
+                    <button type="button" class="btn btn-outline-light btn-sm" (click)="cerrarSesion()">
+                        <i class="bi bi-box-arrow-right me-1"></i>
+                        Salir
+                    </button>
+                </div>
+            } @else {
+                <a routerLink="/login" class="btn btn-outline-light btn-sm">
+                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                    Acceso Personal
+                </a>
+            }
 
         </div>
     </div>
