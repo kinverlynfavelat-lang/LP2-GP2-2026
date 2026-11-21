@@ -1,15 +1,23 @@
 
 package pe.edu.upeu.centromedico.centro_medico.entity;
 
-import jakarta.persistence.*;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import pe.edu.upeu.centromedico.centro_medico.enums.EstadoCivil;
 import pe.edu.upeu.centromedico.centro_medico.enums.EstadoPersona;
 import pe.edu.upeu.centromedico.centro_medico.enums.SiNo;
 import pe.edu.upeu.centromedico.centro_medico.enums.TipoPaciente;
 import pe.edu.upeu.centromedico.centro_medico.enums.TipoPersona;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 @Entity
 @Table(name = "PERSONA")
 public class Persona {
@@ -68,8 +76,7 @@ public class Persona {
     @Column(name = "estado", length = 100)
     private EstadoPersona estado;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario")
+    @OneToOne(mappedBy = "persona")
     private Usuario usuario;
 
     @OneToOne(mappedBy = "persona")
