@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -8,11 +7,19 @@ import { Reporte } from '../../core/interfaces/reporte.interface';
 
 type TipoReporte = 'diario' | 'semanal' | 'mensual';
 
+interface SegmentoBarra {
+  tipo: string;
+  cantidad: number;
+  porcentaje: number;
+  color: string;
+}
+
 interface BarraReporte {
   etiqueta: string;
   titulo: string;
   cantidad: number;
   altura: number;
+  segmentos: SegmentoBarra[];
 }
 
 interface DistribucionPaciente {
@@ -33,35 +40,39 @@ export class ReportesComponent implements OnInit {
 
   private reporteService = inject(ReporteService);
 
+  // INFORMACION DEL BACKEND
   reportes: Reporte[] = [];
   reportesFiltrados: Reporte[] = [];
 
+  // FILTROS
   tipoReporte: TipoReporte = 'mensual';
+  fechaSeleccionada = '2026-11-12';
+  busqueda = '';
 
-  // Fecha inicial para probar los datos registrados en Oracle
-  fechaSeleccionada: string = '2026-11-12';
+  // ESTADOS
+  cargando = false;
+  errorMensaje = '';
 
-  busqueda: string = '';
+  // ESTADISTICAS
+  totalAtenciones = 0;
+  totalMedicos = 0;
+  totalTiposPaciente = 0;
 
-  cargando: boolean = false;
-  errorMensaje: string = '';
-
-  totalAtenciones: number = 0;
-  totalMedicos: number = 0;
-  totalTiposPaciente: number = 0;
-
+  // GRAFICOS
   barras: BarraReporte[] = [];
   distribucion: DistribucionPaciente[] = [];
+  graficoCircular = '';
 
-  graficoCircular: string = '';
+  // COLORES ESTABLES POR TIPO DE PACIENTE
+  private readonly coloresPaciente: Record<string, string> = {
+    DOCENTE: '#07577A',
+    ESTUDIANTE: '#43A6CC',
+    ADMINISTRATIVO: '#6478A8',
+    EXTERNO: '#D59A58'
+  };
 
-  private colores: string[] = [
-    '#075477',
-    '#329BC2',
-    '#70C3E2',
-    '#56A69C',
-    '#7C91C6',
-    '#E6AD66'
+  private readonly coloresAdicionales = [
+    '#438D82', '#8B78B5', '#8C9CAB', '#B77E93'
   ];
 
   ngOnInit(): void {
@@ -69,25 +80,28 @@ export class ReportesComponent implements OnInit {
   }
 
   // ==========================================
-  // RF-25: SELECCIONAR TIPO DE REPORTE
+  // SELECCIONAR TIPO DE REPORTE
   // ==========================================
 
   cambiarTipo(tipo: TipoReporte): void {
+    if (this.cargando || this.tipoReporte === tipo) return;
+
     this.tipoReporte = tipo;
     this.busqueda = '';
     this.consultarReporte();
   }
 
   // ==========================================
-  // RF-25: CONSULTAR REPORTES
+  // CONSULTAR ORACLE A TRAVES DEL SERVICIO
   // ==========================================
 
   consultarReporte(): void {
-
     if (!this.fechaSeleccionada) {
       this.errorMensaje = 'Debe seleccionar una fecha.';
       return;
     }
+
+    if (this.cargando) return;
 
     this.cargando = true;
     this.errorMensaje = '';
@@ -98,234 +112,211 @@ export class ReportesComponent implements OnInit {
     let consulta;
 
     switch (this.tipoReporte) {
-
       case 'diario':
-        consulta = this.reporteService.getReporteDiario(
-          this.fechaSeleccionada
-        );
+        consulta = this.reporteService.getReporteDiario(this.fechaSeleccionada);
         break;
 
       case 'semanal':
-        consulta = this.reporteService.getReporteSemanal(
-          this.fechaSeleccionada
-        );
+        consulta = this.reporteService.getReporteSemanal(this.fechaSeleccionada);
         break;
 
       case 'mensual':
-        consulta = this.reporteService.getReporteMensual(
-          this.fechaSeleccionada
-        );
+        consulta = this.reporteService.getReporteMensual(this.fechaSeleccionada);
         break;
     }
 
     consulta.subscribe({
-
       next: (data) => {
-
-        this.reportes = data;
-
+        this.reportes = data ?? [];
         this.filtrarReportes();
         this.calcularResumen();
         this.generarGraficoBarras();
         this.generarGraficoCircular();
-
         this.cargando = false;
       },
 
       error: (err) => {
-
         console.error('Error al consultar reportes:', err);
 
         this.errorMensaje =
           err.error?.mensaje ||
+          err.error?.message ||
           'No se pudo obtener el reporte de atenciones.';
 
         this.cargando = false;
       }
-
     });
   }
 
   // ==========================================
-  // BUSCAR EN LA TABLA
+  // BUSQUEDA: AFECTA SOLO LA TABLA
   // ==========================================
 
   filtrarReportes(): void {
-
     const texto = this.busqueda.trim().toLowerCase();
 
-    this.reportesFiltrados = this.reportes.filter(r => {
-
-      return (
-        r.medico.toLowerCase().includes(texto) ||
-        r.especialidad.toLowerCase().includes(texto) ||
-        r.tipoPaciente.toLowerCase().includes(texto)
-      );
-
-    });
+    this.reportesFiltrados = this.reportes.filter(r =>
+      (r.medico ?? '').toLowerCase().includes(texto) ||
+      (r.especialidad ?? '').toLowerCase().includes(texto) ||
+      (r.tipoPaciente ?? '').toLowerCase().includes(texto)
+    );
   }
 
   // ==========================================
-  // TARJETAS DE RESUMEN
+  // TARJETAS: SIEMPRE SOBRE TODO EL PERIODO
   // ==========================================
 
   calcularResumen(): void {
-
     this.totalAtenciones = this.reportes.reduce(
-      (total, r) => total + Number(r.cantAtenciones),
+      (total, r) => total + Number(r.cantAtenciones || 0),
       0
     );
 
     this.totalMedicos = new Set(
-      this.reportes.map(r => r.medico)
+      this.reportes.map(r => r.medico).filter(Boolean)
     ).size;
 
     this.totalTiposPaciente = new Set(
-      this.reportes.map(r => r.tipoPaciente)
+      this.reportes.map(r => r.tipoPaciente).filter(Boolean)
     ).size;
   }
 
   // ==========================================
-  // GRAFICO DE BARRAS
-  // DIARIO: POR MEDICO
-  // SEMANAL / MENSUAL: POR DIA
+  // GRAFICO DE BARRAS APILADAS POR TIPO
+  // DIARIO: CADA MEDICO
+  // SEMANAL Y MENSUAL: DIAS CON ATENCIONES
   // ==========================================
 
   generarGraficoBarras(): void {
+    const grupos = new Map<string, Map<string, number>>();
 
-    const cantidades = new Map<string, number>();
-
-    for (const reporte of this.reportes) {
-
+    for (const r of this.reportes) {
       const clave = this.tipoReporte === 'diario'
-        ? reporte.medico
-        : (reporte.fechaAtencion || '');
+        ? (r.medico || '')
+        : (r.fechaAtencion || r.fecha || '');
 
-      if (!clave) {
-        continue;
+      if (!clave) continue;
+
+      const tipo = String(
+        r.tipoPaciente || 'NO REGISTRADO'
+      ).toUpperCase();
+
+      const cantidad = Number(r.cantAtenciones || 0);
+
+      if (cantidad <= 0) continue;
+
+      if (!grupos.has(clave)) {
+        grupos.set(clave, new Map());
       }
 
-      cantidades.set(
-        clave,
-        (cantidades.get(clave) || 0) +
-        Number(reporte.cantAtenciones)
+      const tipos = grupos.get(clave)!;
+
+      tipos.set(
+        tipo,
+        (tipos.get(tipo) || 0) + cantidad
       );
     }
 
-    this.barras = [];
-
-    if (this.tipoReporte === 'diario') {
-
-      cantidades.forEach((cantidad, medico) => {
-
-        this.barras.push({
-          etiqueta: medico.split(' ').slice(0, 2).join(' '),
-          titulo: medico,
-          cantidad: cantidad,
-          altura: 0
-        });
-
-      });
-
-    } else {
-
-      const fecha = this.convertirFecha(this.fechaSeleccionada);
-
-      if (this.tipoReporte === 'semanal') {
-
-        // Semana ISO: lunes a domingo
-        const diaSemana = (fecha.getDay() + 6) % 7;
-        fecha.setDate(fecha.getDate() - diaSemana);
-
-      } else {
-
-        // Primer dia del mes
-        fecha.setDate(1);
-      }
-
-
-      const cantidadDias = this.tipoReporte === 'semanal'
-        ? 6
-        : new Date(
-          fecha.getFullYear(),
-          fecha.getMonth() + 1,
-          0
-        ).getDate();
-
-
-      for (let i = 0; i < cantidadDias; i++) {
-
-        const dia = new Date(fecha);
-        dia.setDate(fecha.getDate() + i);
-        // No mostrar domingos porque la universidad no atiende
-        if (dia.getDay() === 0) {
-          continue;
-        }
-
-        const clave = this.fechaISO(dia);
-
-        const etiqueta = this.tipoReporte === 'semanal'
-          ? dia.toLocaleDateString('es-PE', {
-            weekday: 'short',
-            day: '2-digit'
-          })
-          : String(dia.getDate());
-
-        this.barras.push({
-          etiqueta: etiqueta,
-          titulo: this.formatearFecha(clave),
-          cantidad: cantidades.get(clave) || 0,
-          altura: 0
-        });
-
-      }
-    }
+    const claves = Array.from(grupos.keys()).sort((a, b) =>
+      this.tipoReporte === 'diario'
+        ? a.localeCompare(b, 'es')
+        : a.localeCompare(b)
+    );
 
     const maximo = Math.max(
       1,
-      ...this.barras.map(b => b.cantidad)
+      ...claves.map(clave =>
+        Array.from(grupos.get(clave)!.values())
+          .reduce((total, n) => total + n, 0)
+      )
     );
 
-    this.barras = this.barras.map(b => ({
-      ...b,
-      altura: b.cantidad === 0
-        ? 0
-        : Math.max(8, (b.cantidad / maximo) * 85)
-    }));
+    this.barras = claves.map(clave => {
+      const tipos = grupos.get(clave)!;
+
+      const cantidad = Array.from(tipos.values())
+        .reduce((total, n) => total + n, 0);
+
+      const segmentos: SegmentoBarra[] =
+        Array.from(tipos.entries())
+          .sort(([a], [b]) =>
+            this.ordenTipo(a) - this.ordenTipo(b)
+          )
+          .map(([tipo, numero]) => ({
+            tipo,
+            cantidad: numero,
+            porcentaje: cantidad > 0
+              ? (numero / cantidad) * 100
+              : 0,
+            color: this.obtenerColorPaciente(tipo)
+          }));
+
+      let etiqueta: string;
+      let titulo: string;
+
+      if (this.tipoReporte === 'diario') {
+        etiqueta = clave.split(' ').slice(0, 2).join(' ');
+        titulo = clave;
+
+      } else {
+        const fecha = this.convertirFecha(clave);
+
+        const dia = String(fecha.getDate()).padStart(2, '0');
+
+        const mes = fecha.toLocaleDateString('es-PE', {
+          month: 'short'
+        });
+
+        etiqueta = this.tipoReporte === 'semanal'
+          ? `${fecha.toLocaleDateString('es-PE', {
+              weekday: 'short'
+            })} ${dia}`
+          : `${dia} ${mes}`;
+
+        titulo = this.formatearFecha(clave);
+      }
+
+      return {
+        etiqueta,
+        titulo,
+        cantidad,
+        altura: (cantidad / maximo) * 86,
+        segmentos
+      };
+    });
   }
 
   // ==========================================
   // GRAFICO CIRCULAR POR TIPO DE PACIENTE
+  // PORCENTAJES CALCULADOS SOBRE LOS TOTALES
   // ==========================================
 
   generarGraficoCircular(): void {
+    const agrupados = new Map<string, number>();
 
-    const agrupados = new Map<
-      string,
-      { cantidad: number; porcentaje: number }
-    >();
+    for (const r of this.reportes) {
+      const tipo = String(
+        r.tipoPaciente || 'NO REGISTRADO'
+      ).toUpperCase();
 
-    for (const reporte of this.reportes) {
-
-      const tipo = reporte.tipoPaciente;
-
-      const actual = agrupados.get(tipo) || {
-        cantidad: 0,
-        porcentaje: 0
-      };
-
-      agrupados.set(tipo, {
-        cantidad: actual.cantidad + Number(reporte.cantAtenciones),
-        porcentaje: actual.porcentaje + Number(reporte.porcentaje)
-      });
+      agrupados.set(
+        tipo,
+        (agrupados.get(tipo) || 0) +
+          Number(r.cantAtenciones || 0)
+      );
     }
 
     this.distribucion = Array.from(agrupados.entries())
-      .map(([tipo, datos], index) => ({
-        tipo: tipo,
-        cantidad: datos.cantidad,
-        porcentaje: Number(datos.porcentaje.toFixed(2)),
-        color: this.colores[index % this.colores.length]
+      .sort(([a], [b]) =>
+        this.ordenTipo(a) - this.ordenTipo(b)
+      )
+      .map(([tipo, cantidad]) => ({
+        tipo,
+        cantidad,
+        porcentaje: this.totalAtenciones > 0
+          ? (cantidad / this.totalAtenciones) * 100
+          : 0,
+        color: this.obtenerColorPaciente(tipo)
       }));
 
     if (this.totalAtenciones === 0) {
@@ -335,15 +326,14 @@ export class ReportesComponent implements OnInit {
 
     let acumulado = 0;
 
-    const segmentos = this.distribucion.map(d => {
-
+    const segmentos = this.distribucion.map(item => {
       const inicio = (acumulado / this.totalAtenciones) * 100;
 
-      acumulado += d.cantidad;
+      acumulado += item.cantidad;
 
       const fin = (acumulado / this.totalAtenciones) * 100;
 
-      return `${d.color} ${inicio}% ${fin}%`;
+      return `${item.color} ${inicio}% ${fin}%`;
     });
 
     this.graficoCircular =
@@ -351,51 +341,131 @@ export class ReportesComponent implements OnInit {
   }
 
   // ==========================================
-  // PERIODO DEL REPORTE
+  // COLORES IGUALES EN AMBOS GRAFICOS
   // ==========================================
 
+  obtenerColorPaciente(tipo: string): string {
+    const nombre = String(tipo || '')
+      .trim()
+      .toUpperCase();
 
-obtenerPeriodo(): string {
+    if (this.coloresPaciente[nombre]) {
+      return this.coloresPaciente[nombre];
+    }
 
-  if (this.reportes.length > 0 &&
-      this.reportes[0].periodo) {
-    return this.reportes[0].periodo;
+    const otros = Array.from(
+      new Set(
+        this.reportes.map(r =>
+          String(
+            r.tipoPaciente || 'NO REGISTRADO'
+          ).toUpperCase()
+        )
+      )
+    )
+      .filter(t => !this.coloresPaciente[t])
+      .sort();
+
+    const posicion = Math.max(
+      0,
+      otros.indexOf(nombre)
+    );
+
+    return this.coloresAdicionales[
+      posicion % this.coloresAdicionales.length
+    ];
   }
 
-  if (!this.fechaSeleccionada) {
-    return 'Sin periodo seleccionado';
+  obtenerClaseTipoPaciente(tipo: string): string {
+    switch (String(tipo || '').toUpperCase()) {
+      case 'DOCENTE':
+        return 'tipo-docente';
+
+      case 'ESTUDIANTE':
+        return 'tipo-estudiante';
+
+      default:
+        return 'tipo-otro';
+    }
   }
 
-  const fecha = this.convertirFecha(this.fechaSeleccionada);
-
-  if (this.tipoReporte === 'diario') {
-    return this.formatearFecha(this.fechaSeleccionada);
+  limitarPorcentaje(valor: number): number {
+    return Math.max(
+      0,
+      Math.min(100, Number(valor) || 0)
+    );
   }
 
-  if (this.tipoReporte === 'mensual') {
-    return fecha.toLocaleDateString('es-PE', {
-      month: 'long',
-      year: 'numeric'
-    });
+  private ordenTipo(tipo: string): number {
+    const orden = [
+      'DOCENTE',
+      'ESTUDIANTE',
+      'ADMINISTRATIVO',
+      'EXTERNO'
+    ];
+
+    const indice = orden.indexOf(tipo);
+
+    return indice === -1 ? orden.length : indice;
   }
 
-  // Semana de lunes a sabado
-  const diaSemana = (fecha.getDay() + 6) % 7;
+  // ==========================================
+  // PERIODO CONSULTADO
+  // ==========================================
 
-  const lunes = new Date(fecha);
-  lunes.setDate(fecha.getDate() - diaSemana);
+  obtenerPeriodo(): string {
+    if (
+      this.reportes.length > 0 &&
+      this.reportes[0].periodo
+    ) {
+      return this.primeraMayuscula(
+        this.reportes[0].periodo
+      );
+    }
 
-  const sabado = new Date(lunes);
-  sabado.setDate(lunes.getDate() + 5);
+    if (!this.fechaSeleccionada) {
+      return 'Sin periodo seleccionado';
+    }
 
-  return `Del ${this.formatearFecha(this.fechaISO(lunes))} al ` +
-         this.formatearFecha(this.fechaISO(sabado));
-}
+    const fecha = this.convertirFecha(
+      this.fechaSeleccionada
+    );
+
+    if (this.tipoReporte === 'diario') {
+      return this.formatearFecha(
+        this.fechaSeleccionada
+      );
+    }
+
+    if (this.tipoReporte === 'mensual') {
+      return this.primeraMayuscula(
+        fecha.toLocaleDateString('es-PE', {
+          month: 'long',
+          year: 'numeric'
+        })
+      );
+    }
+
+    const diaSemana = (fecha.getDay() + 6) % 7;
+
+    const lunes = new Date(fecha);
+    lunes.setDate(
+      fecha.getDate() - diaSemana
+    );
+
+    const sabado = new Date(lunes);
+    sabado.setDate(
+      lunes.getDate() + 5
+    );
+
+    return `Del ${this.formatearFecha(
+      this.fechaISO(lunes)
+    )} al ${this.formatearFecha(
+      this.fechaISO(sabado)
+    )}`;
+  }
 
   obtenerTituloGrafico(): string {
-
     switch (this.tipoReporte) {
-
       case 'diario':
         return 'Atenciones por médico';
 
@@ -407,17 +477,20 @@ obtenerPeriodo(): string {
     }
   }
 
+  obtenerDescripcionGrafico(): string {
+    return this.tipoReporte === 'diario'
+      ? 'Médicos con atenciones, separados por tipo de paciente.'
+      : 'Solo se muestran los días con atenciones, separados por tipo de paciente.';
+  }
+
   // ==========================================
-  // FUNCIONES AUXILIARES
+  // FECHAS SIN DESFASE HORARIO
   // ==========================================
 
   formatearFecha(valor?: string): string {
+    if (!valor) return '-';
 
-    if (!valor) {
-      return '-';
-    }
-
-    const partes = valor.split('-');
+    const partes = valor.substring(0, 10).split('-');
 
     if (partes.length !== 3) {
       return valor;
@@ -427,23 +500,40 @@ obtenerPeriodo(): string {
   }
 
   private convertirFecha(valor: string): Date {
-
-    const [anio, mes, dia] = valor.split('-').map(Number);
+    const [anio, mes, dia] = valor
+      .substring(0, 10)
+      .split('-')
+      .map(Number);
 
     return new Date(anio, mes - 1, dia, 12);
   }
 
   private fechaISO(fecha: Date): string {
-
     const anio = fecha.getFullYear();
-    const mes = String(fecha.getMonth() + 1).padStart(2, '0');
-    const dia = String(fecha.getDate()).padStart(2, '0');
+
+    const mes = String(
+      fecha.getMonth() + 1
+    ).padStart(2, '0');
+
+    const dia = String(
+      fecha.getDate()
+    ).padStart(2, '0');
 
     return `${anio}-${mes}-${dia}`;
   }
 
-  private limpiarResumen(): void {
+  private primeraMayuscula(texto: string): string {
+    return texto
+      ? texto.charAt(0).toLocaleUpperCase('es-PE') +
+          texto.slice(1)
+      : texto;
+  }
 
+  // ==========================================
+  // LIMPIAR AL CAMBIAR DE PERIODO
+  // ==========================================
+
+  private limpiarResumen(): void {
     this.totalAtenciones = 0;
     this.totalMedicos = 0;
     this.totalTiposPaciente = 0;
@@ -452,5 +542,4 @@ obtenerPeriodo(): string {
     this.distribucion = [];
     this.graficoCircular = '';
   }
-
 }

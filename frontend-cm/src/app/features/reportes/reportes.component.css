@@ -1,24 +1,40 @@
+/* ==========================================
+   RF-25: REPORTES DE GESTION - UPeU SALUD
+   ========================================== */
+
+:host {
+  display: block;
+
+  --reporte-azul: var(--color-primario, #07577A);
+  --reporte-celeste: var(--color-secundario, #43A6CC);
+  --reporte-fondo: var(--color-celeste, #E8F5FB);
+  --reporte-borde: var(--color-borde, #DCEAF1);
+  --reporte-texto: var(--color-texto-oscuro, #263E4D);
+}
 
 /* ==========================================
-   RF-25: REPORTES DE GESTION
+   CONTENEDOR
    ========================================== */
 
 .reportes-container {
   max-width: 1450px;
+  margin: 0 auto;
   padding: 30px 20px 50px;
 }
 
-/* ENCABEZADO */
+/* ==========================================
+   ENCABEZADO
+   ========================================== */
 
 .encabezado {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
 }
 
 h2 {
-  color: #075477;
+  color: var(--reporte-azul);
   font-size: 27px;
   font-weight: 700;
   margin: 0;
@@ -27,31 +43,21 @@ h2 {
 .subtitulo {
   color: #718096;
   font-size: 14px;
-  margin-top: 6px;
-  margin-bottom: 0;
-}
-
-.badge-reporte {
-  background-color: #e5f4fc;
-  color: #075477;
-  border: 1px solid #c9e4f2;
-  padding: 9px 14px;
-  border-radius: 7px;
-  font-weight: 700;
-  font-size: 13px;
+  margin: 6px 0 0;
 }
 
 /* ==========================================
-   PANEL DE FILTROS
+   TARJETAS GENERALES
    ========================================== */
 
 .panel-filtros,
 .panel-tabla,
-.tarjeta-grafico {
-  border: 1px solid #dceaf2;
-  border-radius: 10px;
-  box-shadow: 0 3px 12px rgba(7, 84, 119, 0.05);
-  background: white;
+.tarjeta-grafico,
+.tarjeta-estadistica {
+  background: #FFFFFF;
+  border: 1px solid var(--reporte-borde);
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgba(7, 87, 122, 0.05);
 }
 
 .panel-filtros .card-body,
@@ -61,75 +67,109 @@ h2 {
 }
 
 .titulo-seccion {
-  color: #075477;
-  font-size: 17px;
+  color: var(--reporte-azul);
+  font-size: 16px;
   font-weight: 700;
-  margin-bottom: 15px;
+  margin: 0 0 14px;
 }
 
-/* BOTONES DE TIPO DE REPORTE */
+.titulo-seccion i {
+  color: #1685AC;
+}
+
+/* ==========================================
+   FILTROS
+   ========================================== */
 
 .tipos-reporte {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 9px;
 }
 
 .btn-tipo {
-  background-color: #f5f9fc;
-  border: 1px solid #cbdce7;
-  color: #075477;
-  border-radius: 7px;
-  padding: 10px 20px;
+  background: #F5F9FC;
+  border: 1px solid #CBDCE7;
+  color: var(--reporte-azul);
+  border-radius: 8px;
+  padding: 9px 17px;
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
-  transition: all 0.2s ease;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .btn-tipo:hover {
-  border-color: #329bc2;
-  background-color: #e5f4fc;
+  background: var(--reporte-fondo);
+  border-color: var(--reporte-celeste);
 }
 
-.btn-tipo.activo {
-  background-color: #075477;
-  border-color: #075477;
+.btn-tipo.activo,
+.btn-tipo.activo:hover {
+  background: var(--reporte-azul);
+  border-color: var(--reporte-azul);
   color: white;
 }
 
-/* FECHA */
+.btn-tipo:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   FECHA
+   ========================================== */
+
+.form-label {
+  color: #344F60;
+  font-size: 13px;
+}
 
 .input-fecha {
-  padding: 10px 12px;
-  border: 1px solid #cbdce7;
-  border-radius: 7px;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+  color: var(--reporte-texto);
 }
 
 .input-fecha:focus {
-  border-color: #329bc2;
-  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
+  border-color: var(--reporte-celeste);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
 }
 
-/* BOTON CONSULTAR */
+.texto-ayuda {
+  display: block;
+  margin-top: 6px;
+  color: #718096;
+  font-size: 12px;
+}
+
+/* ==========================================
+   BOTON CONSULTAR
+   ========================================== */
 
 .btn-consultar {
-  background-color: #075477;
+  min-height: 42px;
+  padding: 9px 17px;
+  background: var(--reporte-azul);
+  border: 1px solid var(--reporte-azul);
+  border-radius: 8px;
   color: white;
-  border: 1px solid #075477;
-  padding: 10px 20px;
-  border-radius: 7px;
+  font-size: 13px;
   font-weight: 600;
-  min-height: 44px;
 }
 
 .btn-consultar:hover {
-  background-color: #329bc2;
-  border-color: #329bc2;
+  background: #096A91;
+  border-color: #096A91;
   color: white;
 }
 
 .btn-consultar:disabled {
-  opacity: 0.65;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
@@ -138,39 +178,39 @@ h2 {
    ========================================== */
 
 .periodo-consultado {
-  background: #e5f4fc;
-  border: 1px solid #c9e4f2;
-  border-radius: 10px;
-  padding: 20px 24px;
-
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
   gap: 15px;
+  flex-wrap: wrap;
+  padding: 19px 23px;
+
+  background: var(--reporte-fondo);
+  border: 1px solid #C9E4F2;
+  border-radius: 11px;
 }
 
 .periodo-consultado small {
-  color: #718096;
+  color: #607F91;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.7px;
 }
 
 .periodo-consultado h4 {
-  color: #075477;
+  color: var(--reporte-azul);
+  font-size: 19px;
   font-weight: 700;
   margin: 6px 0 0;
-  font-size: 20px;
-  text-transform: capitalize;
 }
 
 .estado-reporte {
-  color: #075477;
-  font-size: 13px;
-  font-weight: 600;
-  background: white;
-  padding: 8px 12px;
+  color: var(--reporte-azul);
+  background: #FFFFFF;
   border-radius: 20px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 /* ==========================================
@@ -178,135 +218,185 @@ h2 {
    ========================================== */
 
 .tarjeta-estadistica {
-  background: white;
-  border: 1px solid #dceaf2;
-  border-radius: 10px;
   height: 100%;
-  box-shadow: 0 3px 12px rgba(7, 84, 119, 0.05);
 }
 
 .tarjeta-estadistica .card-body {
-  padding: 22px;
+  padding: 21px;
 }
 
 .tarjeta-estadistica p {
   color: #718096;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
-  margin-bottom: 8px;
+  margin-bottom: 7px;
 }
 
 .tarjeta-estadistica h3 {
-  color: #075477;
-  font-size: 32px;
+  color: var(--reporte-azul);
+  font-size: 29px;
   font-weight: 700;
-  margin: 0 0 12px;
+  margin: 0 0 11px;
 }
 
 .tarjeta-estadistica small {
-  color: #718096;
+  color: #8295A2;
   font-size: 12px;
 }
 
 .icono-estadistica {
-  width: 48px;
-  height: 48px;
-  background-color: #e5f4fc;
-  color: #329bc2;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
 
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 
-  font-size: 23px;
+  border-radius: 10px;
+  background: var(--reporte-fondo);
+  color: #1685AC;
+  font-size: 21px;
 }
 
 /* ==========================================
-   GRAFICOS
+   TARJETAS DE GRAFICOS
    ========================================== */
+
+.tarjeta-grafico {
+  height: 100%;
+}
 
 .descripcion-grafico {
   color: #718096;
-  font-size: 13px;
-  margin-bottom: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 18px;
 }
 
-.tarjeta-grafico {
-  min-height: 350px;
-}
-
-/* GRAFICO DE BARRAS */
+/* ==========================================
+   GRAFICO DE BARRAS APILADAS
+   ========================================== */
 
 .grafico-barras {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   align-items: flex-end;
-  gap: 12px;
-  height: 245px;
 
-  overflow-x: auto;
-  overflow-y: hidden;
+  column-gap: 17px;
+  row-gap: 14px;
 
-  border-bottom: 1px solid #cbdce7;
-  padding: 15px 5px 0;
+  padding: 12px 8px 3px;
+  min-height: 245px;
+
+  border-bottom: 1px solid #D9E6EE;
+
+  overflow: visible;
 }
+
+/* CADA BARRA */
 
 .grupo-barra {
-  min-width: 48px;
-  flex: 1;
-
   display: flex;
+  flex: 0 0 105px;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
 }
+
+/* ESPACIO VERTICAL */
 
 .barra-pista {
   width: 100%;
-  height: 190px;
+  height: 200px;
 
   display: flex;
   align-items: flex-end;
   justify-content: center;
 }
 
+/* CONTENEDOR DE SEGMENTOS */
+
 .barra-relleno {
   position: relative;
-  background: linear-gradient(
-    180deg,
-    #329bc2 0%,
-    #075477 100%
-  );
 
-  width: 70%;
-  max-width: 52px;
+  display: flex;
+  flex-direction: column-reverse;
 
-  min-height: 0;
-  border-radius: 5px 5px 0 0;
+  width: 57px;
+  max-width: 90%;
 
-  transition: height 0.3s ease;
+  border-radius: 7px 7px 0 0;
+  overflow: visible;
+
+  transition: height 0.25s ease;
 }
+
+/* COLORES DE CADA TIPO DE PACIENTE */
+
+.segmento-barra {
+  width: 100%;
+  min-height: 0;
+  flex-shrink: 0;
+}
+
+.segmento-barra:last-child {
+  border-radius: 7px 7px 0 0;
+}
+
+/* CANTIDAD ENCIMA DE LA BARRA */
 
 .numero-barra {
   position: absolute;
-  bottom: calc(100% + 5px);
   left: 50%;
+  bottom: calc(100% + 6px);
   transform: translateX(-50%);
 
-  color: #075477;
-  font-size: 12px;
+  color: var(--reporte-azul);
+  font-size: 13px;
   font-weight: 700;
 }
+
+/* FECHA O MEDICO */
 
 .etiqueta-barra {
   display: block;
   width: 100%;
   margin-top: 10px;
-  padding-bottom: 8px;
+  min-height: 32px;
 
-  color: #52677b;
+  color: #526B7A;
   text-align: center;
-  font-size: 11px;
+  font-size: 12px;
+  font-weight: 500;
+
   overflow-wrap: anywhere;
+}
+
+/* ==========================================
+   LEYENDA DE BARRAS
+   ========================================== */
+
+.leyenda-barras {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+  padding-top: 18px;
+}
+
+.leyenda-barra-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #526B7A;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 /* ==========================================
@@ -318,37 +408,38 @@ h2 {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 10px 0;
+
+  gap: 22px;
+  padding: 9px 0;
 }
 
 .grafico-circular {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
   width: 190px;
   height: 190px;
   border-radius: 50%;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  flex-shrink: 0;
 }
 
 .centro-circular {
-  width: 115px;
-  height: 115px;
-  border-radius: 50%;
-  background-color: white;
-
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+
+  width: 115px;
+  height: 115px;
+
+  border-radius: 50%;
+  background: #FFFFFF;
 }
 
 .centro-circular strong {
-  color: #075477;
-  font-size: 30px;
+  color: var(--reporte-azul);
+  font-size: 29px;
   font-weight: 700;
 }
 
@@ -357,6 +448,10 @@ h2 {
   font-size: 12px;
 }
 
+/* ==========================================
+   LEYENDA CIRCULAR
+   ========================================== */
+
 .leyenda-circular {
   width: 100%;
   max-width: 350px;
@@ -364,153 +459,315 @@ h2 {
 
 .item-leyenda {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
+  justify-content: space-between;
 
-  color: #52677b;
-  font-size: 13px;
-  padding: 8px 0;
+  gap: 10px;
+  padding: 9px 0;
 
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid #E7EFF4;
+
+  color: #526B7A;
+  font-size: 12px;
 }
 
 .item-leyenda strong {
-  color: #075477;
+  color: var(--reporte-azul);
+  font-weight: 700;
 }
 
 .color-leyenda {
-  width: 12px;
-  height: 12px;
-  border-radius: 3px;
   display: inline-block;
   flex-shrink: 0;
+
+  width: 12px;
+  height: 12px;
+
+  border-radius: 3px;
+}
+
+/* ==========================================
+   ENCABEZADO DE TABLA
+   ========================================== */
+
+.encabezado-tabla {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 16px;
+}
+
+/* ==========================================
+   BUSCADOR DE TABLA
+   ========================================== */
+
+.search-container {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  margin-left: auto;
+}
+
+.search-icon {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+
+  color: var(--reporte-celeste);
+  pointer-events: none;
+}
+
+.search-input {
+  min-height: 42px;
+  padding: 9px 13px 9px 41px;
+
+  border: 1px solid #CBDCE7;
+  border-radius: 8px;
+
+  color: var(--reporte-texto);
+  font-size: 13px;
+}
+
+.search-input:focus {
+  border-color: var(--reporte-celeste);
+  box-shadow: 0 0 0 3px rgba(67, 166, 204, 0.12);
+}
+
+/* ==========================================
+   CONTENEDOR DE TABLA
+   ========================================== */
+
+.tabla-contenedor {
+  border: 1px solid var(--reporte-borde);
+  border-radius: 9px;
+  overflow-x: auto;
 }
 
 /* ==========================================
    TABLA DE ATENCIONES
    ========================================== */
 
-.search-container {
-  position: relative;
+.tabla-atenciones {
   width: 100%;
-  max-width: 350px;
-}
+  min-width: 950px;
 
-.search-icon {
-  position: absolute;
-  left: 13px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: #329bc2;
-}
+  --bs-table-bg: #FFFFFF;
+  --bs-table-hover-bg: #F4F9FC;
 
-.search-input {
-  padding: 11px 12px 11px 40px;
-  border: 1px solid #cbdce7;
-  border-radius: 7px;
-  font-size: 14px;
-}
-
-.search-input:focus {
-  border-color: #329bc2;
-  box-shadow: 0 0 0 3px rgba(50, 155, 194, 0.12);
-}
-
-.table {
-  border: 1px solid #dceaf2;
-  font-size: 14px;
-  margin-bottom: 0;
-}
-
-.table thead th {
-  background-color: #e5f4fc !important;
-  color: #075477;
-  font-weight: 700;
-  padding: 15px 12px;
-  border-bottom: 2px solid #c9e4f2;
-  white-space: nowrap;
-}
-
-.table tbody td {
-  color: #334e68;
-  padding: 13px 12px;
-  vertical-align: middle;
-}
-
-.table tbody tr:hover td {
-  background-color: #f1f8fc;
-}
-
-.nombre-medico {
-  color: #075477;
-  font-weight: 600;
-}
-
-.badge-paciente {
-  background-color: #e5f4fc;
-  color: #075477;
-  border: 1px solid #c9e4f2;
-  padding: 5px 9px;
-  border-radius: 5px;
-  font-weight: 600;
-  font-size: 12px;
-}
-
-.badge-cantidad {
-  background-color: #e9f5fa;
-  color: #075477;
-  padding: 5px 12px;
-  border-radius: 6px;
-  font-weight: 700;
-}
-
-.porcentaje {
-  color: #075477;
-  font-weight: 700;
-}
-
-/* PIE DE TABLA */
-
-.pie-tabla {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 12px;
-
-  margin-top: 18px;
-  padding-top: 14px;
-
-  border-top: 1px solid #dceaf2;
-
-  color: #718096;
   font-size: 13px;
 }
 
-.pie-tabla strong {
-  color: #075477;
+/* ENCABEZADOS */
+
+.tabla-atenciones thead th {
+  background: var(--reporte-fondo) !important;
+  color: var(--reporte-azul) !important;
+
+  padding: 15px 12px;
+
+  border-bottom: 2px solid #C9E4F2;
+
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-/* ESTADO SIN DATOS */
+/* FILAS */
 
-.sin-datos {
-  min-height: 230px;
+.tabla-atenciones tbody td {
+  padding: 14px 12px;
 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  color: #385769;
+
+  vertical-align: middle;
+  border-bottom: 1px solid #E7EFF4;
+}
+
+.tabla-atenciones tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+/* ==========================================
+   DATOS DE LA TABLA
+   ========================================== */
+
+.numero-tabla {
+  color: #708695 !important;
+  font-size: 12px;
+}
+
+.fecha-tabla {
+  white-space: nowrap;
+  color: #526B7A !important;
+}
+
+.nombre-medico {
+  color: #07577A;
+  font-weight: 600;
+}
+
+.especialidad-tabla {
+  color: #526B7A !important;
+}
+
+/* ==========================================
+   TIPO DE PACIENTE
+   ========================================== */
+
+.badge-paciente {
+  display: inline-flex;
   align-items: center;
 
-  color: #94a3b8;
+  padding: 6px 10px;
+
+  border: 1px solid transparent;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* DOCENTE */
+
+.tipo-docente {
+  color: #07577A;
+  background: #E3EEF4;
+  border-color: #BED8E5;
+}
+
+/* ESTUDIANTE */
+
+.tipo-estudiante {
+  color: #176F94;
+  background: #E5F5FB;
+  border-color: #BDE2F1;
+}
+
+/* OTROS TIPOS */
+
+.tipo-otro {
+  color: #526B7A;
+  background: #EDF1F4;
+  border-color: #DCE4E9;
+}
+
+/* ==========================================
+   CANTIDAD DE ATENCIONES
+   ========================================== */
+
+.badge-cantidad {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 32px;
+  padding: 5px 10px;
+
+  border-radius: 7px;
+
+  background: var(--reporte-fondo);
+  color: var(--reporte-azul);
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ==========================================
+   PORCENTAJE CON BARRA
+   ========================================== */
+
+.porcentaje-celda {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  gap: 7px;
+  min-width: 95px;
+}
+
+.porcentaje {
+  color: var(--reporte-azul);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.porcentaje-pista {
+  width: 100%;
+  height: 6px;
+
+  overflow: hidden;
+
+  border-radius: 10px;
+  background: #E6EEF3;
+}
+
+.porcentaje-relleno {
+  height: 100%;
+  border-radius: inherit;
+}
+
+/* ==========================================
+   SIN REGISTROS
+   ========================================== */
+
+.sin-registros {
+  color: #8295A2 !important;
+}
+
+/* ==========================================
+   PIE DE TABLA
+   ========================================== */
+
+.pie-tabla {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  gap: 10px;
+
+  margin-top: 17px;
+  padding-top: 14px;
+
+  border-top: 1px solid var(--reporte-borde);
+
+  color: #718096;
+  font-size: 12px;
+}
+
+.pie-tabla strong {
+  color: var(--reporte-azul);
+  font-weight: 700;
+}
+
+/* ==========================================
+   ESTADO SIN DATOS
+   ========================================== */
+
+.sin-datos {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 245px;
+  gap: 8px;
+
+  color: #94A3B8;
 }
 
 .sin-datos i {
-  font-size: 45px;
-  margin-bottom: 12px;
+  font-size: 36px;
 }
 
 .sin-datos p {
-  font-size: 14px;
+  font-size: 13px;
+  margin: 0;
   text-align: center;
 }
 
@@ -521,15 +778,11 @@ h2 {
 @media (max-width: 768px) {
 
   .reportes-container {
-    padding: 15px 12px 35px;
+    padding: 16px 12px 35px;
   }
 
   h2 {
     font-size: 22px;
-  }
-
-  .encabezado {
-    align-items: flex-start;
   }
 
   .panel-filtros .card-body,
@@ -544,20 +797,25 @@ h2 {
   }
 
   .btn-tipo {
-    padding: 10px 5px;
+    padding: 9px 5px;
     font-size: 12px;
   }
 
   .periodo-consultado {
-    padding: 16px;
+    padding: 15px;
   }
 
   .periodo-consultado h4 {
     font-size: 17px;
   }
 
-  .table {
-    font-size: 12px;
+  .search-container {
+    max-width: 100%;
+    margin-left: 0;
+  }
+
+  .grupo-barra {
+    flex-basis: 84px;
   }
 
   .grafico-circular {
