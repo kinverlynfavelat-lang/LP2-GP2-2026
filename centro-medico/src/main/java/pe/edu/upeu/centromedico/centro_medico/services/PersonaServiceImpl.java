@@ -1,22 +1,21 @@
 
 package pe.edu.upeu.centromedico.centro_medico.services;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
-import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
-import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
-import pe.edu.upeu.centromedico.centro_medico.entity.Usuario;
-import pe.edu.upeu.centromedico.centro_medico.enums.TipoPaciente;
-import pe.edu.upeu.centromedico.centro_medico.enums.TipoPersona;
-import pe.edu.upeu.centromedico.centro_medico.repository.PersonaRepository;
-import pe.edu.upeu.centromedico.centro_medico.repository.UsuarioRepository;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
+import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
+import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
+import pe.edu.upeu.centromedico.centro_medico.enums.TipoPaciente;
+import pe.edu.upeu.centromedico.centro_medico.repository.PersonaRepository;
+import pe.edu.upeu.centromedico.centro_medico.repository.UsuarioRepository;
 
 @Service
 public class PersonaServiceImpl implements IPersonaService {
@@ -127,16 +126,6 @@ public class PersonaServiceImpl implements IPersonaService {
             persona.setSaldoFondo(null);
         }
 
-        if (p.idUsuario() != null) {
-            Usuario usuario = usuarioRepository.findById(p.idUsuario())
-                    .orElseThrow(() -> new ResponseStatusException(
-                            HttpStatus.NOT_FOUND,
-                            "El usuario indicado no existe"
-                    ));
-
-            persona.setUsuario(usuario);
-        }
-
         Persona guardada = personaRepository.save(persona);
 
         return convertirDTO(guardada);
@@ -194,16 +183,6 @@ public class PersonaServiceImpl implements IPersonaService {
             personaActual.setEstado(p.estado());
 
             // El saldo no se modifica desde el formulario.
-
-            if (p.idUsuario() != null) {
-                Usuario usuario = usuarioRepository.findById(p.idUsuario())
-                        .orElseThrow(() -> new ResponseStatusException(
-                                HttpStatus.NOT_FOUND,
-                                "El usuario indicado no existe"
-                        ));
-
-                personaActual.setUsuario(usuario);
-            }
 
             Persona actualizada = personaRepository.save(personaActual);
 
