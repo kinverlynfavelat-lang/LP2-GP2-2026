@@ -1,0 +1,157 @@
+CREATE TABLE USUARIO (
+    id_usuario NUMBER GENERATED ALWAYS AS IDENTITY,
+    usuario VARCHAR2(200),
+    password VARCHAR2(200),
+    rol VARCHAR2(200),
+    PRIMARY KEY (id_usuario)
+);
+
+CREATE TABLE PERSONA (
+    id_persona NUMBER GENERATED ALWAYS AS IDENTITY,
+    dni CHAR(8),
+    nombres VARCHAR2(20),
+    apellidos VARCHAR2(20),
+    correo VARCHAR2(100),
+    telefono VARCHAR2(20),
+    direccion VARCHAR2(100),
+    fecha_nacimiento DATE,
+    estado_civil VARCHAR2(20),
+    alergias VARCHAR2(200),
+    tipo_persona VARCHAR2(100),
+    tipo_paciente VARCHAR2(100),
+    codigo_universitario VARCHAR2(100),
+    saldo_fondo NUMBER(6,2),
+    matricula_vigente CHAR(2),
+    estado VARCHAR2(100),
+    id_usuario NUMBER,
+    PRIMARY KEY (id_persona),
+    FOREIGN KEY (id_usuario)
+        REFERENCES USUARIO(id_usuario)
+);
+
+CREATE TABLE EMPLEADO (
+    id_persona NUMBER,
+    fecha_ingreso DATE,
+    sueldo NUMBER(6,2),
+    PRIMARY KEY (id_persona),
+    FOREIGN KEY (id_persona)
+        REFERENCES PERSONA(id_persona)
+);
+
+CREATE TABLE MEDICO (
+    id_empleado NUMBER,
+    especialidad VARCHAR2(100),
+    codigo_col VARCHAR2(100),
+    PRIMARY KEY (id_empleado),
+    FOREIGN KEY (id_empleado)
+        REFERENCES EMPLEADO(id_persona)
+);
+
+CREATE TABLE HORARIO_MEDICO (
+    id_horario NUMBER GENERATED ALWAYS AS IDENTITY,
+    dia_semana VARCHAR2(15),
+    hora_inicio VARCHAR2(5),
+    hora_fin VARCHAR2(5),
+    estado VARCHAR2(20),
+    id_medico NUMBER,
+    PRIMARY KEY (id_horario),
+    FOREIGN KEY (id_medico)
+        REFERENCES MEDICO(id_empleado)
+);
+
+CREATE TABLE MEDICAMENTO (
+    id_medicamento NUMBER GENERATED ALWAYS AS IDENTITY,
+    nombre VARCHAR2(100),
+    descripcion VARCHAR2(100),
+    stock INTEGER,
+    precio NUMBER(6,2),
+    estado VARCHAR2(20),
+    PRIMARY KEY (id_medicamento)
+);
+
+CREATE TABLE CITA (
+    id_cita NUMBER GENERATED ALWAYS AS IDENTITY,
+    fecha_cita DATE,
+    hora_cita VARCHAR2(5),
+    notificacion CHAR(1),
+    temperatura NUMBER(4,1),
+    presion NUMBER(4,1),
+    frecuencia_cardiaca NUMBER(4,1),
+    frecuencia_respiratoria NUMBER(4,1),
+    peso NUMBER(5,2),
+    talla NUMBER(5,2),
+    motivo_consulta VARCHAR2(100),
+    diagnostico VARCHAR2(200),
+    tratamiento VARCHAR2(200),
+    observaciones VARCHAR2(200),
+    indicaciones VARCHAR2(200),
+    estado VARCHAR2(30),
+    id_medico NUMBER,
+    id_persona NUMBER,
+    id_empleado NUMBER,
+    PRIMARY KEY (id_cita),
+    FOREIGN KEY (id_medico)
+        REFERENCES MEDICO(id_empleado),
+    FOREIGN KEY (id_persona)
+        REFERENCES PERSONA(id_persona),
+    FOREIGN KEY (id_empleado)
+        REFERENCES EMPLEADO(id_persona)
+);
+
+
+CREATE TABLE PAGO (
+    id_cita NUMBER,
+    fecha DATE,
+    motivo_pago VARCHAR2(100),
+    monto NUMBER(6,2),
+    medio_pago VARCHAR2(50),
+    PRIMARY KEY (id_cita),
+    FOREIGN KEY (id_cita)
+        REFERENCES CITA(id_cita)
+);
+
+CREATE TABLE RECETA (
+    id_receta NUMBER GENERATED ALWAYS AS IDENTITY,
+    id_cita NUMBER,
+    fecha_emision DATE,
+    PRIMARY KEY (id_receta),
+    FOREIGN KEY (id_cita)
+        REFERENCES CITA(id_cita)
+);
+
+CREATE TABLE DETALLE_RECETA (
+    id_detalle_receta NUMBER GENERATED ALWAYS AS IDENTITY,
+    id_receta NUMBER,
+    id_medicamento NUMBER,
+    dosis VARCHAR2(200),
+    indicaciones VARCHAR2(200),
+    cantidad INTEGER,
+    PRIMARY KEY (id_detalle_receta),
+    FOREIGN KEY (id_receta)
+        REFERENCES RECETA(id_receta),
+    FOREIGN KEY (id_medicamento)
+        REFERENCES MEDICAMENTO(id_medicamento)
+);
+
+CREATE TABLE DERIVACION (
+    id_derivacion NUMBER GENERATED ALWAYS AS IDENTITY,
+    fecha DATE,
+    motivo VARCHAR2(200),
+    centro_destino VARCHAR2(100),
+    responsable VARCHAR2(100),
+    estado VARCHAR2(30),
+    id_cita INTEGER,
+    PRIMARY KEY (id_derivacion),
+    FOREIGN KEY (id_cita)
+        REFERENCES CITA(id_cita)
+);
+
+CREATE TABLE DETALLE_MEDICAMENTO (
+    id_detalle_medicamento NUMBER GENERATED ALWAYS AS IDENTITY,
+    id_detalle_receta NUMBER,
+    cantidad_entregada INTEGER,
+    fecha_salida DATE,
+    PRIMARY KEY (id_detalle_medicamento),
+    FOREIGN KEY (id_detalle_receta)
+        REFERENCES DETALLE_RECETA(id_detalle_receta)
+);
