@@ -34,6 +34,44 @@ export class AtencionListComponent implements OnInit {
   }
 
   // ==========================================
+  // OBTENER FECHA ACTUAL DE PERU
+  // ==========================================
+
+  private obtenerFechaHoyPeru(): string {
+
+    const partes = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Lima',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(new Date());
+
+    const anio = partes.find(p => p.type === 'year')?.value;
+    const mes = partes.find(p => p.type === 'month')?.value;
+    const dia = partes.find(p => p.type === 'day')?.value;
+
+    return `${anio}-${mes}-${dia}`;
+  }
+
+  // ==========================================
+  // VERIFICAR SI LA CITA ES DE HOY
+  // ==========================================
+
+  private esCitaDeHoy(cita: Cita): boolean {
+
+    if (!cita.fechaCita) {
+      return false;
+    }
+
+    const fechaCita = String(cita.fechaCita)
+      .substring(0, 10);
+
+    const hoy = this.obtenerFechaHoyPeru();
+
+    return fechaCita === hoy;
+  }
+
+  // ==========================================
   // VERIFICAR DATOS COMPLETOS DE TRIAJE
   // ==========================================
 
@@ -75,8 +113,12 @@ export class AtencionListComponent implements OnInit {
 
       next: (data) => {
 
-        // Mostrar solamente las citas del medico
-        // con estado TRIAJE y signos vitales completos.
+        // Mostrar unicamente las citas:
+        // 1. Del medico autenticado.
+        // 2. Programadas para HOY.
+        // 3. Con estado TRIAJE.
+        // 4. Con los seis signos vitales completos.
+
         this.citas = data.filter(c => {
 
           const estado = String(c.estado ?? '')
@@ -85,6 +127,7 @@ export class AtencionListComponent implements OnInit {
 
           return (
             estado === 'TRIAJE' &&
+            this.esCitaDeHoy(c) &&
             this.tieneTriajeCompleto(c)
           );
 
@@ -199,9 +242,24 @@ export class AtencionListComponent implements OnInit {
       return;
     }
 
-    // Validacion adicional en el listado.
+    // PRIMERA VALIDACION:
+    // La cita debe estar programada para HOY.
+
+    if (!this.esCitaDeHoy(cita)) {
+
+      this.alertService.error(
+        'Solo puedes atender citas programadas para el dia de hoy.'
+      );
+
+      return;
+    }
+
+    // SEGUNDA VALIDACION:
+    // La cita debe estar en TRIAJE
+    // y tener todos los signos vitales registrados.
+
     if (
-      String(cita.estado ?? '').toUpperCase() !== 'TRIAJE' ||
+      String(cita.estado ?? '').trim().toUpperCase() !== 'TRIAJE' ||
       !this.tieneTriajeCompleto(cita)
     ) {
 
@@ -211,6 +269,9 @@ export class AtencionListComponent implements OnInit {
 
       return;
     }
+
+    // Si cumple ambas condiciones,
+    // se permite ingresar a la atencion medica.
 
     this.router.navigate([
       '/atencion/registrar',

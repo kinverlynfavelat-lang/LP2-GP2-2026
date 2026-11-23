@@ -67,10 +67,25 @@ export const routes: Routes = [
       // SIN LOGIN
       // ==========================================
 
+     
+      // ==========================================
+      // INICIO PUBLICO - PACIENTES
+      // ==========================================
+
+      {
+        path: 'inicio',
+        component: HomeComponent
+      },
+
+      // ==========================================
+      // PORTAL DEL PACIENTE
+      // ==========================================
+
       {
         path: 'portal-paciente',
         component: PortalPaciente
       },
+
 
       // ==========================================
       // INICIO DE TRABAJADORES
@@ -417,7 +432,7 @@ export const routes: Routes = [
 
       // ==========================================
       // FARMACIA
-      // SOLO FARMACIA
+      // GESTION: ADMIN / ENTREGAS: FARMACIA
       // ==========================================
 
       {
@@ -425,7 +440,7 @@ export const routes: Routes = [
         component: FarmaciaListComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['FARMACIA']
+          roles: ['ADMIN', 'FARMACIA']
         }
       },
 
@@ -434,7 +449,7 @@ export const routes: Routes = [
         component: FarmaciaFormComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['FARMACIA']
+          roles: ['ADMIN']
         }
       },
 
@@ -443,7 +458,7 @@ export const routes: Routes = [
         component: FarmaciaFormComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['FARMACIA']
+          roles: ['ADMIN']
         }
       },
 
@@ -491,9 +506,10 @@ export const routes: Routes = [
       // RUTA INICIAL
       // ==========================================
 
+      
       {
         path: '',
-        redirectTo: 'portal-paciente',
+        redirectTo: 'inicio',
         pathMatch: 'full'
       }
 

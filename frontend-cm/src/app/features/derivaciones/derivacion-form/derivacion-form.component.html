@@ -85,8 +85,8 @@
                 *ngFor="let cita of citas"
                 [ngValue]="cita.idCita">
 
-                Cita #{{ cita.idCita }}
-                - {{ cita.paciente }}
+                
+                {{ cita.paciente }}
                 - {{ cita.fechaCita | date:'dd/MM/yyyy' }}
 
               </option>

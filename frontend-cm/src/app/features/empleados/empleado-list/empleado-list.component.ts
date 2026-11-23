@@ -169,7 +169,7 @@ export class EmpleadoListComponent implements OnInit {
         icon: 'warning',
         title: 'Empleado inactivo',
         text: 'Solo se pueden crear accesos para empleados activos.',
-        confirmButtonColor: '#07577A'
+        confirmButtonColor: '#075878'
       });
 
       return;
@@ -178,124 +178,228 @@ export class EmpleadoListComponent implements OnInit {
     const resultado = await Swal.fire({
 
       title: 'Crear acceso al sistema',
+      width: 520,
+      padding: '25px 26px 22px',
+      background: '#ffffff',
+      color: '#24485e',
 
       html: `
-        <div class="text-start">
+        <div style="text-align:left; font-size:14px; color:#24485e;">
 
-          <div class="rounded p-3 mb-3"
-               style="background:#E8F5FB;">
-
-            <small class="text-muted d-block">
-              Empleado seleccionado
-            </small>
-
+          <!-- EMPLEADO SELECCIONADO -->
+          <div style="
+            background:#EAF6FB;
+            border:1px solid #D3EAF3;
+            border-radius:12px;
+            padding:14px 16px;
+            margin-bottom:21px;
+          ">
+            <div style="
+              font-size:11px;
+              font-weight:700;
+              letter-spacing:0.6px;
+              color:#5F8195;
+              margin-bottom:5px;
+            ">
+              EMPLEADO SELECCIONADO
+            </div>
             <strong id="nombreEmpleadoAcceso"
-                    style="color:#07577A;">
+                    style="color:#075878; font-size:15px;">
             </strong>
-
           </div>
 
-          <label class="form-label fw-semibold">
-            Usuario
-          </label>
+          <!-- USUARIO -->
+          <div style="margin-bottom:15px;">
+            <label for="accesoUsuario" style="
+              display:block;
+              margin-bottom:7px;
+              font-size:13px;
+              font-weight:600;
+            ">
+              Nombre de usuario
+            </label>
+            <input
+              id="accesoUsuario"
+              type="text"
+              class="form-control"
+              style="height:43px; border-radius:8px; font-size:14px;"
+              placeholder="Ej. carlos.ramirez"
+              autocomplete="off"
+              maxlength="80">
+          </div>
 
-          <input
-            id="accesoUsuario"
-            type="text"
-            class="form-control mb-3"
-            placeholder="Ejemplo: carlos.ramirez"
-            autocomplete="off">
+          <!-- CONTRASEÑA INICIAL -->
+          <div style="margin-bottom:15px;">
+            <label for="accesoPassword" style="
+              display:block;
+              margin-bottom:7px;
+              font-size:13px;
+              font-weight:600;
+            ">
+              Contraseña inicial
+            </label>
+            <div class="input-group">
+              <input
+                id="accesoPassword"
+                type="password"
+                class="form-control"
+                style="height:43px; font-size:14px;"
+                placeholder="Mínimo 7 caracteres"
+                autocomplete="new-password">
+              <button
+                id="verAccesoPassword"
+                type="button"
+                class="btn btn-outline-secondary"
+                style="min-width:43px;"
+                aria-label="Mostrar contraseña"
+                aria-pressed="false">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
 
-          <label class="form-label fw-semibold">
-            Contraseña inicial
-          </label>
+          <!-- CONFIRMACION -->
+          <div style="margin-bottom:15px;">
+            <label for="accesoConfirmacion" style="
+              display:block;
+              margin-bottom:7px;
+              font-size:13px;
+              font-weight:600;
+            ">
+              Confirmar contraseña
+            </label>
+            <div class="input-group">
+              <input
+                id="accesoConfirmacion"
+                type="password"
+                class="form-control"
+                style="height:43px; font-size:14px;"
+                placeholder="Repetir contraseña"
+                autocomplete="new-password">
+              <button
+                id="verAccesoConfirmacion"
+                type="button"
+                class="btn btn-outline-secondary"
+                style="min-width:43px;"
+                aria-label="Mostrar confirmación"
+                aria-pressed="false">
+                <i class="bi bi-eye"></i>
+              </button>
+            </div>
+          </div>
 
-          <input
-            id="accesoPassword"
-            type="password"
-            class="form-control mb-3"
-            placeholder="Mínimo 12 caracteres"
-            autocomplete="new-password">
+          <!-- ROL: UNA SOLA ETIQUETA -->
+          <div style="margin-bottom:15px;">
+            <label for="accesoRol" style="
+              display:block;
+              margin-bottom:7px;
+              font-size:13px;
+              font-weight:600;
+            ">
+              Rol de acceso
+            </label>
+            <select
+              id="accesoRol"
+              class="form-select"
+              style="height:43px; border-radius:8px; font-size:14px;">
+              <option value="">Seleccionar rol...</option>
+              <option value="ADMIN">Administrador</option>
+              <option value="MEDICO">Médico</option>
+              <option value="TRIAJE">Personal de triaje</option>
+              <option value="FARMACIA">Personal de farmacia</option>
+            </select>
+          </div>
 
-          <label class="form-label fw-semibold">
-            Confirmar contraseña
-          </label>
-
-          <input
-            id="accesoConfirmacion"
-            type="password"
-            class="form-control mb-3"
-            placeholder="Repetir contraseña"
-            autocomplete="new-password">
-
-          <label class="form-label fw-semibold">
-            Área de acceso
-          </label>
-
-          
-<label class="form-label fw-semibold">
-  Rol de acceso
-</label>
-
-<select
-  id="accesoRol"
-  class="form-select">
-
-  <option value="">
-    Seleccionar rol...
-  </option>
-
-  <option value="ADMIN">
-    Administrador
-  </option>
-
-  <option value="MEDICO">
-    Médico
-  </option>
-
-  <option value="TRIAJE">
-    Personal de triaje
-  </option>
-
-  <option value="FARMACIA">
-    Personal de farmacia
-  </option>
-
-</select>
-
-<small class="text-muted d-block mt-2">
-  El administrador asigna el rol según
-  las funciones del trabajador.
-</small>
-
-
-          <small class="text-muted d-block mt-3">
-            La cuenta se vinculará automáticamente
-            con la persona seleccionada.
-            La contraseña se protegerá con BCrypt.
-          </small>
+          <div style="
+            background:#F4F9FC;
+            border-left:3px solid #43A6CC;
+            border-radius:6px;
+            padding:10px 12px;
+            font-size:12px;
+            line-height:1.5;
+            color:#597386;
+          ">
+            El usuario se vinculará con este empleado.
+            Su contraseña se almacenará de forma protegida.
+          </div>
 
         </div>
       `,
 
       didOpen: () => {
 
-        const nombre = Swal.getPopup()
-          ?.querySelector<HTMLElement>(
-            '#nombreEmpleadoAcceso'
-          );
+        const popup = Swal.getPopup();
+        if (!popup) return;
 
-        if (nombre) {
-          nombre.textContent =
-            `${e.nombres} ${e.apellidos}`;
+        popup.style.borderRadius = '17px';
+        popup.style.borderTop = '5px solid #075878';
+        popup.style.boxShadow =
+          '0 20px 60px rgba(0, 35, 56, 0.22)';
+
+        const titulo = popup.querySelector<HTMLElement>(
+          '.swal2-title'
+        );
+        if (titulo) {
+          titulo.style.color = '#075878';
+          titulo.style.fontSize = '23px';
+          titulo.style.fontWeight = '700';
+          titulo.style.marginBottom = '8px';
         }
 
+        const nombre = popup.querySelector<HTMLElement>(
+          '#nombreEmpleadoAcceso'
+        );
+        if (nombre) {
+          nombre.textContent = `${e.nombres} ${e.apellidos}`;
+        }
+
+        // Mostrar u ocultar contraseñas sin modificar Angular.
+        const configurarVisibilidad = (
+          inputId: string,
+          botonId: string
+        ): void => {
+
+          const input = popup.querySelector<HTMLInputElement>(
+            `#${inputId}`
+          );
+          const boton = popup.querySelector<HTMLButtonElement>(
+            `#${botonId}`
+          );
+
+          if (!input || !boton) return;
+
+          boton.addEventListener('click', () => {
+            const visible = input.type === 'password';
+            input.type = visible ? 'text' : 'password';
+            boton.setAttribute('aria-pressed', String(visible));
+            boton.setAttribute(
+              'aria-label',
+              visible ? 'Ocultar contraseña' : 'Mostrar contraseña'
+            );
+
+            const icono = boton.querySelector('i');
+            if (icono) {
+              icono.className = visible
+                ? 'bi bi-eye-slash'
+                : 'bi bi-eye';
+            }
+          });
+        };
+
+        configurarVisibilidad(
+          'accesoPassword',
+          'verAccesoPassword'
+        );
+        configurarVisibilidad(
+          'accesoConfirmacion',
+          'verAccesoConfirmacion'
+        );
       },
 
       showCancelButton: true,
       confirmButtonText: 'Crear acceso',
       cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#07577A',
+      confirmButtonColor: '#075878',
       cancelButtonColor: '#718096',
       focusConfirm: false,
 
@@ -304,62 +408,47 @@ export class EmpleadoListComponent implements OnInit {
         const popup = Swal.getPopup();
 
         const usuario = popup
-          ?.querySelector<HTMLInputElement>(
-            '#accesoUsuario'
-          )
+          ?.querySelector<HTMLInputElement>('#accesoUsuario')
           ?.value.trim() || '';
 
         const password = popup
-          ?.querySelector<HTMLInputElement>(
-            '#accesoPassword'
-          )
+          ?.querySelector<HTMLInputElement>('#accesoPassword')
           ?.value || '';
 
         const confirmacion = popup
-          ?.querySelector<HTMLInputElement>(
-            '#accesoConfirmacion'
-          )
+          ?.querySelector<HTMLInputElement>('#accesoConfirmacion')
           ?.value || '';
 
         const rol = popup
-          ?.querySelector<HTMLSelectElement>(
-            '#accesoRol'
-          )
+          ?.querySelector<HTMLSelectElement>('#accesoRol')
           ?.value || '';
 
-        if (!usuario || usuario.length < 3) {
-
+        if (usuario.length < 3) {
           Swal.showValidationMessage(
             'El usuario debe tener al menos 3 caracteres.'
           );
-
           return false;
         }
 
+        // Consistente con el texto "Mínimo 12 caracteres".
         if (password.length < 7) {
-
           Swal.showValidationMessage(
             'La contraseña debe tener al menos 7 caracteres.'
           );
-
           return false;
         }
 
         if (password !== confirmacion) {
-
           Swal.showValidationMessage(
             'Las contraseñas no coinciden.'
           );
-
           return false;
         }
 
         if (!rol) {
-
           Swal.showValidationMessage(
-            'Selecciona el área del trabajador.'
+            'Selecciona el rol del trabajador.'
           );
-
           return false;
         }
 
@@ -369,9 +458,7 @@ export class EmpleadoListComponent implements OnInit {
           rol,
           idPersona: e.idPersona
         };
-
       }
-
     });
 
     if (!resultado.isConfirmed || !resultado.value) {
@@ -399,7 +486,7 @@ export class EmpleadoListComponent implements OnInit {
           icon: 'success',
           title: 'Acceso creado',
           text: 'El trabajador ya puede iniciar sesión con su usuario y contraseña.',
-          confirmButtonColor: '#07577A'
+          confirmButtonColor: '#075878'
         });
 
       },
@@ -442,7 +529,7 @@ export class EmpleadoListComponent implements OnInit {
           icon: 'error',
           title: 'No se pudo crear el acceso',
           text: mensaje,
-          confirmButtonColor: '#07577A'
+          confirmButtonColor: '#075878'
         });
 
       }

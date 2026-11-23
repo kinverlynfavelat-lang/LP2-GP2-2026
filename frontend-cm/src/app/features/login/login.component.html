@@ -1,85 +1,175 @@
+
 <div class="login-wrapper d-flex align-items-center justify-content-center min-vh-100 p-3">
-  <div class="card login-card shadow-lg border-0">
+
+  <div class="card login-card border-0">
+
     <div class="card-body p-4 p-md-5">
 
-      <div class="text-center mb-4">
+      <!-- ========================================== -->
+      <!-- ENCABEZADO DEL LOGIN -->
+      <!-- ========================================== -->
+
+      <div class="login-encabezado text-center mb-4">
+
         <div class="login-icon mx-auto mb-3">
           <i class="bi bi-heart-pulse-fill"></i>
         </div>
-        <h3 class="fw-bold mb-1">UPeU Salud</h3>
-        <p class="text-muted small mb-0">
-          Acceso para personal del Centro Médico Universitario
+
+        <h2 class="login-titulo fw-bold mb-2">
+          UPeU Salud
+        </h2>
+
+        <p class="login-subtitulo mb-0">
+          Centro Médico Universitario
         </p>
+
+        <div class="login-separador mx-auto my-3"></div>
+
+        <p class="login-descripcion mb-0">
+          Acceso exclusivo para el personal autorizado
+        </p>
+
       </div>
 
+      <!-- ========================================== -->
+      <!-- FORMULARIO -->
+      <!-- ========================================== -->
+
       <form (ngSubmit)="onSubmit()">
+
+        <!-- USUARIO -->
         <div class="mb-3">
-          <label for="usuario" class="form-label fw-semibold">Usuario</label>
-          <div class="input-group">
+
+          <label
+            for="usuario"
+            class="form-label fw-semibold">
+            Usuario
+          </label>
+
+          <div class="input-group login-input-group">
+
             <span class="input-group-text">
               <i class="bi bi-person"></i>
             </span>
+
             <input
               id="usuario"
               type="text"
               class="form-control"
               name="usuario"
               [(ngModel)]="credentials.usuario"
-              placeholder="Ej. admin"
+              placeholder="Ingresa tu usuario"
               autocomplete="username"
               required>
+
           </div>
+
         </div>
 
+        <!-- CONTRASEÑA -->
         <div class="mb-4">
-          <label for="password" class="form-label fw-semibold">Contraseña</label>
-          <div class="input-group">
+
+          <label
+            for="password"
+            class="form-label fw-semibold">
+            Contraseña
+          </label>
+
+          <div class="input-group login-input-group">
+
             <span class="input-group-text">
               <i class="bi bi-lock"></i>
             </span>
+
             <input
               id="password"
               [type]="mostrarPassword ? 'text' : 'password'"
               class="form-control"
               name="password"
               [(ngModel)]="credentials.password"
-              placeholder="••••••••"
+              placeholder="Ingresa tu contraseña"
               autocomplete="current-password"
               required>
+
             <button
               type="button"
-              class="btn btn-outline-secondary"
+              class="btn btn-ver-password"
               (click)="mostrarPassword = !mostrarPassword"
-              tabindex="-1">
-              <i class="bi" [ngClass]="mostrarPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              [attr.aria-pressed]="mostrarPassword">
+
+              <i
+                class="bi"
+                [ngClass]="mostrarPassword ? 'bi-eye-slash' : 'bi-eye'">
+              </i>
+
             </button>
+
           </div>
+
         </div>
+
+        <!-- ========================================== -->
+        <!-- BOTON INICIAR SESION -->
+        <!-- ========================================== -->
 
         <button
           type="submit"
-          class="btn btn-primary w-100 py-2 fw-semibold"
+          class="btn btn-login w-100 py-3 fw-semibold"
           [disabled]="cargando">
+
           @if (cargando) {
-            <span class="spinner-border spinner-border-sm me-2"></span>
+
+            <span
+              class="spinner-border spinner-border-sm me-2"
+              role="status">
+            </span>
+
             Verificando...
+
           } @else {
+
             <i class="bi bi-box-arrow-in-right me-2"></i>
+
             Iniciar sesión
+
           }
+
         </button>
+
       </form>
 
-      <hr class="my-4">
+      <!-- ========================================== -->
+      <!-- ACCESO PUBLICO DEL PACIENTE -->
+      <!-- ========================================== -->
 
-      <div class="text-center">
-        <p class="text-muted small mb-2">¿Eres estudiante o docente y deseas reservar una cita?</p>
-        <a routerLink="/portal-paciente" class="btn btn-outline-primary btn-sm w-100">
+      <div class="login-acceso-paciente text-center mt-4">
+
+        <div class="login-divider mb-4"></div>
+
+        <p class="login-paciente-texto mb-3">
+          ¿Eres estudiante o docente y deseas reservar
+          una cita médica?
+        </p>
+
+        <a
+          routerLink="/portal-paciente"
+          class="btn btn-portal w-100">
+
           <i class="bi bi-calendar-check me-2"></i>
-          Ir al Portal del Paciente (sin inicio de sesión)
+
+          Ir al Portal del Paciente
+
         </a>
+
+        <small class="login-nota d-block mt-3">
+          No necesitas iniciar sesión para reservar una cita.
+        </small>
+
       </div>
 
     </div>
+
   </div>
+
 </div>

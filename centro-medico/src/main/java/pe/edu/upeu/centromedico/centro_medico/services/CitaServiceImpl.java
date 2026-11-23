@@ -1,4 +1,3 @@
-
 package pe.edu.upeu.centromedico.centro_medico.services;
 
 import org.springframework.http.HttpStatus;
@@ -31,19 +30,21 @@ import pe.edu.upeu.centromedico.centro_medico.repository.EmpleadoRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.HorarioMedicoRepository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Objects;
 
 @Service
-@PersistenceContext
 public class CitaServiceImpl implements ICitaService {
 
     private final CitaRepository citaRepository;
@@ -52,6 +53,7 @@ public class CitaServiceImpl implements ICitaService {
     private final EmpleadoRepository empleadoRepository;
     private final HorarioMedicoRepository horarioMedicoRepository;
 
+    @PersistenceContext
     private EntityManager entityManager;
 
     public CitaServiceImpl(
@@ -292,7 +294,25 @@ public class CitaServiceImpl implements ICitaService {
                                     )
                             );
 
+            // Serializa las reservas del mismo medico dentro de la transaccion.
+            // Asi dos solicitudes simultaneas no pueden reservar el mismo turno.
+            entityManager.lock(medico, LockModeType.PESSIMISTIC_WRITE);
+
+            if (dto.estado() != EstadoCita.DERIVADO) {
+                validarFechaHora(dto.fechaCita(), dto.horaCita());
+                validarHorario(dto.idMedico(), dto.fechaCita(), dto.horaCita());
+            }
+
+            validarCitaDuplicada(
+                    dto.idMedico(), dto.fechaCita(), dto.horaCita(), null
+            );
+
             cita.setMedico(medico);
+        } else if (dto.estado() != EstadoCita.DERIVADO) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Debe seleccionar un medico para reservar la cita"
+            );
         }
 
         // 5. Asignar empleado de triaje
@@ -431,6 +451,117 @@ public class CitaServiceImpl implements ICitaService {
                 throw new RuntimeException(
                         "No se puede modificar una cita finalizada"
                 );
+            }
+
+            // ================================================
+            // VALIDACION: LA ATENCION Y EL TRIAJE SOLO EL DIA
+            // PROGRAMADO DE LA CITA (HORA LOCAL DE PERU).
+            // Se valida la fecha YA GUARDADA, antes de cualquier
+            // posible modificacion recibida en el DTO.
+            // ================================================
+
+            boolean modificaDatosClinicos =
+                    dto.temperatura() != null
+                            || dto.presion() != null
+                            || dto.frecuenciaCardiaca() != null
+                            || dto.frecuenciaRespiratoria() != null
+                            || dto.peso() != null
+                            || dto.talla() != null
+                            || dto.diagnostico() != null
+                            || dto.tratamiento() != null
+                            || dto.observaciones() != null
+                            || dto.indicaciones() != null
+                            || dto.estado() == EstadoCita.ATENDIDO;
+
+            if (modificaDatosClinicos) {
+
+                LocalDate fechaProgramada = citaActual.getFechaCita();
+                LocalDate hoyPeru = LocalDate.now(
+                        ZoneId.of("America/Lima")
+                );
+
+                if (fechaProgramada == null
+                        || !fechaProgramada.equals(hoyPeru)) {
+
+                    throw new ResponseStatusException(
+                            HttpStatus.CONFLICT,
+                            "La atencion y el triaje solo pueden registrarse "
+                                    + "el dia programado de la cita: "
+                                    + fechaProgramada
+                    );
+                }
+
+                // No permitir cambiar fecha/hora en la misma
+                // peticion que registra datos clinicos.
+                if ((dto.fechaCita() != null
+                        && !dto.fechaCita().equals(fechaProgramada))
+                        || (dto.horaCita() != null
+                        && !dto.horaCita().equals(citaActual.getHoraCita()))) {
+
+                    throw new ResponseStatusException(
+                            HttpStatus.CONFLICT,
+                            "No se puede cambiar la fecha u hora "
+                                    + "al registrar una atencion o triaje"
+                    );
+                }
+            }
+
+            // El personal clinico no puede adelantar citas con PUT.
+            // Para cambiar una cita debe usarse la reprogramacion.
+            Authentication autenticacion = SecurityContextHolder
+                    .getContext().getAuthentication();
+
+            boolean personalClinico = autenticacion != null
+                    && autenticacion.getAuthorities().stream()
+                    .anyMatch(a -> "MEDICO".equals(a.getAuthority())
+                            || "TRIAJE".equals(a.getAuthority()));
+
+            if (personalClinico
+                    && ((dto.fechaCita() != null
+                    && !dto.fechaCita().equals(citaActual.getFechaCita()))
+                    || (dto.horaCita() != null
+                    && !dto.horaCita().equals(citaActual.getHoraCita())))) {
+
+                throw new ResponseStatusException(
+                        HttpStatus.FORBIDDEN,
+                        "La fecha y la hora solo pueden modificarse "
+                                + "mediante la reprogramacion de citas"
+                );
+            }
+
+            // Si ADMIN modifica el turno con PUT, tampoco puede duplicarlo.
+            // Las actualizaciones de datos clinicos sin cambio de turno siguen igual.
+            Long medicoActual = citaActual.getMedico() == null
+                    ? null : citaActual.getMedico().getIdEmpleado();
+            Long medicoNuevo = dto.idMedico() == null
+                    ? medicoActual : dto.idMedico();
+            LocalDate fechaNueva = dto.fechaCita() == null
+                    ? citaActual.getFechaCita() : dto.fechaCita();
+            String horaNueva = dto.horaCita() == null
+                    ? citaActual.getHoraCita() : dto.horaCita();
+
+            boolean cambiaTurno =
+                    !Objects.equals(medicoActual, medicoNuevo)
+                            || !Objects.equals(citaActual.getFechaCita(), fechaNueva)
+                            || !mismaHora(citaActual.getHoraCita(), horaNueva);
+
+            if (cambiaTurno) {
+                if (medicoNuevo == null) {
+                    throw new ResponseStatusException(
+                            HttpStatus.BAD_REQUEST,
+                            "Debe seleccionar un medico para cambiar el turno"
+                    );
+                }
+
+                Medico medicoBloqueado = medicoRepository.findById(medicoNuevo)
+                        .orElseThrow(() -> new ResponseStatusException(
+                                HttpStatus.NOT_FOUND, "Medico no encontrado"
+                        ));
+                entityManager.lock(medicoBloqueado, LockModeType.PESSIMISTIC_WRITE);
+
+                validarFechaHora(fechaNueva, horaNueva);
+                validarHorario(medicoNuevo, fechaNueva, horaNueva);
+                validarCitaDuplicada(medicoNuevo, fechaNueva, horaNueva, id);
             }
 
             // 2. Actualizar fecha y hora
@@ -692,6 +823,10 @@ public class CitaServiceImpl implements ICitaService {
         Long idMedico =
                 cita.getMedico().getIdEmpleado();
 
+        // Bloquear el medico para evitar reprogramaciones simultaneas
+        // que ocupen el mismo horario.
+        entityManager.lock(cita.getMedico(), LockModeType.PESSIMISTIC_WRITE);
+
         // 6. Validar horario
 
         validarHorario(
@@ -828,7 +963,10 @@ public class CitaServiceImpl implements ICitaService {
             LocalDate fecha,
             String horaCita) {
 
-        if (fecha.isBefore(LocalDate.now())) {
+        LocalDate hoyPeru = LocalDate.now(ZoneId.of("America/Lima"));
+        LocalTime horaActualPeru = LocalTime.now(ZoneId.of("America/Lima"));
+
+        if (fecha == null || fecha.isBefore(hoyPeru)) {
 
             throw new RuntimeException(
                     "No se puede reservar una fecha anterior a hoy"
@@ -848,8 +986,8 @@ public class CitaServiceImpl implements ICitaService {
             );
         }
 
-        if (fecha.isEqual(LocalDate.now())
-                && !hora.isAfter(LocalTime.now())) {
+        if (fecha.isEqual(hoyPeru)
+                && !hora.isAfter(horaActualPeru)) {
 
             throw new RuntimeException(
                     "La hora de la cita debe ser posterior a la hora actual"
@@ -963,8 +1101,8 @@ public class CitaServiceImpl implements ICitaService {
                 continue;
             }
 
-            if (c.getFechaCita().equals(fecha)
-                    && c.getHoraCita().equals(hora)
+            if (Objects.equals(c.getFechaCita(), fecha)
+                    && mismaHora(c.getHoraCita(), hora)
                     && c.getEstado() != EstadoCita.ANULADO) {
 
                 throw new ResponseStatusException(
@@ -972,6 +1110,18 @@ public class CitaServiceImpl implements ICitaService {
                         "El médico ya tiene una cita reservada en esa fecha y hora"
                 );
             }
+        }
+    }
+
+    // Comparar horas aunque vengan como HH:mm o HH:mm:ss.
+    private boolean mismaHora(String primera, String segunda) {
+        if (primera == null || segunda == null) {
+            return Objects.equals(primera, segunda);
+        }
+        try {
+            return LocalTime.parse(primera).equals(LocalTime.parse(segunda));
+        } catch (Exception ex) {
+            return primera.equals(segunda);
         }
     }
 

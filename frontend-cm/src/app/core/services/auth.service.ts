@@ -108,6 +108,7 @@ export class AuthService {
               localStorage.removeItem(
                 PERSONA_ID_KEY
               );
+
             }
 
             // Actualizar estado de autenticacion
@@ -123,14 +124,17 @@ export class AuthService {
               response.rol
             );
 
-            // No sincronizar todos los catalogos
-            // automaticamente durante el login.
-            // Cada rol tiene permisos diferentes.
-            // La sincronizacion offline se gestiona
-            // desde su modulo correspondiente.
-
-            // Redirigir al inicio
-            this.router.navigate(['/home']);
+            // ======================================
+            // IMPORTANTE:
+            // NO REDIRIGIR DESDE AUTH SERVICE.
+            //
+            // LoginComponent se encarga de enviar:
+            //
+            // ADMIN    -> /citas
+            // MEDICO   -> /atencion
+            // TRIAJE   -> /triaje
+            // FARMACIA -> /farmacia
+            // ======================================
 
           }
 

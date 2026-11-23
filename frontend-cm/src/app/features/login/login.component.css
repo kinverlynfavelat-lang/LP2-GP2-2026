@@ -1,21 +1,317 @@
+
+/* ==========================================
+   FONDO PRINCIPAL DEL LOGIN
+========================================== */
+
 .login-wrapper {
-  background: linear-gradient(135deg, #0b2545 0%, #134074 60%, #1d5b96 100%);
+  min-height: 100vh;
+
+  background-color: var(--color-primario, #075878);
+
+  background-image:
+    radial-gradient(
+      circle at 85% 20%,
+      rgba(255, 255, 255, 0.12),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 10% 85%,
+      rgba(0, 35, 56, 0.20),
+      transparent 45%
+    );
+
+  padding: 30px 16px;
 }
+
+/* ==========================================
+   TARJETA DEL LOGIN
+========================================== */
 
 .login-card {
   width: 100%;
-  max-width: 430px;
-  border-radius: 16px;
+  max-width: 440px;
+
+  background-color: #ffffff;
+
+  border-radius: 18px;
+
+  box-shadow:
+    0 18px 45px rgba(0, 35, 56, 0.20),
+    0 5px 15px rgba(0, 35, 56, 0.08);
+
+  overflow: hidden;
+}
+
+/* ==========================================
+   ENCABEZADO
+========================================== */
+
+.login-encabezado {
+  padding-top: 5px;
 }
 
 .login-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(19, 64, 116, 0.12);
-  color: #134074;
+  width: 72px;
+  height: 72px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
+
+  border-radius: 50%;
+
+  background-color: #e7f4fa;
+  color: var(--color-primario, #075878);
+
+  font-size: 32px;
+}
+
+.login-titulo {
+  color: var(--color-primario, #075878);
+
+  font-size: 28px;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitulo {
+  color: #45667a;
+
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.login-separador {
+  width: 50px;
+  height: 3px;
+
+  background-color: #43a6cc;
+  border-radius: 10px;
+}
+
+.login-descripcion {
+  color: #71869a;
+  font-size: 13px;
+}
+
+/* ==========================================
+   ETIQUETAS DEL FORMULARIO
+========================================== */
+
+.login-card .form-label {
+  color: #24485e;
+
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+/* ==========================================
+   CAMPOS DEL FORMULARIO
+========================================== */
+
+.login-input-group .form-control {
+  min-height: 46px;
+
+  border: 1px solid #d5e3eb;
+  border-left: 0;
+
+  font-size: 14px;
+  color: #263b4d;
+
+  box-shadow: none;
+}
+
+.login-input-group .form-control::placeholder {
+  color: #9aaab7;
+}
+
+.login-input-group .input-group-text {
+  min-width: 43px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #f3f9fc;
+
+  color: var(--color-primario, #075878);
+
+  border: 1px solid #d5e3eb;
+
+  font-size: 16px;
+}
+
+.login-input-group:focus-within .form-control,
+.login-input-group:focus-within .input-group-text,
+.login-input-group:focus-within .btn-ver-password {
+  border-color: #43a6cc;
+}
+
+.login-input-group .form-control:focus {
+  box-shadow: none;
+}
+
+/* ==========================================
+   MOSTRAR / OCULTAR CONTRASEÑA
+========================================== */
+
+.btn-ver-password {
+  min-width: 43px;
+
+  background-color: #f8fbfd;
+  color: #6f8797;
+
+  border: 1px solid #d5e3eb;
+
+  font-size: 16px;
+}
+
+.btn-ver-password:hover {
+  background-color: #e7f4fa;
+  color: var(--color-primario, #075878);
+}
+
+/* ==========================================
+   BOTON INICIAR SESION
+========================================== */
+
+.btn-login {
+  min-height: 47px;
+
+  background-color: var(--color-primario, #075878);
+  color: #ffffff;
+
+  border: 1px solid var(--color-primario, #075878);
+  border-radius: 9px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-login:hover:not(:disabled) {
+  background-color: #087099;
+  color: #ffffff;
+
+  border-color: #087099;
+
+  box-shadow: 0 5px 14px rgba(7, 88, 120, 0.20);
+
+  transform: translateY(-1px);
+}
+
+.btn-login:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-login:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   SEPARADOR
+========================================== */
+
+.login-divider {
+  height: 1px;
+  width: 100%;
+
+  background-color: #e3edf2;
+}
+
+/* ==========================================
+   ACCESO DEL PACIENTE
+========================================== */
+
+.login-paciente-texto {
+  color: #667e8e;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.btn-portal {
+  min-height: 43px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  color: var(--color-primario, #075878);
+
+  background-color: #ffffff;
+
+  border: 1px solid var(--color-primario, #075878);
+  border-radius: 9px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  transition: all 0.2s ease;
+}
+
+.btn-portal:hover {
+  background-color: #e7f4fa;
+  color: var(--color-primario, #075878);
+
+  border-color: var(--color-primario, #075878);
+}
+
+.login-nota {
+  color: #8da0ac;
+  font-size: 11px;
+}
+
+/* ==========================================
+   ACCESIBILIDAD
+========================================== */
+
+.btn-login:focus-visible,
+.btn-portal:focus-visible,
+.btn-ver-password:focus-visible {
+  outline: 3px solid #43a6cc;
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 576px) {
+
+  .login-wrapper {
+    padding: 20px 12px;
+  }
+
+  .login-card {
+    max-width: 100%;
+    border-radius: 15px;
+  }
+
+  .login-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+
+  .login-titulo {
+    font-size: 25px;
+  }
+
+  .login-subtitulo {
+    font-size: 13px;
+  }
+
+  .login-descripcion {
+    font-size: 12px;
+  }
+
+  .login-paciente-texto {
+    font-size: 12px;
+  }
+
 }

@@ -1,144 +1,395 @@
 
-/* ENCABEZADO PRINCIPAL */
+/* ==========================================
+   ENCABEZADO PRINCIPAL
+========================================== */
 
 .navbar {
   min-height: 72px;
   padding: 12px 0;
+
   background-color: var(--color-primario) !important;
+
   box-shadow: 0 2px 8px rgba(0, 58, 108, 0.10);
+
+  position: relative;
+  z-index: 1020;
 }
 
-/* LOGO */
+/* ==========================================
+   DISTRIBUCION GENERAL
+========================================== */
+
+.header-contenedor {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+
+  gap: 16px;
+}
+
+.header-izquierda {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 28px;
+}
+
+.header-derecha {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+
+  gap: 16px;
+}
+
+/* ==========================================
+   LOGO UPEU SALUD
+========================================== */
 
 .navbar-brand {
-  color: #FFFFFF !important;
+  display: inline-flex;
+  align-items: center;
+
+  color: #ffffff !important;
+
   font-size: 21px;
+  font-weight: 700;
+
   letter-spacing: 0.2px;
+
+  margin-right: 0;
+  text-decoration: none;
+}
+
+.navbar-brand:hover {
+  color: #ffffff !important;
+  opacity: 0.92;
 }
 
 .navbar-brand i {
-  color: #FFFFFF;
+  color: #ffffff;
 }
 
-/* ENLACES */
+/* ==========================================
+   NAVEGACION DEL PACIENTE
+========================================== */
 
-.navbar-nav .nav-link {
-  color: rgba(255, 255, 255, 0.90) !important;
+.navegacion-paciente {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.nav-publico-enlace {
+  display: inline-flex;
+  align-items: center;
+
+  color: rgba(255, 255, 255, 0.90);
+
+  padding: 10px 15px;
+
   font-size: 14px;
-  padding: 12px 16px !important;
-  transition: background-color 0.2s ease;
-}
+  font-weight: 500;
 
-.navbar-nav .nav-link:hover {
-  color: #FFFFFF !important;
-  background-color: rgba(255, 255, 255, 0.10);
-  border-radius: 6px;
-}
+  text-decoration: none;
 
-/* MENÚ ACTIVO */
-
-.active-link {
-  color: #FFFFFF !important;
-  font-weight: 600;
-  border-bottom: 2px solid #8DD4EF;
-}
-
-/* IDENTIFICACIÓN */
-
-.system-info {
-  color: #FFFFFF;
-  font-size: 13px;
-}
-
-.system-info i {
-  color: #8DD4EF;
-}
-
-/* MENÚ DESPLEGABLE */
-
-.dropdown-menu {
-  min-width: 210px;
-  border: 1px solid #DCEAF2;
   border-radius: 8px;
-  padding: 8px;
-  margin-top: 8px;
-  box-shadow: 0 4px 12px rgba(0, 58, 108, 0.10);
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 }
 
-.dropdown-item {
-  padding: 10px 14px;
-  border-radius: 5px;
-  color: #24516E;
+.nav-publico-enlace:hover {
+  color: #ffffff;
+
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.nav-publico-enlace.active-link {
+  color: #ffffff;
+
+  background-color: rgba(255, 255, 255, 0.16);
+
+  font-weight: 600;
+}
+
+/* ==========================================
+   ESTADO DE CONEXION
+========================================== */
+
+.header-conexion {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 8px;
+}
+
+.header-conexion .badge {
+  font-size: 12px;
+  font-weight: 600;
+
+  border-radius: 7px;
+
+  white-space: nowrap;
+}
+
+/* ==========================================
+   IDENTIFICACION DEL TRABAJADOR
+========================================== */
+
+.header-usuario {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.usuario-badge {
+  display: inline-flex;
+  align-items: center;
+
+  font-size: 12px;
+  font-weight: 500;
+
+  padding: 9px 12px !important;
+
+  border-radius: 8px;
+
+  white-space: nowrap;
+}
+
+.usuario-badge i {
   font-size: 14px;
 }
 
-.dropdown-item:hover {
-  background-color: #E8F5FB;
-  color: #075477;
+/* ==========================================
+   BOTON CERRAR SESION
+========================================== */
+
+.btn-salir {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 13px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  border-radius: 8px;
+
+  transition: all 0.2s ease;
 }
 
-.dropdown-item i {
-  color: #43A6CC;
+.btn-salir:hover {
+  background-color: #ffffff;
+  color: #075878;
 }
 
-.dropdown-toggle::after {
-  margin-left: 8px;
+/* ==========================================
+   BOTON ACCESO DEL PERSONAL
+========================================== */
+
+.btn-acceso {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 14px;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  border-radius: 8px;
 }
 
-/* BOTÓN RESPONSIVE */
+/* ==========================================
+   RESPONSIVE - TABLET
+========================================== */
 
-.navbar-toggler {
-  border-color: rgba(255, 255, 255, 0.4);
+@media (max-width: 991px) {
+
+  .header-contenedor {
+    gap: 12px;
+  }
+
+  .header-izquierda {
+    gap: 15px;
+  }
+
+  .header-derecha {
+    gap: 10px;
+  }
+
+  .navbar-brand {
+    font-size: 19px;
+  }
+
+  .nav-publico-enlace {
+    padding: 9px 12px;
+    font-size: 13px;
+  }
+
 }
 
-.navbar-toggler:focus {
-  box-shadow: none;
+/* ==========================================
+   RESPONSIVE - CELULAR
+========================================== */
+
+@media (max-width: 576px) {
+
+  .navbar {
+    padding: 11px 0;
+  }
+
+  .header-contenedor {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+
+    gap: 12px;
+  }
+
+  .header-izquierda {
+    width: 100%;
+    justify-content: space-between;
+
+    gap: 10px;
+  }
+
+  .header-derecha {
+    width: 100%;
+    justify-content: flex-end;
+
+    gap: 10px;
+  }
+
+  .navbar-brand {
+    font-size: 18px;
+  }
+
+  .navbar-brand i {
+    font-size: 24px !important;
+  }
+
+  .navegacion-paciente {
+    gap: 4px;
+  }
+
+  .nav-publico-enlace {
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .header-conexion .badge {
+    font-size: 11px;
+  }
+
+  .usuario-badge {
+    font-size: 11px;
+    padding: 8px 10px !important;
+  }
+
+  .btn-salir {
+    font-size: 12px;
+    padding: 7px 10px;
+  }
+
+  .btn-acceso {
+    font-size: 12px;
+  }
+
+}
+
+/* ==========================================
+   PERFIL DEL TRABAJADOR
+========================================== */
+
+.usuario-perfil {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  background: #ffffff;
+  border: 1px solid #e0edf4;
+  border-radius: 10px;
+
+  padding: 5px 13px 5px 6px;
+
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+/* AVATAR */
+
+.usuario-avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e7f4fa;
+  color: var(--color-primario, #075878);
+
+  font-size: 17px;
+}
+
+/* INFORMACION */
+
+.usuario-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  line-height: 1.2;
+}
+
+.usuario-nombre {
+  color: #183d53;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.usuario-rol {
+  color: #0878a3;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 /* RESPONSIVE */
 
-@media (max-width: 991px) {
-  .navbar-nav {
-    padding-top: 10px;
+@media (max-width: 576px) {
+
+  .usuario-perfil {
+    padding: 5px 9px 5px 5px;
+    gap: 7px;
   }
 
-  .system-info {
-    padding: 12px 0;
+  .usuario-avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
   }
-}
-/* Menú desplegable */
-.dropdown-menu {
-  background-color: #ffffff !important;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 8px;
-  min-width: 190px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-  z-index: 1050;
-}
 
-/* Opciones del menú */
-.dropdown-menu .dropdown-item {
-  color: #263445 !important;
-  padding: 10px 14px;
-  border-radius: 6px;
-  font-size: 14px;
-  transition: all 0.2s ease;
-}
+  .usuario-nombre {
+    font-size: 11px;
+  }
 
-/* Al pasar el cursor */
-.dropdown-menu .dropdown-item:hover {
-  background-color: #eaf2f7 !important;
-  color: #075779 !important;
-}
+  .usuario-rol {
+    font-size: 10px;
+  }
 
-/* Opción activa */
-.dropdown-menu .dropdown-item.active {
-  background-color: #075779 !important;
-  color: #ffffff !important;
-}
-
-/* Iconos */
-.dropdown-menu .dropdown-item i {
-  margin-right: 8px;
 }

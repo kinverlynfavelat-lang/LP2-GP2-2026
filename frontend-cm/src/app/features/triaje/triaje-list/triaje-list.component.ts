@@ -34,7 +34,10 @@ export class TriajeListComponent implements OnInit {
   guardando = false;
   errorCarga = false;
 
+  // ==========================================
   // DATOS DEL FORMULARIO
+  // ==========================================
+
   temperatura: number | null = null;
   presion: number | null = null;
   frecuenciaCardiaca: number | null = null;
@@ -47,6 +50,50 @@ export class TriajeListComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarCitas();
+  }
+
+  // ==========================================
+  // OBTENER FECHA ACTUAL DE PERU
+  // ==========================================
+
+  private obtenerFechaHoyPeru(): string {
+
+    const partes = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'America/Lima',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).formatToParts(new Date());
+
+    const anio = partes.find(
+      p => p.type === 'year'
+    )?.value;
+
+    const mes = partes.find(
+      p => p.type === 'month'
+    )?.value;
+
+    const dia = partes.find(
+      p => p.type === 'day'
+    )?.value;
+
+    return `${anio}-${mes}-${dia}`;
+  }
+
+  // ==========================================
+  // VERIFICAR SI LA CITA ES DE HOY
+  // ==========================================
+
+  private esCitaDeHoy(cita: Cita): boolean {
+
+    if (!cita.fechaCita) {
+      return false;
+    }
+
+    const fechaCita = String(cita.fechaCita)
+      .substring(0, 10);
+
+    return fechaCita === this.obtenerFechaHoyPeru();
   }
 
   // ==========================================
@@ -100,14 +147,18 @@ export class TriajeListComponent implements OnInit {
       .subscribe({
 
         next: (data) => {
+
           this.citasCriticas = data;
           this.filtrarCitas();
+
         },
 
         error: () => {
+
           this.citasCriticas = [];
           this.mostrarSoloCriticas = false;
           this.filtrarCitas();
+
         }
 
       });
@@ -130,8 +181,11 @@ export class TriajeListComponent implements OnInit {
 
       next: (data) => {
 
-        // Mostrar solo las citas que siguen
-        // pendientes de completar el triaje.
+        // Mostrar solo las citas que:
+        // 1. Esten programadas para HOY.
+        // 2. Tengan estado TRIAJE.
+        // 3. No tengan el triaje completo.
+
         this.citas = data.filter(cita => {
 
           const estado = String(cita.estado ?? '')
@@ -140,11 +194,13 @@ export class TriajeListComponent implements OnInit {
 
           return (
             estado === 'TRIAJE' &&
+            this.esCitaDeHoy(cita) &&
             !this.tieneTriajeCompleto(cita)
           );
 
         });
 
+        // Ordenar por fecha y hora.
         this.citas.sort((a, b) => {
 
           const fechaA =
@@ -154,17 +210,23 @@ export class TriajeListComponent implements OnInit {
             `${b.fechaCita} ${b.horaCita}`;
 
           return fechaA.localeCompare(fechaB);
+
         });
 
         this.filtrarCitas();
+
         this.cargando = false;
 
         this.cargarCriticas();
+
       },
 
       error: (err) => {
 
-        console.error('Error al listar citas:', err);
+        console.error(
+          'Error al listar citas:',
+          err
+        );
 
         this.errorCarga = true;
         this.cargando = false;
@@ -172,6 +234,7 @@ export class TriajeListComponent implements OnInit {
         this.alertService.error(
           'No se pudieron cargar los pacientes pendientes de triaje'
         );
+
       }
 
     });
@@ -234,11 +297,38 @@ export class TriajeListComponent implements OnInit {
 
   seleccionarCita(cita: Cita): void {
 
+    // No permitir triaje fuera del dia programado.
+    if (!this.esCitaDeHoy(cita)) {
+
+      this.alertService.error(
+        'Solo puedes realizar triaje de citas programadas para hoy.'
+      );
+
+      return;
+    }
+
+    const estado = String(cita.estado ?? '')
+      .trim()
+      .toUpperCase();
+
+    if (
+      estado !== 'TRIAJE' ||
+      this.tieneTriajeCompleto(cita)
+    ) {
+
+      this.alertService.error(
+        'Esta cita no tiene un triaje pendiente.'
+      );
+
+      return;
+    }
+
     this.citaSeleccionada = cita;
 
     this.temperatura = cita.temperatura;
     this.presion = cita.presion;
     this.frecuenciaCardiaca = cita.frecuenciaCardiaca;
+
     this.frecuenciaRespiratoria =
       cita.frecuenciaRespiratoria;
 
@@ -313,11 +403,36 @@ export class TriajeListComponent implements OnInit {
       return;
     }
 
-    if (!this.validarValores()) {
+    const cita = this.citaSeleccionada;
+
+    // VALIDACION DE FECHA ANTES DE GUARDAR
+
+    if (!this.esCitaDeHoy(cita)) {
+
+      this.alertService.error(
+        'No puedes registrar triaje fuera de la fecha programada de la cita.'
+      );
+
       return;
     }
 
-    const cita = this.citaSeleccionada;
+    // VALIDACION DE ESTADO
+
+    if (
+      String(cita.estado ?? '').trim().toUpperCase()
+      !== 'TRIAJE'
+    ) {
+
+      this.alertService.error(
+        'La cita no se encuentra en estado TRIAJE.'
+      );
+
+      return;
+    }
+
+    if (!this.validarValores()) {
+      return;
+    }
 
     const datosActualizados: Cita = {
 
@@ -331,6 +446,7 @@ export class TriajeListComponent implements OnInit {
       temperatura: this.temperatura,
       presion: this.presion,
       frecuenciaCardiaca: this.frecuenciaCardiaca,
+
       frecuenciaRespiratoria:
         this.frecuenciaRespiratoria,
 
@@ -372,6 +488,7 @@ export class TriajeListComponent implements OnInit {
         this.cancelar();
         this.guardando = false;
         this.listarCitas();
+
       },
 
       error: (err) => {
@@ -387,6 +504,7 @@ export class TriajeListComponent implements OnInit {
         );
 
         this.guardando = false;
+
       }
 
     });

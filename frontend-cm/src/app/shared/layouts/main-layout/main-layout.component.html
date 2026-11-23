@@ -1,7 +1,279 @@
 <app-header></app-header>
 
-<main class="main-content">
-  <router-outlet></router-outlet>
-</main>
+<div class="layout-contenedor">
+
+  <!-- ====================================== -->
+  <!-- MENU LATERAL - SOLO TRABAJADORES -->
+  <!-- ====================================== -->
+
+  @if (auth.isAuthenticated()) {
+
+  <aside class="menu-lateral" [class.menu-colapsado]="menuColapsado" [class.menu-movil-abierto]="menuMovilAbierto">
+
+    <!-- CABECERA DEL MENU -->
+    <div class="menu-superior">
+
+
+      <div class="menu-identidad">
+
+        <i class="bi bi-grid-1x2-fill"></i>
+
+        <span class="texto-menu">
+
+          @switch (auth.currentRole()) {
+
+          @case ('ADMIN') {
+          Administración
+          }
+
+          @case ('MEDICO') {
+          Panel médico
+          }
+
+          @case ('TRIAJE') {
+          Panel de triaje
+          }
+
+          @case ('FARMACIA') {
+          Panel de farmacia
+          }
+
+          @default {
+          Panel de gestión
+          }
+
+          }
+
+        </span>
+
+      </div>
+
+
+      <button type="button" class="btn-colapsar" (click)="alternarMenu()" title="Expandir o contraer menú"
+        aria-label="Expandir o contraer menú">
+
+        <i class="bi" [class.bi-chevron-left]="!menuColapsado" [class.bi-chevron-right]="menuColapsado">
+        </i>
+
+      </button>
+
+      <button type="button" class="btn-cerrar-movil" (click)="cerrarMenuMovil()" aria-label="Cerrar menú">
+
+        <i class="bi bi-x-lg"></i>
+
+      </button>
+
+    </div>
+
+    <!-- ================================== -->
+    <!-- ADMIN -->
+    <!-- ================================== -->
+
+    @if (auth.currentRole() === 'ADMIN') {
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Atención y pacientes
+      </div>
+
+      <a routerLink="/pacientes" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-people"></i>
+        <span class="texto-menu">Pacientes</span>
+      </a>
+
+      <a routerLink="/citas" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-calendar-check"></i>
+        <span class="texto-menu">Citas médicas</span>
+      </a>
+
+      <a routerLink="/pagos" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-cash-coin"></i>
+        <span class="texto-menu">Pagos</span>
+      </a>
+    </div>
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Recursos clínicos
+      </div>
+
+      <a routerLink="/farmacia" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-capsule-pill"></i>
+        <span class="texto-menu">
+          Gestión de medicamentos
+        </span>
+      </a>
+
+      <a routerLink="/empleados" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-person-workspace"></i>
+        <span class="texto-menu">Empleados</span>
+      </a>
+
+      <a routerLink="/medicos" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-person-badge"></i>
+        <span class="texto-menu">Médicos</span>
+      </a>
+
+      <a routerLink="/horarios-medicos" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-calendar-week"></i>
+        <span class="texto-menu">Horarios médicos</span>
+      </a>
+    </div>
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Sistema
+      </div>
+
+      <a routerLink="/reportes" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-bar-chart-line"></i>
+        <span class="texto-menu">
+          Reportes de gestión
+        </span>
+      </a>
+
+      <a routerLink="/sincronizacion" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-cloud-arrow-up"></i>
+        <span class="texto-menu">
+          Sincronización Offline
+        </span>
+      </a>
+    </div>
+
+    }
+
+    <!-- ================================== -->
+    <!-- MEDICO -->
+    <!-- ================================== -->
+
+    @if (auth.currentRole() === 'MEDICO') {
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Atención médica
+      </div>
+
+      <a routerLink="/atencion" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-clipboard2-pulse"></i>
+        <span class="texto-menu">Atención médica</span>
+      </a>
+
+      <a routerLink="/historial-pacientes" routerLinkActive="menu-activo" class="menu-enlace"
+        (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-journal-medical"></i>
+        <span class="texto-menu">
+          Historial de pacientes
+        </span>
+      </a>
+
+      <a routerLink="/recetas" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-file-earmark-medical"></i>
+        <span class="texto-menu">Recetas médicas</span>
+      </a>
+
+      <a routerLink="/derivaciones" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-arrow-left-right"></i>
+        <span class="texto-menu">
+          Derivaciones médicas
+        </span>
+      </a>
+
+    </div>
+    }
+
+    <!-- ================================== -->
+    <!-- TRIAJE -->
+    <!-- ================================== -->
+
+    @if (auth.currentRole() === 'TRIAJE') {
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Evaluación de pacientes
+      </div>
+
+      <a routerLink="/triaje" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-heart-pulse"></i>
+        <span class="texto-menu">Triaje</span>
+      </a>
+
+    </div>
+    }
+
+    <!-- ================================== -->
+    <!-- FARMACIA -->
+    <!-- ================================== -->
+
+    @if (auth.currentRole() === 'FARMACIA') {
+
+    <div class="menu-seccion">
+      <div class="menu-titulo">
+        Farmacia
+      </div>
+
+      <a routerLink="/recetas" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-file-earmark-medical"></i>
+        <span class="texto-menu">Recetas médicas</span>
+      </a>
+
+      <a routerLink="/farmacia" routerLinkActive="menu-activo" class="menu-enlace" (click)="cerrarMenuMovil()">
+
+        <i class="bi bi-capsule-pill"></i>
+        <span class="texto-menu">
+          Entrega de medicamentos
+        </span>
+      </a>
+
+    </div>
+    }
+
+  </aside>
+
+  <!-- FONDO AL ABRIR MENU EN CELULAR -->
+  @if (menuMovilAbierto) {
+  <button type="button" class="menu-overlay" (click)="cerrarMenuMovil()" aria-label="Cerrar menú lateral">
+  </button>
+  }
+
+  }
+
+  <!-- ====================================== -->
+  <!-- CONTENIDO PRINCIPAL -->
+  <!-- ====================================== -->
+
+  <div class="contenido-pagina">
+
+    @if (auth.isAuthenticated()) {
+
+    <button type="button" class="btn-menu-movil" (click)="abrirMenuMovil()">
+
+      <i class="bi bi-list"></i>
+      Menú
+    </button>
+
+    }
+
+    <main class="main-content">
+      <router-outlet></router-outlet>
+    </main>
+
+  </div>
+
+</div>
 
 <app-footer></app-footer>

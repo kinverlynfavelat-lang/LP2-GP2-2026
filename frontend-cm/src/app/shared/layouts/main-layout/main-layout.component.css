@@ -5,8 +5,325 @@
   min-height: 100vh;
 }
 
-main {
-  flex-grow: 1;
+/* ==========================================
+   ESTRUCTURA PRINCIPAL
+========================================== */
+
+.layout-contenedor {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.contenido-pagina {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.main-content {
+  flex: 1;
   padding: 25px 35px;
   background-color: var(--color-fondo-claro);
+}
+
+/* ==========================================
+   MENU LATERAL
+========================================== */
+
+.menu-lateral {
+  width: 265px;
+  flex-shrink: 0;
+
+  background-color: #075878;
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 17px 12px 24px;
+
+  transition: width 0.25s ease;
+
+  box-shadow: 3px 0 12px rgba(0, 0, 0, 0.06);
+
+  overflow-x: hidden;
+}
+
+.menu-superior {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 8px;
+
+  padding: 7px 10px 17px;
+  margin-bottom: 9px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.menu-identidad {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  white-space: nowrap;
+}
+
+.menu-identidad i {
+  font-size: 19px;
+}
+
+/* ==========================================
+   BOTON CONTRAER
+========================================== */
+
+.btn-colapsar {
+  border: 0;
+  border-radius: 7px;
+
+  color: white;
+  background-color: rgba(255, 255, 255, 0.13);
+
+  width: 29px;
+  height: 29px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-colapsar:hover {
+  background-color: rgba(255, 255, 255, 0.23);
+}
+
+/* ==========================================
+   SECCIONES
+========================================== */
+
+.menu-seccion {
+  padding: 9px 0 13px;
+}
+
+.menu-seccion + .menu-seccion {
+  margin-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.menu-titulo {
+  color: rgba(255, 255, 255, 0.7);
+
+  font-size: 10px;
+  font-weight: 700;
+
+  text-transform: uppercase;
+  letter-spacing: 1px;
+
+  padding: 11px 12px 9px;
+
+  white-space: nowrap;
+}
+
+.menu-enlace {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  color: #e6f4fa;
+  text-decoration: none;
+
+  padding: 12px 13px;
+
+  border-radius: 9px;
+  margin: 3px 0;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+
+  white-space: nowrap;
+}
+
+.menu-enlace i {
+  font-size: 18px;
+  width: 21px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.menu-enlace:hover {
+  background-color: rgba(255, 255, 255, 0.13);
+  color: #ffffff;
+}
+
+.menu-enlace.menu-activo {
+  background-color: #137ca4;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.menu-enlace.menu-activo i {
+  color: #ffffff;
+}
+
+/* ==========================================
+   MENU CONTRAIDO
+========================================== */
+
+.menu-lateral.menu-colapsado {
+  width: 69px;
+}
+
+.menu-colapsado .texto-menu,
+.menu-colapsado .menu-titulo {
+  display: none;
+}
+
+.menu-colapsado .menu-identidad {
+  display: none;
+}
+
+.menu-colapsado .menu-superior {
+  justify-content: center;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.menu-colapsado .menu-enlace {
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.menu-colapsado .menu-enlace i {
+  margin: 0;
+}
+
+.menu-colapsado .menu-seccion {
+  padding-top: 12px;
+}
+
+/* ==========================================
+   CONTROLES PARA CELULAR
+========================================== */
+
+.btn-menu-movil,
+.btn-cerrar-movil {
+  display: none;
+}
+
+.menu-overlay {
+  display: none;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 991px) {
+
+  .main-content {
+    padding: 16px;
+  }
+
+  .menu-lateral,
+  .menu-lateral.menu-colapsado {
+    position: fixed;
+
+    top: 0;
+    left: 0;
+    bottom: 0;
+
+    width: 270px;
+
+    z-index: 1051;
+
+    overflow-y: auto;
+
+    transform: translateX(-100%);
+
+    transition: transform 0.25s ease;
+  }
+
+  .menu-lateral.menu-movil-abierto {
+    transform: translateX(0);
+  }
+
+  .menu-colapsado .texto-menu,
+  .menu-colapsado .menu-titulo,
+  .menu-colapsado .menu-identidad {
+    display: flex;
+  }
+
+  .menu-colapsado .menu-superior {
+    justify-content: space-between;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .menu-colapsado .menu-enlace {
+    justify-content: flex-start;
+    padding: 12px 13px;
+  }
+
+  .btn-colapsar {
+    display: none;
+  }
+
+  .btn-cerrar-movil {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    color: white;
+
+    border: 0;
+
+    font-size: 20px;
+    cursor: pointer;
+  }
+
+  .btn-menu-movil {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    margin: 14px 16px 0;
+    padding: 8px 13px;
+
+    align-self: flex-start;
+
+    color: #075878;
+    background: #ffffff;
+
+    border: 1px solid #c9dce5;
+    border-radius: 8px;
+
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .menu-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    z-index: 1050;
+
+    border: 0;
+    background: rgba(0, 0, 0, 0.45);
+  }
+
 }
