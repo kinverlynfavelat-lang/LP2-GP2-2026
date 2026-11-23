@@ -275,16 +275,19 @@ public class SecurityConfig {
                                 "/api/v1/recetas/**"
                         ).hasAuthority("MEDICO")
 
-                        // ==========================================
-                        // 8. DERIVACIONES MEDICAS
-                        // ==========================================
 
-                        .requestMatchers(
-                                "/api/v1/derivaciones",
-                                "/api/v1/derivaciones/**"
-                        ).hasAuthority("MEDICO")
+// ==========================================
+// 8. DERIVACIONES MEDICAS
+// SOLO ADMIN
+// ==========================================
 
-                        // ==========================================
+                                .requestMatchers(
+                                        "/api/v1/derivaciones",
+                                        "/api/v1/derivaciones/**"
+                                ).hasAuthority("ADMIN")
+
+
+                                // ==========================================
                         // 9. FARMACIA
                         // ==========================================
 

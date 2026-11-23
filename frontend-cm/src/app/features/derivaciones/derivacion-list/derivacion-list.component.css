@@ -676,3 +676,57 @@
   }
 
 }
+
+/* BOTONES DE ACCIONES */
+
+.acciones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.acciones .btn-accion {
+  width: 38px;
+  height: 36px;
+  padding: 0;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 7px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* VER Y EDITAR */
+
+.acciones .ver,
+.acciones .editar {
+  background-color: #075878;
+  border: 1px solid #075878;
+  color: #ffffff;
+}
+
+.acciones .ver:hover,
+.acciones .editar:hover {
+  background-color: #08769c;
+  border-color: #08769c;
+  color: #ffffff;
+}
+
+/* ELIMINAR */
+
+.acciones .eliminar {
+  background-color: #fff0f1;
+  border: 1px solid #f3c8cd;
+  color: #c83b4b;
+}
+
+.acciones .eliminar:hover {
+  background-color: #fbe2e5;
+  border-color: #e9a4ad;
+  color: #a92334;
+}

@@ -400,7 +400,7 @@ export const routes: Routes = [
 
       // ==========================================
       // DERIVACIONES MEDICAS
-      // SOLO MEDICO
+      // SOLO ADMIN
       // ==========================================
 
       {
@@ -408,7 +408,7 @@ export const routes: Routes = [
         component: DerivacionListComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['MEDICO']
+          roles: ['ADMIN']
         }
       },
 
@@ -417,7 +417,7 @@ export const routes: Routes = [
         component: DerivacionFormComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['MEDICO']
+          roles: ['ADMIN']
         }
       },
 
@@ -426,9 +426,10 @@ export const routes: Routes = [
         component: DerivacionFormComponent,
         canActivate: [authGuard],
         data: {
-          roles: ['MEDICO']
+          roles: ['ADMIN']
         }
       },
+
 
       // ==========================================
       // FARMACIA

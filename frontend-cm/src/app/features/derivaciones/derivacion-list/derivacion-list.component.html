@@ -1,4 +1,3 @@
-
 <div class="container-fluid py-4 pagina-derivaciones">
 
   <!-- ENCABEZADO -->
@@ -14,10 +13,7 @@
       </p>
     </div>
 
-    <button
-      type="button"
-      class="btn btn-primary"
-      (click)="nuevaDerivacion()">
+    <button type="button" class="btn btn-primary" (click)="nuevaDerivacion()">
 
       <i class="bi bi-plus-circle me-2"></i>
       Nueva derivación
@@ -102,28 +98,18 @@
         <div class="filtros">
 
           <!-- BUSCADOR -->
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Buscar derivación..."
-            aria-label="Buscar derivaciones"
-            [(ngModel)]="busqueda"
-            (ngModelChange)="filtrarDerivaciones()">
+          <input type="text" class="form-control" placeholder="Buscar derivación..." aria-label="Buscar derivaciones"
+            [(ngModel)]="busqueda" (ngModelChange)="filtrarDerivaciones()">
 
           <!-- FILTRO DE ESTADOS -->
-          <select
-            class="form-select"
-            aria-label="Filtrar por estado"
-            [(ngModel)]="filtroEstado"
+          <select class="form-select" aria-label="Filtrar por estado" [(ngModel)]="filtroEstado"
             (ngModelChange)="filtrarDerivaciones()">
 
             <option value="">
               Todos los estados
             </option>
 
-            <option
-              *ngFor="let estado of estadosDisponibles"
-              [value]="estado">
+            <option *ngFor="let estado of estadosDisponibles" [value]="estado">
 
               {{ estado }}
 
@@ -132,11 +118,7 @@
           </select>
 
           <!-- ACTUALIZAR -->
-          <button
-            type="button"
-            class="btn btn-actualizar"
-            [disabled]="cargando"
-            (click)="cargarDerivaciones()">
+          <button type="button" class="btn btn-actualizar" [disabled]="cargando" (click)="cargarDerivaciones()">
 
             <i class="bi bi-arrow-clockwise me-1"></i>
             Actualizar
@@ -152,13 +134,9 @@
     <div class="card-body p-0">
 
       <!-- CARGANDO -->
-      <div
-        class="text-center p-5"
-        *ngIf="cargando">
+      <div class="text-center p-5" *ngIf="cargando">
 
-        <div
-          class="spinner-border text-primary mb-3"
-          role="status">
+        <div class="spinner-border text-primary mb-3" role="status">
         </div>
 
         <p class="text-muted mb-0">
@@ -168,9 +146,7 @@
       </div>
 
       <!-- TABLA -->
-      <div
-        class="table-responsive"
-        *ngIf="!cargando">
+      <div class="table-responsive" *ngIf="!cargando">
 
         <table class="table table-hover align-middle mb-0">
 
@@ -188,8 +164,7 @@
 
           <tbody>
 
-            <tr
-              *ngFor="let derivacion of derivacionesFiltradas; let i = index">
+            <tr *ngFor="let derivacion of derivacionesFiltradas; let i = index">
 
               <!-- NUMERO -->
               <td>
@@ -203,9 +178,7 @@
 
               <!-- MOTIVO -->
               <td>
-                <span
-                  class="texto-tabla"
-                  [title]="derivacion.motivo">
+                <span class="texto-tabla" [title]="derivacion.motivo">
 
                   {{ derivacion.motivo }}
 
@@ -225,9 +198,7 @@
               <!-- ESTADO -->
               <td>
 
-                <span
-                  class="badge-estado"
-                  [ngClass]="{
+                <span class="badge-estado" [ngClass]="{
                     'estado-pendiente': derivacion.estado === 'PENDIENTE',
                     'estado-completada': derivacion.estado === 'REALIZADA',
                     'estado-cancelada': derivacion.estado === 'CANCELADA'
@@ -239,38 +210,33 @@
 
               </td>
 
+
               <!-- ACCIONES -->
               <td>
 
                 <div class="acciones">
 
-                  <button
-                    type="button"
-                    class="btn-accion ver"
-                    title="Ver derivación"
+                  <!-- VER DERIVACION -->
+                  <button type="button" class="btn-accion ver" title="Ver derivación" aria-label="Ver derivación"
                     (click)="verDerivacion(derivacion)">
 
-                    Ver
+                    <i class="bi bi-eye"></i>
 
                   </button>
 
-                  <button
-                    type="button"
-                    class="btn-accion editar"
-                    title="Editar derivación"
-                    (click)="editarDerivacion(derivacion.idDerivacion)">
+                  <!-- EDITAR DERIVACION -->
+                  <button type="button" class="btn-accion editar" title="Editar derivación"
+                    aria-label="Editar derivación" (click)="editarDerivacion(derivacion.idDerivacion)">
 
-                    Editar
+                    <i class="bi bi-pencil-square"></i>
 
                   </button>
 
-                  <button
-                    type="button"
-                    class="btn-accion eliminar"
-                    title="Eliminar derivación"
-                    (click)="solicitarEliminar(derivacion)">
+                  <!-- ELIMINAR DERIVACION -->
+                  <button type="button" class="btn-accion eliminar" title="Eliminar derivación"
+                    aria-label="Eliminar derivación" (click)="solicitarEliminar(derivacion)">
 
-                    Eliminar
+                    <i class="bi bi-trash3"></i>
 
                   </button>
 
@@ -279,6 +245,7 @@
               </td>
 
             </tr>
+
 
             <!-- SIN RESULTADOS -->
             <tr *ngIf="derivacionesFiltradas.length === 0">
@@ -315,14 +282,9 @@
   <!-- MODAL: DETALLE DE DERIVACION -->
   <!-- ========================================== -->
 
-  <div
-    class="modal-fondo"
-    *ngIf="derivacionSeleccionada">
+  <div class="modal-fondo" *ngIf="derivacionSeleccionada">
 
-    <div
-      class="modal-contenido modal-detalle"
-      role="dialog"
-      aria-modal="true"
+    <div class="modal-contenido modal-detalle" role="dialog" aria-modal="true"
       aria-labelledby="tituloDetalleDerivacion">
 
       <!-- CABECERA -->
@@ -340,11 +302,7 @@
 
         </div>
 
-        <button
-          type="button"
-          class="cerrar"
-          aria-label="Cerrar detalle"
-          (click)="cerrarDetalle()">
+        <button type="button" class="cerrar" aria-label="Cerrar detalle" (click)="cerrarDetalle()">
 
           <i class="bi bi-x-lg"></i>
 
@@ -387,9 +345,7 @@
 
             <div>
 
-              <span
-                class="badge-estado"
-                [ngClass]="{
+              <span class="badge-estado" [ngClass]="{
                   'estado-pendiente': derivacionSeleccionada.estado === 'PENDIENTE',
                   'estado-completada': derivacionSeleccionada.estado === 'REALIZADA',
                   'estado-cancelada': derivacionSeleccionada.estado === 'CANCELADA'
@@ -443,19 +399,13 @@
       <!-- PIE -->
       <div class="modal-pie">
 
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          (click)="cerrarDetalle()">
+        <button type="button" class="btn btn-outline-secondary" (click)="cerrarDetalle()">
 
           Cerrar
 
         </button>
 
-        <button
-          type="button"
-          class="btn btn-primary"
-          (click)="editarDerivacion(derivacionSeleccionada.idDerivacion)">
+        <button type="button" class="btn btn-primary" (click)="editarDerivacion(derivacionSeleccionada.idDerivacion)">
 
           <i class="bi bi-pencil-square me-2"></i>
           Editar derivación
@@ -472,14 +422,9 @@
   <!-- MODAL: ELIMINAR DERIVACION -->
   <!-- ========================================== -->
 
-  <div
-    class="modal-fondo"
-    *ngIf="derivacionEliminar">
+  <div class="modal-fondo" *ngIf="derivacionEliminar">
 
-    <div
-      class="modal-contenido modal-pequeno"
-      role="dialog"
-      aria-modal="true"
+    <div class="modal-contenido modal-pequeno" role="dialog" aria-modal="true"
       aria-labelledby="tituloEliminarDerivacion">
 
       <div class="modal-cabecera">
@@ -507,21 +452,13 @@
 
       <div class="modal-pie">
 
-        <button
-          type="button"
-          class="btn btn-outline-secondary"
-          [disabled]="eliminando"
-          (click)="cancelarEliminar()">
+        <button type="button" class="btn btn-outline-secondary" [disabled]="eliminando" (click)="cancelarEliminar()">
 
           Cancelar
 
         </button>
 
-        <button
-          type="button"
-          class="btn btn-danger"
-          [disabled]="eliminando"
-          (click)="confirmarEliminar()">
+        <button type="button" class="btn btn-danger" [disabled]="eliminando" (click)="confirmarEliminar()">
 
           {{ eliminando ? 'Eliminando...' : 'Sí, eliminar' }}
 

@@ -141,7 +141,7 @@ export class DerivacionFormComponent implements OnInit {
 
     // El backend identifica al medico mediante JWT.
     // Consultamos solamente sus citas asignadas.
-    this.citaService.getMisCitas().subscribe({
+    this.citaService.getCitas().subscribe({
       next: (citas) => {
         this.citas = citas ?? [];
 
