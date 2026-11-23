@@ -483,6 +483,7 @@ export class EmpleadoListComponent implements OnInit {
       next: () => {
 
         this.creandoAcceso = false;
+        this.listEmpleados();
 
         Swal.fire({
           icon: 'success',
