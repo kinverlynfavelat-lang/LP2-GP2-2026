@@ -301,13 +301,19 @@ public class SecurityConfig {
                                 "FARMACIA"
                         )
 
-                        // ADMINISTRAR MEDICAMENTOS
-                        .requestMatchers(
-                                "/api/v1/medicamentos",
-                                "/api/v1/medicamentos/**"
-                        ).hasAuthority("FARMACIA")
 
-                        // DETALLES DE MEDICAMENTOS
+                                // ==========================================
+                                // GESTION DE MEDICAMENTOS
+                                // SOLO ADMIN
+                                // ==========================================
+
+                                .requestMatchers(
+                                        "/api/v1/medicamentos",
+                                        "/api/v1/medicamentos/**"
+                                ).hasAuthority("ADMIN")
+
+
+                                // DETALLES DE MEDICAMENTOS
                         .requestMatchers(
                                 "/api/v1/detalle-medicamentos",
                                 "/api/v1/detalle-medicamentos/**"
@@ -431,10 +437,12 @@ public class SecurityConfig {
         CorsConfiguration configuration =
                 new CorsConfiguration();
 
-        configuration.setAllowedOrigins(
-                List.of("http://localhost:4200")
+        configuration.setAllowedOriginPatterns(
+                List.of(
+                        "http://localhost:*",
+                        "https://*.trycloudflare.com"
+                )
         );
-
         configuration.setAllowedMethods(
                 List.of(
                         "GET",

@@ -1,4 +1,3 @@
-
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
@@ -17,6 +16,7 @@ import {
   ILoginResponse,
   RolUsuario
 } from '../interfaces/auth.interface';
+import { CatalogCacheService } from '../offline/catalog-cache.service';
 
 const TOKEN_KEY = 'token_centro_medico';
 const USER_KEY = 'cm_user_name';
@@ -31,6 +31,7 @@ export class AuthService {
 
   private http = inject(HttpClient);
   private router = inject(Router);
+  private catalogCache = inject(CatalogCacheService);
 
   private apiUrl = '/api/v1/auth';
 
@@ -123,6 +124,9 @@ export class AuthService {
             this.currentRole.set(
               response.rol
             );
+
+            // Precargar catálogos offline automáticamente al iniciar sesión
+            this.catalogCache.sincronizarCatalogos();
 
             // ======================================
             // IMPORTANTE:

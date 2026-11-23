@@ -39,8 +39,7 @@ export class EmpleadoListComponent implements OnInit {
   private http = inject(HttpClient);
 
   // Endpoint del registro protegido para ADMIN
-  private readonly registroUrl =
-    'http://localhost:8080/centro-medico/api/v1/auth/registro';
+private readonly registroUrl = '/api/v1/auth/registro';
 
   empleados: EmpleadoVista[] = [];
   empleadosFiltrados: EmpleadoVista[] = [];
@@ -483,6 +482,7 @@ export class EmpleadoListComponent implements OnInit {
       next: () => {
 
         this.creandoAcceso = false;
+        this.listEmpleados();
 
         Swal.fire({
           icon: 'success',

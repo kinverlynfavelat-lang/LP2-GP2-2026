@@ -80,7 +80,7 @@ export class OfflineOperationsService {
       await this.db.syncQueue.add({
         entityType: 'CITA',
         method: 'POST',
-        endpoint: 'api/v1/citas',
+        endpoint: '/api/v1/citas',
         payload: cita,
         localUuid,
         resumen,
@@ -131,7 +131,7 @@ export class OfflineOperationsService {
       await this.db.syncQueue.add({
         entityType: 'ATENCION',
         method: 'PUT',
-        endpoint: `api/v1/citas/${idCita}`,
+        endpoint: `/api/v1/citas/${idCita}`,
         payload: datosCita,
         localUuid,
         resumen,

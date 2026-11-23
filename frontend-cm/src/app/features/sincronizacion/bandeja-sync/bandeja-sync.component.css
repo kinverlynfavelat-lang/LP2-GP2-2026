@@ -1,14 +1,805 @@
-.text-upeu-primary {
-  color: #1a5276;
+
+/* ==========================================
+   UPeU SALUD
+   MODO OFFLINE Y SINCRONIZACION
+========================================== */
+
+:host {
+  --sync-primary: var(--color-primario, #075878);
+  --sync-primary-hover: #08729a;
+  --sync-light: #e7f4fa;
+  --sync-border: #dbe8ef;
+  --sync-text: #24485e;
+  --sync-muted: #71869a;
+}
+
+/* ==========================================
+   CONTENEDOR PRINCIPAL
+========================================== */
+
+.sync-container {
+  width: 100%;
+}
+
+/* ==========================================
+   ENCABEZADO
+========================================== */
+
+.sync-encabezado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.sync-encabezado-info {
+  flex: 1;
+  min-width: 250px;
+}
+
+.sync-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  margin: 0 0 7px;
+
+  color: var(--sync-primary);
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.sync-titulo i {
+  font-size: 27px;
+}
+
+.sync-subtitulo {
+  margin: 0;
+  color: var(--sync-muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* ==========================================
+   ESTADO DE CONEXION
+========================================== */
+
+.sync-conexion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 9px 14px;
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sync-online {
+  background: #e5f4eb;
+  color: #16804c;
+  border: 1px solid #cbe7d7;
+}
+
+.sync-offline {
+  background: #fce9eb;
+  color: #b92d3e;
+  border: 1px solid #f3c6cc;
+}
+
+/* ==========================================
+   BARRA DE ACCIONES
+========================================== */
+
+.sync-barra-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  margin-bottom: 24px;
+  padding: 15px 18px;
+
+  background: #ffffff;
+  border: 1px solid var(--sync-border);
+  border-radius: 12px;
+}
+
+.sync-barra-texto {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  color: var(--sync-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sync-barra-texto i {
+  color: var(--sync-primary);
+  font-size: 19px;
+}
+
+.sync-botones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+/* ==========================================
+   BOTONES INSTITUCIONALES
+========================================== */
+
+.sync-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 8px 13px;
+
+  border-radius: 8px;
+
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+
+  transition: all 0.2s ease;
+}
+
+.sync-btn-principal {
+  background: var(--sync-primary);
+  border: 1px solid var(--sync-primary);
+  color: #ffffff;
+}
+
+.sync-btn-principal:hover:not(:disabled) {
+  background: var(--sync-primary-hover);
+  border-color: var(--sync-primary-hover);
+  color: #ffffff;
+}
+
+.sync-btn-secundario {
+  background: #ffffff;
+  border: 1px solid #b9d5e3;
+  color: var(--sync-primary);
+}
+
+.sync-btn-secundario:hover:not(:disabled) {
+  background: var(--sync-light);
+  border-color: var(--sync-primary);
+  color: var(--sync-primary);
+}
+
+.sync-btn-cancelar {
+  background: #ffffff;
+  border: 1px solid #cfdce5;
+  color: #60798a;
+}
+
+.sync-btn-cancelar:hover {
+  background: #f1f5f8;
+  color: #395569;
+}
+
+.sync-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ==========================================
+   TARJETAS DE CACHE
+========================================== */
+
+.sync-stat-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 15px;
+
+  height: 100%;
+  min-height: 132px;
+
+  padding: 19px 20px;
+
+  background: #ffffff;
+  border: 1px solid var(--sync-border);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 10px rgba(7, 88, 120, 0.04);
+}
+
+.sync-stat-contenido {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.sync-stat-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+
+  background: var(--sync-light);
+  color: var(--sync-primary);
+
+  border-radius: 11px;
+  font-size: 23px;
+}
+
+.sync-stat-info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.sync-stat-etiqueta {
+  color: var(--sync-muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.sync-stat-numero {
+  color: var(--sync-primary);
+  font-size: 29px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.sync-stat-pie {
+  color: #8a9ba9;
+  font-size: 11px;
+}
+
+/* ==========================================
+   PANELES
+========================================== */
+
+.sync-panel {
+  overflow: hidden;
+
+  background: #ffffff;
+  border: 1px solid var(--sync-border);
+  border-radius: 12px;
+
+  box-shadow: 0 3px 12px rgba(7, 88, 120, 0.04);
+}
+
+.sync-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding: 17px 20px;
+
+  background: #f4f9fc;
+  border-bottom: 1px solid var(--sync-border);
+}
+
+.sync-panel-titulo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sync-panel-titulo h5 {
+  margin: 0 0 4px;
+
+  color: var(--sync-primary);
+  font-size: 16px;
   font-weight: 700;
 }
 
-.cache-card {
-  background: #f8fafc;
+.sync-panel-titulo p {
+  margin: 0;
+  color: var(--sync-muted);
+  font-size: 11px;
+}
+
+.sync-panel-icono {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 39px;
+  height: 39px;
+  flex-shrink: 0;
+
+  background: #dfeff7;
+  color: var(--sync-primary);
+
+  border-radius: 9px;
+  font-size: 18px;
+}
+
+.sync-panel-body {
+  padding: 20px;
+}
+
+.sync-sin-padding {
+  padding: 0;
+}
+
+/* ==========================================
+   CONTADORES DE PANELES
+========================================== */
+
+.sync-contador {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 6px 11px;
+
+  background: #e5eef3;
+  border: 1px solid #d4e2eb;
+  border-radius: 7px;
+
+  color: var(--sync-primary);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sync-contador-alerta {
+  background: #fce7e9;
+  color: #be3043;
+  border-color: #f1c5cc;
+}
+
+.sync-contador-pendiente {
+  background: #fff3db;
+  color: #986100;
+  border-color: #f3dfaa;
+}
+
+/* ==========================================
+   CONFLICTOS ACTIVOS
+========================================== */
+
+.sync-panel-alerta {
+  border-color: #f0c4ca;
+}
+
+.sync-panel-alerta .sync-panel-header {
+  background: #fff5f6;
+  border-bottom-color: #f0d5d9;
+}
+
+.sync-icono-alerta {
+  background: #fce7e9;
+  color: #be3043;
+}
+
+/* ==========================================
+   ESTADO VACIO
+========================================== */
+
+.sync-estado-vacio {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  padding: 8px 2px;
+}
+
+.sync-estado-vacio > i {
+  flex-shrink: 0;
+  color: #19905a;
+  font-size: 24px;
+}
+
+.sync-estado-vacio strong {
+  display: block;
+  margin-bottom: 3px;
+
+  color: #31586d;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.sync-estado-vacio p {
+  margin: 0;
+
+  color: var(--sync-muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* ==========================================
+   LISTADOS DE CONFLICTOS Y ERRORES
+========================================== */
+
+.sync-listado {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sync-conflicto-item {
+  padding: 17px;
+
+  background: #fffafa;
+  border: 1px solid #f1d2d6;
   border-radius: 10px;
 }
 
-.conflicto-item {
-  background-color: #fff5f5;
-  border: 1px solid #fecaca;
+.sync-conflicto-superior {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.sync-conflicto-info {
+  flex: 1;
+  min-width: 230px;
+}
+
+.sync-etiqueta-conflicto {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  margin-bottom: 9px;
+  padding: 5px 9px;
+
+  background: #fde8ea;
+  color: #b92d3e;
+
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.sync-conflicto-info h6,
+.sync-error-info h6 {
+  margin-bottom: 7px;
+
+  color: var(--sync-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.sync-mensaje-error {
+  margin-bottom: 9px;
+
+  color: #b92d3e;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.sync-conflicto-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  color: #64798a;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.sync-conflicto-detalle code {
+  color: var(--sync-primary);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+.sync-conflicto-acciones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ==========================================
+   BOTON ELIMINAR / DESCARTAR
+========================================== */
+
+.sync-btn-eliminar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 38px;
+  height: 38px;
+  padding: 0;
+
+  background: #fff0f1;
+  color: #c83b4b;
+
+  border: 1px solid #f3c8cd;
+  border-radius: 8px;
+
+  font-size: 15px;
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.sync-btn-eliminar:hover {
+  background: #fbe2e5;
+  border-color: #e9a4ad;
+  color: #a92334;
+}
+
+/* ==========================================
+   FORMULARIO DE REUBICACION
+========================================== */
+
+.sync-reubicacion {
+  margin-top: 18px;
+  padding-top: 18px;
+
+  border-top: 1px solid #f0d4d8;
+}
+
+.sync-reubicacion-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  margin-bottom: 15px;
+
+  color: var(--sync-primary);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.sync-reubicacion .form-label {
+  color: var(--sync-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.sync-reubicacion .form-control {
+  min-height: 39px;
+
+  border-color: #d4e3ec;
+  border-radius: 8px;
+
+  font-size: 13px;
+}
+
+.sync-reubicacion .form-control:focus {
+  border-color: #57a9cd;
+  box-shadow: 0 0 0 3px rgba(7, 88, 120, 0.1);
+}
+
+.sync-reubicacion-botones {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ==========================================
+   TABLA DE OPERACIONES FIFO
+========================================== */
+
+.sync-tabla {
+  width: 100%;
+  font-size: 12px;
+}
+
+.sync-tabla thead th {
+  padding: 14px 16px;
+
+  background: #e8f5fb;
+  color: var(--sync-primary);
+
+  border-bottom: 1px solid #c9e3ef;
+
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sync-tabla tbody td {
+  padding: 13px 16px;
+
+  color: #3e5d70;
+  border-bottom-color: #e8eef2;
+}
+
+.sync-tabla tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.sync-numero-fila {
+  font-weight: 600;
+  color: var(--sync-primary);
+}
+
+.sync-tipo-operacion {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  background: var(--sync-light);
+  border: 1px solid #c9e5f2;
+  border-radius: 6px;
+
+  color: var(--sync-primary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.sync-detalle-operacion {
+  min-width: 190px;
+}
+
+.sync-badge-pendiente {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+
+  padding: 6px 9px;
+
+  background: #fff3db;
+  border: 1px solid #f3dfaa;
+  border-radius: 6px;
+
+  color: #986100;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ==========================================
+   ERRORES PARA REVISION
+========================================== */
+
+.sync-panel-advertencia {
+  border-color: #ecdba8;
+}
+
+.sync-panel-advertencia .sync-panel-header {
+  background: #fffbf1;
+  border-bottom-color: #f1e2b8;
+}
+
+.sync-icono-advertencia {
+  background: #fff1cf;
+  color: #a36b00;
+}
+
+.sync-error-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  padding: 15px;
+
+  background: #fffdfa;
+  border: 1px solid #f0e2c4;
+  border-radius: 9px;
+}
+
+.sync-error-info {
+  flex: 1;
+  min-width: 220px;
+}
+
+.sync-error-info .sync-tipo-operacion {
+  margin-bottom: 9px;
+}
+
+/* ==========================================
+   ACCESIBILIDAD
+========================================== */
+
+.sync-btn:focus-visible,
+.sync-btn-eliminar:focus-visible {
+  outline: 3px solid #57a9cd;
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 768px) {
+
+  .sync-titulo {
+    font-size: 22px;
+  }
+
+  .sync-titulo i {
+    font-size: 23px;
+  }
+
+  .sync-barra-acciones {
+    align-items: stretch;
+    padding: 14px;
+  }
+
+  .sync-barra-texto {
+    width: 100%;
+  }
+
+  .sync-botones {
+    width: 100%;
+  }
+
+  .sync-botones .sync-btn {
+    flex: 1;
+  }
+
+  .sync-panel-header {
+    padding: 14px;
+  }
+
+  .sync-panel-body {
+    padding: 15px;
+  }
+
+  .sync-sin-padding {
+    padding: 0;
+  }
+
+  .sync-stat-card {
+    min-height: 110px;
+  }
+
+  .sync-conflicto-acciones {
+    width: 100%;
+  }
+
+}
+
+@media (max-width: 480px) {
+
+  .sync-titulo {
+    font-size: 20px;
+  }
+
+  .sync-botones {
+    flex-direction: column;
+  }
+
+  .sync-botones .sync-btn {
+    width: 100%;
+  }
+
+  .sync-panel-titulo h5 {
+    font-size: 14px;
+  }
+
+  .sync-panel-titulo p {
+    font-size: 10px;
+  }
+
+  .sync-contador {
+    font-size: 10px;
+  }
+
+  .sync-reubicacion-botones {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .sync-reubicacion-botones .sync-btn {
+    width: 100%;
+  }
+
 }

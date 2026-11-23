@@ -509,3 +509,41 @@
   }
 
 }
+
+/* ==========================================
+   ROLES DEL PERSONAL - UPeU SALUD
+========================================== */
+
+.rol-empleado {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  padding: 7px 11px;
+
+  background-color: #e7f4fa;
+  color: var(--color-primario, #075878);
+
+  border: 1px solid #c9e5f2;
+  border-radius: 7px;
+
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+.rol-empleado i {
+  font-size: 13px;
+}
+
+/* SIN ACCESO */
+
+.rol-sin-acceso {
+  background-color: #f1f5f8;
+  color: #64748b;
+  border-color: #e0e6eb;
+  font-weight: 500;
+}

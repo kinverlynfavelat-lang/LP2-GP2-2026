@@ -65,6 +65,9 @@ export class SyncService {
         }
 
         let endpoint = item.endpoint;
+        if (!endpoint.startsWith('/')) {
+          endpoint = '/' + endpoint;
+        }
         if (item.dependsOnUuid && this.uuidToServerId.has(item.dependsOnUuid)) {
           endpoint = endpoint.replace(item.dependsOnUuid, String(this.uuidToServerId.get(item.dependsOnUuid)));
         }

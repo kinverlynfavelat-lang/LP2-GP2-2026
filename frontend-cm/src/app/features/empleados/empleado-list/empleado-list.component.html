@@ -1,4 +1,3 @@
-
 <div class="container empleados-container mt-4 mb-5">
 
   <!-- ========================================== -->
@@ -19,9 +18,7 @@
 
     </div>
 
-    <a
-      routerLink="/empleados/nuevo"
-      class="btn btn-nuevo">
+    <a routerLink="/empleados/nuevo" class="btn btn-nuevo">
 
       <i class="bi bi-plus-circle me-2"></i>
       Nuevo empleado
@@ -53,12 +50,8 @@
 
         <i class="bi bi-search search-icon"></i>
 
-        <input
-          type="text"
-          class="form-control search-input"
-          placeholder="Buscar por DNI, nombres o apellidos..."
-          aria-label="Buscar empleados por DNI, nombres o apellidos"
-          [(ngModel)]="busqueda"
+        <input type="text" class="form-control search-input" placeholder="Buscar por DNI, nombres o apellidos..."
+          aria-label="Buscar empleados por DNI, nombres o apellidos" [(ngModel)]="busqueda"
           (input)="filtrarEmpleados()">
 
       </div>
@@ -73,270 +66,307 @@
 
   @if (cargando) {
 
-    <div class="estado-vacio">
+  <div class="estado-vacio">
 
-      <div
-        class="spinner-border text-primary mb-3"
-        role="status">
-      </div>
-
-      <p>Cargando empleados...</p>
-
+    <div class="spinner-border text-primary mb-3" role="status">
     </div>
+
+    <p>Cargando empleados...</p>
+
+  </div>
 
   } @else if (errorCarga) {
 
-    <div class="estado-vacio">
+  <div class="estado-vacio">
 
-      <i class="bi bi-exclamation-circle icono-vacio"></i>
+    <i class="bi bi-exclamation-circle icono-vacio"></i>
 
-      <h6>No se pudo cargar la información</h6>
+    <h6>No se pudo cargar la información</h6>
 
-      <p>Intenta consultar nuevamente el listado.</p>
+    <p>Intenta consultar nuevamente el listado.</p>
 
-      <button
-        type="button"
-        class="btn btn-nuevo mt-3"
-        (click)="listEmpleados()">
+    <button type="button" class="btn btn-nuevo mt-3" (click)="listEmpleados()">
 
-        <i class="bi bi-arrow-clockwise me-2"></i>
-        Reintentar
+      <i class="bi bi-arrow-clockwise me-2"></i>
+      Reintentar
 
-      </button>
+    </button>
 
-    </div>
+  </div>
 
   } @else {
 
-    <!-- ========================================== -->
-    <!-- TABLA DE EMPLEADOS -->
-    <!-- ========================================== -->
+  <!-- ========================================== -->
+  <!-- TABLA DE EMPLEADOS -->
+  <!-- ========================================== -->
 
-    <div class="tabla-empleados table-responsive">
+  <div class="tabla-empleados table-responsive">
 
-      <table class="table table-hover align-middle mb-0">
+    <table class="table table-hover align-middle mb-0">
 
-        <thead>
+      <thead>
 
-          <tr>
-            <th>N.º</th>
-            <th>DNI</th>
-            <th>Empleado</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Fecha de ingreso</th>
-            <th>Sueldo</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th class="text-center">Acciones</th>
-          </tr>
+        <tr>
+          <th>N.º</th>
+          <th>DNI</th>
+          <th>Empleado</th>
+          <th>Correo</th>
+          <th>Teléfono</th>
+          <th>Fecha de ingreso</th>
+          <th>Sueldo</th>
+          <th>Rol</th>
+          <th>Estado</th>
+          <th class="text-center">Acciones</th>
+        </tr>
 
-        </thead>
+      </thead>
 
-        <tbody>
+      <tbody>
 
-          @for (
-            e of empleadosFiltrados;
-            track e.idPersona;
-            let i = $index
-          ) {
+        @for (
+        e of empleadosFiltrados;
+        track e.idPersona;
+        let i = $index
+        ) {
 
-            <tr>
+        <tr>
 
-              <!-- NUMERO -->
-              <td>
-                <span class="numero-fila">
-                  {{ i + 1 }}
-                </span>
-              </td>
+          <!-- NUMERO -->
+          <td>
+            <span class="numero-fila">
+              {{ i + 1 }}
+            </span>
+          </td>
 
-              <!-- DNI -->
-              <td>
-                <span class="dni-empleado">
-                  {{ e.dni || '-' }}
-                </span>
-              </td>
+          <!-- DNI -->
+          <td>
+            <span class="dni-empleado">
+              {{ e.dni || '-' }}
+            </span>
+          </td>
 
-              <!-- EMPLEADO -->
-              <td>
-                <span class="nombre-empleado">
-                  {{ e.nombres }} {{ e.apellidos }}
-                </span>
-              </td>
+          <!-- EMPLEADO -->
+          <td>
+            <span class="nombre-empleado">
+              {{ e.nombres }} {{ e.apellidos }}
+            </span>
+          </td>
 
-              <!-- CORREO -->
-              <td>
-                <span class="correo-empleado">
-                  {{ e.correo || '-' }}
-                </span>
-              </td>
+          <!-- CORREO -->
+          <td>
+            <span class="correo-empleado">
+              {{ e.correo || '-' }}
+            </span>
+          </td>
 
-              <!-- TELEFONO -->
-              <td>
-                <span class="telefono-empleado">
-                  {{ e.telefono || '-' }}
-                </span>
-              </td>
+          <!-- TELEFONO -->
+          <td>
+            <span class="telefono-empleado">
+              {{ e.telefono || '-' }}
+            </span>
+          </td>
 
-              <!-- FECHA -->
-              <td>
-                <span class="fecha-ingreso">
-                  {{ formatearFecha(e.fechaIngreso) }}
-                </span>
-              </td>
+          <!-- FECHA -->
+          <td>
+            <span class="fecha-ingreso">
+              {{ formatearFecha(e.fechaIngreso) }}
+            </span>
+          </td>
 
-              <!-- SUELDO -->
-              <td>
-                <span class="sueldo-empleado">
-                  S/ {{ e.sueldo | number:'1.2-2' }}
-                </span>
-              </td>
+          <!-- SUELDO -->
+          <td>
+            <span class="sueldo-empleado">
+              S/ {{ e.sueldo | number:'1.2-2' }}
+            </span>
+          </td>
 
-              <!-- ROL -->
-              <td>
-                @if (e.rol) {
-                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
-                    {{ e.rol }}
-                  </span>
-                } @else {
-                  <span class="badge bg-secondary-subtle text-secondary px-2 py-1">
-                    Sin acceso
-                  </span>
-                }
-              </td>
 
-              <!-- ESTADO -->
-              <td>
+          <!-- ========================================== -->
+          <!-- ROL DEL EMPLEADO -->
+          <!-- ========================================== -->
 
-                <span
-                  class="estado-badge"
-                  [ngClass]="e.estado === 'ACTIVO'
+          <td>
+
+            @switch (e.rol) {
+
+            @case ('ADMIN') {
+
+            <span class="rol-empleado">
+              <i class="bi bi-shield-check"></i>
+              Administrador
+            </span>
+
+            }
+
+            @case ('MEDICO') {
+
+            <span class="rol-empleado">
+              <i class="bi bi-heart-pulse"></i>
+              Médico
+            </span>
+
+            }
+
+            @case ('TRIAJE') {
+
+            <span class="rol-empleado">
+              <i class="bi bi-clipboard2-pulse"></i>
+              Triaje
+            </span>
+
+            }
+
+            @case ('FARMACIA') {
+
+            <span class="rol-empleado">
+              <i class="bi bi-capsule-pill"></i>
+              Farmacia
+            </span>
+
+            }
+
+            @default {
+
+            @if (e.rol) {
+
+            <span class="rol-empleado">
+              <i class="bi bi-person-badge"></i>
+              {{ e.rol }}
+            </span>
+
+            } @else {
+
+            <span class="rol-empleado rol-sin-acceso">
+              <i class="bi bi-lock"></i>
+              Sin acceso
+            </span>
+
+            }
+
+            }
+
+            }
+
+          </td>
+
+
+          <!-- ESTADO -->
+          <td>
+
+            <span class="estado-badge" [ngClass]="e.estado === 'ACTIVO'
                     ? 'estado-activo'
                     : 'estado-inactivo'">
 
-                  {{ e.estado || 'SIN ESTADO' }}
+              {{ e.estado || 'SIN ESTADO' }}
 
-                </span>
+            </span>
 
-              </td>
+          </td>
 
-              <!-- ACCIONES -->
-              <td class="text-center">
+          <!-- ACCIONES -->
+          <td class="text-center">
 
-                <div class="acciones-empleado gap-2">
+            <div class="acciones-empleado gap-2">
 
-                  <!-- CREAR ACCESO -->
+              <!-- CREAR ACCESO -->
 
-                  <button
-                    type="button"
-                    class="btn btn-sm btn-editar"
-                    title="Crear acceso al sistema"
-                    [disabled]="creandoAcceso"
-                    [attr.aria-label]="
+              <button type="button" class="btn btn-sm btn-editar" title="Crear acceso al sistema"
+                [disabled]="creandoAcceso" [attr.aria-label]="
                       'Crear acceso para ' +
                       e.nombres + ' ' + e.apellidos
-                    "
-                    (click)="crearAcceso(e)">
+                    " (click)="crearAcceso(e)">
 
-                    <i
-                      class="bi bi-person-plus"
-                      aria-hidden="true">
-                    </i>
+                <i class="bi bi-person-plus" aria-hidden="true">
+                </i>
 
-                  </button>
+              </button>
 
-                  <!-- EDITAR EMPLEADO -->
+              <!-- EDITAR EMPLEADO -->
 
-                  <a
-                    [routerLink]="[
+              <a [routerLink]="[
                       '/empleados/editar',
                       e.idPersona
-                    ]"
-                    class="btn btn-sm btn-editar"
-                    title="Editar empleado"
-                    [attr.aria-label]="
+                    ]" class="btn btn-sm btn-editar" title="Editar empleado" [attr.aria-label]="
                       'Editar empleado ' +
                       e.nombres + ' ' + e.apellidos
                     ">
 
-                    <i
-                      class="bi bi-pencil-square"
-                      aria-hidden="true">
-                    </i>
+                <i class="bi bi-pencil-square" aria-hidden="true">
+                </i>
 
-                  </a>
+              </a>
 
-                </div>
+            </div>
 
-              </td>
+          </td>
 
-            </tr>
+        </tr>
 
-          } @empty {
+        } @empty {
 
-            <tr>
+        <tr>
 
-              <td colspan="9" class="text-center py-5">
+          <td colspan="10" class="text-center py-5">
 
-                <div class="sin-resultados">
+            <div class="sin-resultados">
 
-                  <i class="bi bi-people"></i>
+              <i class="bi bi-people"></i>
 
-                  @if (busqueda) {
+              @if (busqueda) {
 
-                    <h6>
-                      No se encontraron coincidencias
-                    </h6>
+              <h6>
+                No se encontraron coincidencias
+              </h6>
 
-                    <p>
-                      Prueba buscando con otro DNI,
-                      nombre o apellido.
-                    </p>
+              <p>
+                Prueba buscando con otro DNI,
+                nombre o apellido.
+              </p>
 
-                  } @else {
+              } @else {
 
-                    <h6>
-                      No hay empleados registrados
-                    </h6>
+              <h6>
+                No hay empleados registrados
+              </h6>
 
-                    <p>
-                      Registra un nuevo empleado
-                      para comenzar.
-                    </p>
+              <p>
+                Registra un nuevo empleado
+                para comenzar.
+              </p>
 
-                  }
+              }
 
-                </div>
+            </div>
 
-              </td>
+          </td>
 
-            </tr>
+        </tr>
 
-          }
+        }
 
-        </tbody>
+      </tbody>
 
-      </table>
+    </table>
 
-    </div>
+  </div>
 
-    <!-- ========================================== -->
-    <!-- PIE DE TABLA -->
-    <!-- ========================================== -->
+  <!-- ========================================== -->
+  <!-- PIE DE TABLA -->
+  <!-- ========================================== -->
 
-    <div class="pie-tabla">
+  <div class="pie-tabla">
 
-      <span>
-        <i class="bi bi-info-circle me-1"></i>
-        Directorio administrativo del personal.
-      </span>
+    <span>
+      <i class="bi bi-info-circle me-1"></i>
+      Directorio administrativo del personal.
+    </span>
 
-      <span>
-        Total registrado:
-        <strong>{{ empleados.length }}</strong>
-      </span>
+    <span>
+      Total registrado:
+      <strong>{{ empleados.length }}</strong>
+    </span>
 
-    </div>
+  </div>
 
   }
 

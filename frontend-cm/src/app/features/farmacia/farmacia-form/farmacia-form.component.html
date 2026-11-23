@@ -53,7 +53,10 @@
               [(ngModel)]="medicamento.descripcion" placeholder="Descripción del medicamento"></textarea>
           </div>
 
+
+          <!-- STOCK INICIAL -->
           <div class="col-md-6">
+
             <label class="form-label">
               {{ idMedicamento === null ? 'Stock inicial *' : 'Stock actual' }}
             </label>
@@ -65,17 +68,31 @@
               El stock se actualiza automáticamente al entregar
               medicamentos o mediante el ingreso de nuevo inventario.
             </small>
+
           </div>
 
 
+          <!-- ESTADO DEL MEDICAMENTO -->
           <div class="col-md-6">
-            <label class="form-label">Estado *</label>
-            <input class="form-control" type="text" maxlength="20" required name="estado"
-              [(ngModel)]="medicamento.estado" placeholder="ACTIVO/INACTIVO">
-            <small class="text-muted">
 
-            </small>
+            <label for="estado" class="form-label">
+              Estado *
+            </label>
+
+            <select id="estado" name="estado" class="form-select" [(ngModel)]="medicamento.estado" required>
+
+              <option value="" disabled>
+                -- Seleccione un estado --
+              </option>
+
+              <option value="ACTIVO">Activo</option>
+              <option value="INACTIVO">Inactivo</option>
+
+            </select>
+
           </div>
+
+
 
         </div>
 

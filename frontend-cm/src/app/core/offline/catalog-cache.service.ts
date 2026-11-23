@@ -1,4 +1,3 @@
-
 import { Injectable, inject, signal } from '@angular/core';
 import { catchError, firstValueFrom, forkJoin, of } from 'rxjs';
 
@@ -38,14 +37,16 @@ export class CatalogCacheService {
     }
 
     const esAdmin = rol === 'ADMIN';
+    const esRecepcion = rol === 'RECEPCION';
     const esMedico = rol === 'MEDICO';
     const esTriaje = rol === 'TRIAJE';
+    const esFarmacia = rol === 'FARMACIA';
 
     const puedeVerMedicamentos =
-      esAdmin || esMedico || rol === 'FARMACIA';
+      esAdmin || esMedico || esFarmacia;
 
     // No sincronizar si el rol no es reconocido.
-    if (!esAdmin && !esMedico && !esTriaje && rol !== 'FARMACIA') {
+    if (!esAdmin && !esRecepcion && !esMedico && !esTriaje && !esFarmacia) {
       return false;
     }
 
@@ -56,15 +57,15 @@ export class CatalogCacheService {
       const data = await firstValueFrom(
         forkJoin({
 
-          // Solo ADMIN puede consultar todas las personas.
-          personas: esAdmin
+          // ADMIN y RECEPCION pueden consultar personas.
+          personas: (esAdmin || esRecepcion)
             ? this.personaService.getPersonas().pipe(
                 catchError(() => of([]))
               )
             : of([]),
 
-          // Solo ADMIN puede consultar todos los empleados.
-          empleados: esAdmin
+          // ADMIN y RECEPCION pueden consultar empleados.
+          empleados: (esAdmin || esRecepcion)
             ? this.empleadoService.getEmpleados().pipe(
                 catchError(() => of([]))
               )
