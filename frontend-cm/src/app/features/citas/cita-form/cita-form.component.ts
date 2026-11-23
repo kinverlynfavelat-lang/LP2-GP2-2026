@@ -223,7 +223,7 @@ export class CitaFormComponent implements OnInit {
       }));
 
     this.empleados = empleados
-      .filter(e => e.idPersona != null)
+      .filter(e => e.idPersona != null && e.rol === 'TRIAJE')
       .map(e => {
         const persona = personas.find(p => p.idPersona === e.idPersona);
         return {

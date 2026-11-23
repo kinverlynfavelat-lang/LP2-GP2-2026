@@ -21,6 +21,7 @@ interface EmpleadoVista {
   fechaIngreso: string;
   sueldo: number;
   estado: string;
+  rol: string | null;
 }
 
 @Component({
@@ -93,7 +94,8 @@ export class EmpleadoListComponent implements OnInit {
               telefono: persona.telefono,
               fechaIngreso: empleado.fechaIngreso,
               sueldo: empleado.sueldo,
-              estado: persona.estado
+              estado: persona.estado,
+              rol: empleado.rol ?? null
             });
 
           }
