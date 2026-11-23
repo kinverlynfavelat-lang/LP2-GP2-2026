@@ -923,3 +923,39 @@ button:disabled {
   }
 
 }
+/* BUSQUEDA POR DNI O CODIGO UNIVERSITARIO */
+.busqueda {
+  flex-wrap: wrap;
+}
+
+.busqueda .campo {
+  flex: 1 1 220px;
+}
+
+.busqueda .tipo-identificacion {
+  flex: 0 1 205px;
+}
+
+.campo select {
+  width: 100%;
+  font: inherit;
+  border: 1px solid #cfe1e9;
+  border-radius: 9px;
+  padding: 13px 14px;
+  color: #153d50;
+  outline: none;
+  background: #fff;
+}
+
+.campo select:focus {
+  border-color: #2a9cc7;
+  box-shadow: 0 0 0 3px #eaf4f8;
+}
+
+@media (max-width: 560px) {
+  .busqueda .campo,
+  .busqueda .tipo-identificacion {
+    width: 100%;
+    flex: 1 1 100%;
+  }
+}

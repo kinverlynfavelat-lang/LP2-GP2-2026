@@ -132,14 +132,16 @@ export class DerivacionFormComponent implements OnInit {
   }
 
   // ==========================================
-  // CARGAR CITAS MÉDICAS
+  // CARGAR CITAS DEL MEDICO AUTENTICADO
   // ==========================================
 
   cargarDatos(): void {
     this.cargando = true;
     this.error = '';
 
-    this.citaService.getCitas().subscribe({
+    // El backend identifica al medico mediante JWT.
+    // Consultamos solamente sus citas asignadas.
+    this.citaService.getMisCitas().subscribe({
       next: (citas) => {
         this.citas = citas ?? [];
 
@@ -156,7 +158,7 @@ export class DerivacionFormComponent implements OnInit {
         this.cargando = false;
 
         this.error =
-          'No se pudieron cargar las citas médicas.';
+          'No se pudieron cargar tus citas médicas.';
 
         console.error(
           'Error al cargar citas:',

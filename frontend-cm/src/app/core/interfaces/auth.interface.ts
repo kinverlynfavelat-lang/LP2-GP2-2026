@@ -2,7 +2,6 @@ export type RolUsuario =
   | 'ADMIN'
   | 'MEDICO'
   | 'TRIAJE'
-  | 'RECEPCION'
   | 'FARMACIA';
 
 export interface ILoginRequest {

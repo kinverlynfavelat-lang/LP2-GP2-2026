@@ -1,3 +1,4 @@
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -12,58 +13,119 @@ export class CitaService {
 
   private http = inject(HttpClient);
 
-  // Ruta del backend
-  private apiUrl = 'api/v1/citas';
+  // Ruta del backend mediante el proxy de Angular
+  private apiUrl = '/api/v1/citas';
 
-  // Listar todas las citas
+  // ==========================================
+  // LISTAR TODAS LAS CITAS
+  // ==========================================
+
   getCitas(): Observable<Cita[]> {
     return this.http.get<Cita[]>(this.apiUrl);
   }
 
-  // Listar última cita de cada paciente
-  getHistorialPacientes(): Observable<Cita[]> {
-    return this.http.get<Cita[]>(`${this.apiUrl}/historial-pacientes`);
+  // ==========================================
+  // MIS CITAS - MEDICO AUTENTICADO
+  // ==========================================
+
+  getMisCitas(): Observable<Cita[]> {
+    return this.http.get<Cita[]>(
+      `${this.apiUrl}/mis-citas`
+    );
   }
-    //Listar citas con signos vitales en alerta o estado crítico
-  getAlertasTriaje(temp?: number, presion?: number): Observable<Cita[]> {
+
+  // ==========================================
+  // HISTORIAL DE PACIENTES
+  // ==========================================
+
+  getHistorialPacientes(): Observable<Cita[]> {
+    return this.http.get<Cita[]>(
+      `${this.apiUrl}/historial-pacientes`
+    );
+  }
+
+  // ==========================================
+  // ALERTAS DE TRIAJE
+  // ==========================================
+
+  getAlertasTriaje(
+    temp?: number,
+    presion?: number
+  ): Observable<Cita[]> {
+
     let url = `${this.apiUrl}/alertas-triaje`;
     const params: string[] = [];
-    if (temp !== undefined) params.push(`temp=${temp}`);
-    if (presion !== undefined) params.push(`presion=${presion}`);
-    if (params.length > 0) url += `?${params.join('&')}`;
+
+    if (temp !== undefined) {
+      params.push(`temp=${temp}`);
+    }
+
+    if (presion !== undefined) {
+      params.push(`presion=${presion}`);
+    }
+
+    if (params.length > 0) {
+      url += `?${params.join('&')}`;
+    }
+
     return this.http.get<Cita[]>(url);
   }
 
-  //Productividad médica (citas atendidas/totales por médico)
+  // ==========================================
+  // PRODUCTIVIDAD MEDICA
+  // ==========================================
+
   getProductividadMedicos(): Observable<MedicoProductividad[]> {
-    return this.http.get<MedicoProductividad[]>(`${this.apiUrl}/productividad-medicos`);
+    return this.http.get<MedicoProductividad[]>(
+      `${this.apiUrl}/productividad-medicos`
+    );
   }
 
-  // Buscar cita por ID
+  // ==========================================
+  // BUSCAR CITA POR ID
+  // ==========================================
+
   getCitaById(id: number): Observable<Cita> {
-    return this.http.get<Cita>(`${this.apiUrl}/${id}`);
+    return this.http.get<Cita>(
+      `${this.apiUrl}/${id}`
+    );
   }
 
-  // Listar citas por paciente
+  // ==========================================
+  // CITAS POR PACIENTE
+  // ==========================================
+
   getCitasByPaciente(idPersona: number): Observable<Cita[]> {
     return this.http.get<Cita[]>(
       `${this.apiUrl}/paciente/${idPersona}`
     );
   }
 
-  // Listar citas por médico
+  // ==========================================
+  // CITAS POR MEDICO
+  // ==========================================
+
   getCitasByMedico(idMedico: number): Observable<Cita[]> {
     return this.http.get<Cita[]>(
       `${this.apiUrl}/medico/${idMedico}`
     );
   }
 
-  // Registrar cita
+  // ==========================================
+  // REGISTRAR CITA
+  // ==========================================
+
   createCita(cita: Cita): Observable<Cita> {
-    return this.http.post<Cita>(this.apiUrl, cita);
+    return this.http.post<Cita>(
+      this.apiUrl,
+      cita
+    );
   }
 
-  // Actualizar cita
+  // ==========================================
+  // ACTUALIZAR CITA
+  // ==========================================
+
   updateCita(id: number, cita: Cita): Observable<Cita> {
     return this.http.put<Cita>(
       `${this.apiUrl}/${id}`,
@@ -71,7 +133,10 @@ export class CitaService {
     );
   }
 
-  // Anular cita
+  // ==========================================
+  // ANULAR CITA
+  // ==========================================
+
   anularCita(id: number): Observable<void> {
     return this.http.patch<void>(
       `${this.apiUrl}/${id}/anular`,

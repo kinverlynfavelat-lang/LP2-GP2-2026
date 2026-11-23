@@ -30,8 +30,8 @@ export class SyncService {
 
   async actualizarContadores(): Promise<void> {
     const [pendientes, conflictos, errores] = await Promise.all([
-      this.db.syncQueue.where('status').equals('PENDING').count(),
-      this.db.syncQueue.where('status').equals('CONFLICT').count(),
+      this.db.syncQueue.where('status').equals('PENDIENTE').count(),
+      this.db.syncQueue.where('status').equals('CONFLICTO').count(),
       this.db.syncQueue.where('status').equals('ERROR').count()
     ]);
 
@@ -53,7 +53,7 @@ export class SyncService {
     try {
       const items = await this.db.syncQueue
         .where('status')
-        .equals('PENDING')
+        .equals('PENDIENTE')
         .sortBy('id'); // Orden FIFO estricto
 
       for (const item of items) {

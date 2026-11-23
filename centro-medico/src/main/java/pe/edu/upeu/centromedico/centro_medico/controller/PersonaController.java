@@ -5,11 +5,15 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import pe.edu.upeu.centromedico.centro_medico.dto.FondoEstudiantilDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.PersonaDTO;
 import pe.edu.upeu.centromedico.centro_medico.services.IPersonaService;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/personas")
@@ -21,6 +25,10 @@ public class PersonaController {
         this.personaService = personaService;
     }
 
+    // ==========================================
+    // LISTAR TODAS LAS PERSONAS
+    // ==========================================
+
     @GetMapping
     public ResponseEntity<List<PersonaDTO>> listar() {
 
@@ -28,6 +36,10 @@ public class PersonaController {
                 personaService.listarTodo()
         );
     }
+
+    // ==========================================
+    // BUSCAR PERSONA POR ID
+    // ==========================================
 
     @GetMapping("/{id}")
     public ResponseEntity<PersonaDTO> obtener(
@@ -38,6 +50,10 @@ public class PersonaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // ==========================================
+    // BUSCAR PERSONA POR DNI
+    // ==========================================
+
     @GetMapping("/dni/{dni}")
     public ResponseEntity<PersonaDTO> buscarPorDni(
             @PathVariable String dni) {
@@ -47,6 +63,11 @@ public class PersonaController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    // ==========================================
+    // BUSCAR POR CODIGO UNIVERSITARIO
+    // CONSULTA ADMINISTRATIVA
+    // ==========================================
+
     @GetMapping("/codigo/{codigoUniversitario}")
     public ResponseEntity<PersonaDTO> buscarPorCodigo(
             @PathVariable String codigoUniversitario) {
@@ -55,6 +76,46 @@ public class PersonaController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // ==========================================
+    // BUSCAR PACIENTE POR CODIGO UNIVERSITARIO
+    // RESPUESTA LIMITADA PARA EL PORTAL
+    // ==========================================
+
+    @GetMapping("/portal/codigo/{codigoUniversitario}")
+    public ResponseEntity<Map<String, Object>> buscarPacientePortalPorCodigo(
+            @PathVariable String codigoUniversitario) {
+
+        Optional<PersonaDTO> resultado =
+                personaService.buscarPorCodigo(codigoUniversitario);
+
+        if (resultado.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        PersonaDTO persona = resultado.get();
+
+        Map<String, Object> datos = new LinkedHashMap<>();
+
+        // PersonaDTO es un record, por eso
+        // utilizamos sus metodos de acceso
+        // sin el prefijo "get".
+
+        datos.put("idPersona", persona.idPersona());
+        datos.put("nombres", persona.nombres());
+        datos.put("apellidos", persona.apellidos());
+        datos.put("tipoPaciente", persona.tipoPaciente());
+        datos.put(
+                "codigoUniversitario",
+                persona.codigoUniversitario()
+        );
+
+        return ResponseEntity.ok(datos);
+    }
+
+    // ==========================================
+    // CREAR PERSONA
+    // ==========================================
 
     @PostMapping
     public ResponseEntity<PersonaDTO> crear(
@@ -66,6 +127,10 @@ public class PersonaController {
         );
     }
 
+    // ==========================================
+    // ACTUALIZAR PERSONA
+    // ==========================================
+
     @PutMapping("/{id}")
     public ResponseEntity<PersonaDTO> actualizar(
             @PathVariable Long id,
@@ -75,6 +140,10 @@ public class PersonaController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    // ==========================================
+    // ELIMINAR PERSONA
+    // ==========================================
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
@@ -87,7 +156,10 @@ public class PersonaController {
         return ResponseEntity.notFound().build();
     }
 
-    // RF-03: Consultar saldo del fondo estudiantil
+    // ==========================================
+    // RF-03: CONSULTAR FONDO ESTUDIANTIL
+    // ==========================================
+
     @GetMapping("/fondo/{codigoUniversitario}")
     public ResponseEntity<FondoEstudiantilDTO> consultarFondo(
             @PathVariable String codigoUniversitario) {
@@ -96,5 +168,4 @@ public class PersonaController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-
 }

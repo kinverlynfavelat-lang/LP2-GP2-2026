@@ -1,15 +1,21 @@
+
 package pe.edu.upeu.centromedico.centro_medico.services;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.springframework.web.server.ResponseStatusException;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+
+import pe.edu.upeu.centromedico.centro_medico.security.UsuarioPrincipal;
+
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.CitaResponseDTO;
-
 import pe.edu.upeu.centromedico.centro_medico.dto.MedicoProductividadDTO;
 import pe.edu.upeu.centromedico.centro_medico.dto.ReprogramarCitaDTO;
+
 import pe.edu.upeu.centromedico.centro_medico.entity.Cita;
 import pe.edu.upeu.centromedico.centro_medico.entity.Persona;
 import pe.edu.upeu.centromedico.centro_medico.entity.Medico;
@@ -24,18 +30,20 @@ import pe.edu.upeu.centromedico.centro_medico.repository.MedicoRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.EmpleadoRepository;
 import pe.edu.upeu.centromedico.centro_medico.repository.HorarioMedicoRepository;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.ParameterMode;
 import jakarta.persistence.StoredProcedureQuery;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@PersistenceContext
 public class CitaServiceImpl implements ICitaService {
 
     private final CitaRepository citaRepository;
@@ -43,8 +51,9 @@ public class CitaServiceImpl implements ICitaService {
     private final MedicoRepository medicoRepository;
     private final EmpleadoRepository empleadoRepository;
     private final HorarioMedicoRepository horarioMedicoRepository;
-    @PersistenceContext
+
     private EntityManager entityManager;
+
     public CitaServiceImpl(
             CitaRepository citaRepository,
             PersonaRepository personaRepository,
@@ -85,16 +94,18 @@ public class CitaServiceImpl implements ICitaService {
     @Transactional(readOnly = true)
     public Optional<CitaResponseDTO> buscarPorId(Long id) {
 
-        Optional<Cita> cita = citaRepository.findById(id);
+        Optional<Cita> resultado = citaRepository.findById(id);
 
-        if (cita.isPresent()) {
-
-            Cita c = cita.get();
-
-            return Optional.of(convertirADTO(c));
+        if (resultado.isEmpty()) {
+            return Optional.empty();
         }
 
-        return Optional.empty();
+        Cita cita = resultado.get();
+
+        // NUEVO: verificar que la cita sea del médico.
+        verificarCitaDelMedico(cita);
+
+        return Optional.of(convertirADTO(cita));
     }
 
     // ==================================
@@ -118,11 +129,13 @@ public class CitaServiceImpl implements ICitaService {
     }
 
     // ==================================
-    // LISTAR ÚLTIMA CITA POR PACIENTE
+    // LISTAR ULTIMA CITA POR PACIENTE
     // ==================================
+
     @Override
     @Transactional(readOnly = true)
     public List<CitaResponseDTO> listarUltimasPorPaciente() {
+
         List<Cita> lista =
                 citaRepository.findUltimasCitasPorPaciente();
 
@@ -135,18 +148,27 @@ public class CitaServiceImpl implements ICitaService {
         return respuesta;
     }
 
-    // ===========================================
-    // TRIAJE Citas con signos vitales críticos
-    // ===========================================
+    // ==================================
+    // TRIAJE: CITAS CON SIGNOS CRITICOS
+    // ==================================
 
     @Override
     @Transactional(readOnly = true)
-    public List<CitaResponseDTO> listarCitasCriticas(BigDecimal tempLimite, BigDecimal presionLimite) {
+    public List<CitaResponseDTO> listarCitasCriticas(
+            BigDecimal tempLimite,
+            BigDecimal presionLimite) {
 
-        BigDecimal temp = (tempLimite != null) ? tempLimite : new BigDecimal("38.0");
-        BigDecimal pres = (presionLimite != null) ? presionLimite : new BigDecimal("120.0");
+        BigDecimal temp = (tempLimite != null)
+                ? tempLimite
+                : new BigDecimal("38.0");
 
-        List<Cita> lista = citaRepository.findCitasConSignosCriticos(temp, pres);
+        BigDecimal pres = (presionLimite != null)
+                ? presionLimite
+                : new BigDecimal("120.0");
+
+        List<Cita> lista =
+                citaRepository.findCitasConSignosCriticos(temp, pres);
+
         List<CitaResponseDTO> respuesta = new ArrayList<>();
 
         for (Cita c : lista) {
@@ -156,9 +178,9 @@ public class CitaServiceImpl implements ICitaService {
         return respuesta;
     }
 
-    // =================================================
-    // PRODUCTIVIDAD MÉDICA Reporte de citas por médico
-    // =================================================
+    // ==================================
+    // PRODUCTIVIDAD MEDICA
+    // ==================================
 
     @Override
     @Transactional(readOnly = true)
@@ -187,41 +209,59 @@ public class CitaServiceImpl implements ICitaService {
         return respuesta;
     }
 
-
+    // ==================================
+    // CREAR CITA
+    // ==================================
 
     @Override
     @Transactional
     public CitaResponseDTO crear(CitaDTO dto) {
 
         // 1. Validar datos obligatorios
+
         if (dto.idPersona() == null) {
-            throw new RuntimeException("El paciente es obligatorio");
+            throw new RuntimeException(
+                    "El paciente es obligatorio"
+            );
         }
 
         if (dto.fechaCita() == null || dto.horaCita() == null) {
-            throw new RuntimeException("La fecha y hora son obligatorias");
+            throw new RuntimeException(
+                    "La fecha y hora son obligatorias"
+            );
         }
 
         if (dto.motivoConsulta() == null ||
                 dto.motivoConsulta().isBlank()) {
-            throw new RuntimeException("El motivo de consulta es obligatorio");
+
+            throw new RuntimeException(
+                    "El motivo de consulta es obligatorio"
+            );
         }
 
         // 2. Buscar paciente
-        Persona paciente = personaRepository.findById(dto.idPersona())
-                .orElseThrow(() ->
-                        new RuntimeException("Paciente no encontrado"));
+
+        Persona paciente =
+                personaRepository.findById(dto.idPersona())
+                        .orElseThrow(() ->
+                                new RuntimeException(
+                                        "Paciente no encontrado"
+                                )
+                        );
 
         validarPaciente(paciente);
 
         // 3. Crear cita
+
         Cita cita = new Cita();
 
         cita.setFechaCita(dto.fechaCita());
         cita.setHoraCita(dto.horaCita());
 
         cita.setNotificacion(
-                dto.notificacion() == null ? "N" : dto.notificacion()
+                dto.notificacion() == null
+                        ? "N"
+                        : dto.notificacion()
         );
 
         cita.setMotivoConsulta(dto.motivoConsulta());
@@ -240,107 +280,131 @@ public class CitaServiceImpl implements ICitaService {
 
         cita.setPersona(paciente);
 
-        // 4. Asignar médico
+        // 4. Asignar medico
+
         if (dto.idMedico() != null) {
 
-            Medico medico = medicoRepository.findById(dto.idMedico())
-                    .orElseThrow(() ->
-                            new RuntimeException("Médico no encontrado"));
+            Medico medico =
+                    medicoRepository.findById(dto.idMedico())
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Médico no encontrado"
+                                    )
+                            );
 
             cita.setMedico(medico);
         }
 
         // 5. Asignar empleado de triaje
+
         if (dto.idEmpleado() != null) {
 
-            Empleado empleado = empleadoRepository.findById(dto.idEmpleado())
-                    .orElseThrow(() ->
-                            new RuntimeException("Empleado no encontrado"));
+            Empleado empleado =
+                    empleadoRepository.findById(dto.idEmpleado())
+                            .orElseThrow(() ->
+                                    new RuntimeException(
+                                            "Empleado no encontrado"
+                                    )
+                            );
 
             cita.setEmpleado(empleado);
         }
 
-
         // 6. Determinar estado inicial
+
         if (dto.estado() == EstadoCita.DERIVADO) {
             cita.setEstado(EstadoCita.DERIVADO);
         } else {
             cita.setEstado(EstadoCita.RECEPCION);
         }
 
-        // 7. Registrar la cita y obtener su ID
-        Cita guardada = citaRepository.saveAndFlush(cita);
+        // 7. Registrar cita y obtener ID
 
+        Cita guardada =
+                citaRepository.saveAndFlush(cita);
 
         // ==========================================
         // COBERTURA AUTOMATICA DEL FONDO ESTUDIANTIL
         // ==========================================
 
+        BigDecimal precioCita =
+                new BigDecimal("50.00");
 
-        // 8. COBERTURA AUTOMATICA DEL FONDO ESTUDIANTIL
+        BigDecimal saldoActual =
+                paciente.getSaldoFondo() != null
+                        ? paciente.getSaldoFondo()
+                        : BigDecimal.ZERO;
 
-        BigDecimal precioCita = new BigDecimal("50.00");
+        // Estudiante con matricula vigente y fondo suficiente
 
-        BigDecimal saldoActual = paciente.getSaldoFondo() != null
-                ? paciente.getSaldoFondo()
-                : BigDecimal.ZERO;
-
-        // Solo estudiantes con matricula vigente y fondo suficiente
         if (dto.estado() != EstadoCita.DERIVADO
                 && paciente.getTipoPaciente() == TipoPaciente.ESTUDIANTE
                 && paciente.getMatriculaVigente() == SiNo.SI
                 && saldoActual.compareTo(precioCita) >= 0) {
 
-            // Ejecutar procedimiento almacenado Oracle
             StoredProcedureQuery procedimiento =
                     entityManager.createStoredProcedureQuery(
-                            "CENTRO_MEDICO.SP_DESCONTAR_FONDO_ESTUDIANTIL");
+                            "CENTRO_MEDICO.SP_DESCONTAR_FONDO_ESTUDIANTIL"
+                    );
 
             procedimiento.registerStoredProcedureParameter(
-                    1, Long.class, ParameterMode.IN);
+                    1,
+                    Long.class,
+                    ParameterMode.IN
+            );
 
             procedimiento.registerStoredProcedureParameter(
-                    2, BigDecimal.class, ParameterMode.OUT);
+                    2,
+                    BigDecimal.class,
+                    ParameterMode.OUT
+            );
 
             procedimiento.registerStoredProcedureParameter(
-                    3, BigDecimal.class, ParameterMode.OUT);
+                    3,
+                    BigDecimal.class,
+                    ParameterMode.OUT
+            );
 
             procedimiento.setParameter(
-                    1, guardada.getIdCita());
+                    1,
+                    guardada.getIdCita()
+            );
 
             procedimiento.execute();
 
-            // 9. Consultar monto pendiente
             Number resultado =
                     (Number) procedimiento.getOutputParameterValue(3);
 
             BigDecimal montoCaja =
                     new BigDecimal(resultado.toString());
 
-            // Verificar que la cobertura sea completa
             if (montoCaja.compareTo(BigDecimal.ZERO) != 0) {
 
                 throw new IllegalStateException(
-                        "No se pudo confirmar la cobertura completa del fondo");
+                        "No se pudo confirmar la cobertura completa del fondo"
+                );
             }
 
-            // 10. Cobertura completa: pasa directamente a triaje
+            // Cobertura completa: pasa directamente a triaje
+
             guardada.setEstado(EstadoCita.TRIAJE);
 
             citaRepository.save(guardada);
 
             // Actualizar saldo del estudiante
+
             entityManager.refresh(paciente);
         }
 
-        // Estudiantes sin cobertura completa:
-        // permanecen en RECEPCION y pasan a caja.
-        // El descuento parcial se aplicara al confirmar el pago.
+        // Los estudiantes sin cobertura completa
+        // permanecen en RECEPCION para caja.
 
-        // 11. Devolver cita registrada
         return convertirADTO(guardada);
     }
 
+    // ==================================
+    // ACTUALIZAR CITA
+    // ==================================
 
     @Override
     @Transactional
@@ -354,17 +418,23 @@ public class CitaServiceImpl implements ICitaService {
 
             Cita citaActual = cita.get();
 
+            // NUEVO: verificar pertenencia al médico.
+            verificarCitaDelMedico(citaActual);
+
             // 1. No modificar citas finalizadas
+
             if (citaActual.getEstado() == EstadoCita.ATENDIDO
                     || citaActual.getEstado() == EstadoCita.ANULADO
                     || citaActual.getEstado() == EstadoCita.INASISTENCIA
                     || citaActual.getEstado() == EstadoCita.DERIVADO) {
 
                 throw new RuntimeException(
-                        "No se puede modificar una cita finalizada");
+                        "No se puede modificar una cita finalizada"
+                );
             }
 
             // 2. Actualizar fecha y hora
+
             if (dto.fechaCita() != null) {
                 citaActual.setFechaCita(dto.fechaCita());
             }
@@ -373,12 +443,14 @@ public class CitaServiceImpl implements ICitaService {
                 citaActual.setHoraCita(dto.horaCita());
             }
 
-            // 3. Actualizar notificación
+            // 3. Actualizar notificacion
+
             if (dto.notificacion() != null) {
                 citaActual.setNotificacion(dto.notificacion());
             }
 
             // 4. Actualizar signos vitales
+
             if (dto.temperatura() != null) {
                 citaActual.setTemperatura(dto.temperatura());
             }
@@ -388,11 +460,15 @@ public class CitaServiceImpl implements ICitaService {
             }
 
             if (dto.frecuenciaCardiaca() != null) {
-                citaActual.setFrecuenciaCardiaca(dto.frecuenciaCardiaca());
+                citaActual.setFrecuenciaCardiaca(
+                        dto.frecuenciaCardiaca()
+                );
             }
 
             if (dto.frecuenciaRespiratoria() != null) {
-                citaActual.setFrecuenciaRespiratoria(dto.frecuenciaRespiratoria());
+                citaActual.setFrecuenciaRespiratoria(
+                        dto.frecuenciaRespiratoria()
+                );
             }
 
             if (dto.peso() != null) {
@@ -403,7 +479,8 @@ public class CitaServiceImpl implements ICitaService {
                 citaActual.setTalla(dto.talla());
             }
 
-            // 5. Actualizar información médica
+            // 5. Actualizar informacion medica
+
             if (dto.motivoConsulta() != null) {
                 citaActual.setMotivoConsulta(dto.motivoConsulta());
             }
@@ -425,59 +502,80 @@ public class CitaServiceImpl implements ICitaService {
             }
 
             // 6. Actualizar paciente
+
             if (dto.idPersona() != null) {
 
-                Persona paciente = personaRepository.findById(dto.idPersona())
-                        .orElseThrow(() ->
-                                new RuntimeException("Paciente no encontrado"));
+                Persona paciente =
+                        personaRepository.findById(dto.idPersona())
+                                .orElseThrow(() ->
+                                        new RuntimeException(
+                                                "Paciente no encontrado"
+                                        )
+                                );
 
                 citaActual.setPersona(paciente);
             }
 
-            // 7. Actualizar médico
+            // 7. Actualizar medico
+
             if (dto.idMedico() != null) {
 
-                Medico medico = medicoRepository.findById(dto.idMedico())
-                        .orElseThrow(() ->
-                                new RuntimeException("Médico no encontrado"));
+                Medico medico =
+                        medicoRepository.findById(dto.idMedico())
+                                .orElseThrow(() ->
+                                        new RuntimeException(
+                                                "Médico no encontrado"
+                                        )
+                                );
 
                 citaActual.setMedico(medico);
             }
 
             // 8. Actualizar empleado
+
             if (dto.idEmpleado() != null) {
 
-                Empleado empleado = empleadoRepository.findById(dto.idEmpleado())
-                        .orElseThrow(() ->
-                                new RuntimeException("Empleado no encontrado"));
+                Empleado empleado =
+                        empleadoRepository.findById(dto.idEmpleado())
+                                .orElseThrow(() ->
+                                        new RuntimeException(
+                                                "Empleado no encontrado"
+                                        )
+                                );
 
                 citaActual.setEmpleado(empleado);
             }
 
             // 9. Validar cambios de estado
+
             if (dto.estado() != null) {
 
                 EstadoCita nuevoEstado = dto.estado();
                 EstadoCita estadoActual = citaActual.getEstado();
 
                 // No permitir saltarse el pago
+
                 if (estadoActual == EstadoCita.RECEPCION
                         && (nuevoEstado == EstadoCita.TRIAJE
                         || nuevoEstado == EstadoCita.ATENDIDO)) {
 
                     throw new RuntimeException(
-                            "Debe completar el pago o la cobertura del fondo antes de continuar");
+                            "Debe completar el pago o la cobertura del fondo antes de continuar"
+                    );
                 }
 
                 // No permitir atender sin pasar por triaje
+
                 if (nuevoEstado == EstadoCita.ATENDIDO
                         && estadoActual != EstadoCita.TRIAJE) {
 
                     throw new RuntimeException(
-                            "La cita debe pasar por triaje antes de ser atendida");
+                            "La cita debe pasar por triaje antes de ser atendida"
+                    );
                 }
 
-                // Validar diagnóstico y tratamiento
+                // Validar diagnostico y tratamiento
+
                 if (nuevoEstado == EstadoCita.ATENDIDO) {
 
                     if (citaActual.getDiagnostico() == null
@@ -486,7 +584,8 @@ public class CitaServiceImpl implements ICitaService {
                             || citaActual.getTratamiento().isBlank()) {
 
                         throw new RuntimeException(
-                                "Debe registrar diagnóstico y tratamiento para atender la cita");
+                                "Debe registrar diagnóstico y tratamiento para atender la cita"
+                        );
                     }
                 }
 
@@ -494,30 +593,30 @@ public class CitaServiceImpl implements ICitaService {
             }
 
             // 10. Guardar cambios
-            Cita actualizada = citaRepository.save(citaActual);
 
-            return Optional.of(convertirADTO(actualizada));
+            Cita actualizada =
+                    citaRepository.save(citaActual);
+
+            return Optional.of(
+                    convertirADTO(actualizada)
+            );
         }
 
         return Optional.empty();
     }
 
-
     // ==================================
     // ANULAR CITA
     // ==================================
-
 
     @Override
     @Transactional
     public boolean anular(Long id) {
 
-        // Verificar que la cita exista
         if (!citaRepository.existsById(id)) {
             return false;
         }
 
-        // Llamar al procedimiento almacenado
         StoredProcedureQuery procedimiento =
                 entityManager.createStoredProcedureQuery(
                         "CENTRO_MEDICO.SP_ANULAR_CITA"
@@ -536,6 +635,9 @@ public class CitaServiceImpl implements ICitaService {
         return true;
     }
 
+    // ==================================
+    // REPROGRAMAR CITA
+    // ==================================
 
     @Override
     @Transactional
@@ -543,8 +645,10 @@ public class CitaServiceImpl implements ICitaService {
             Long id,
             ReprogramarCitaDTO dto) {
 
-        // 1. Buscar la cita
-        Optional<Cita> resultado = citaRepository.findById(id);
+        // 1. Buscar cita
+
+        Optional<Cita> resultado =
+                citaRepository.findById(id);
 
         if (resultado.isEmpty()) {
             return Optional.empty();
@@ -552,7 +656,8 @@ public class CitaServiceImpl implements ICitaService {
 
         Cita cita = resultado.get();
 
-        // 2. Validar que la cita pueda reprogramarse
+        // 2. Validar estado
+
         if (cita.getEstado() != EstadoCita.RECEPCION
                 && cita.getEstado() != EstadoCita.TRIAJE) {
 
@@ -561,20 +666,24 @@ public class CitaServiceImpl implements ICitaService {
             );
         }
 
-        // 3. Verificar que la cita original no haya pasado
+        // 3. Validar fecha original
+
         validarFechaHora(
                 cita.getFechaCita(),
                 cita.getHoraCita()
         );
 
-        // 4. Validar la nueva fecha y hora
+        // 4. Validar nueva fecha
+
         validarFechaHora(
                 dto.fechaCita(),
                 dto.horaCita()
         );
 
-        // 5. Verificar que tenga medico asignado
+        // 5. Verificar medico asignado
+
         if (cita.getMedico() == null) {
+
             throw new IllegalStateException(
                     "La cita no tiene medico asignado"
             );
@@ -583,7 +692,8 @@ public class CitaServiceImpl implements ICitaService {
         Long idMedico =
                 cita.getMedico().getIdEmpleado();
 
-        // 6. Validar el horario del medico
+        // 6. Validar horario
+
         validarHorario(
                 idMedico,
                 dto.fechaCita(),
@@ -591,6 +701,7 @@ public class CitaServiceImpl implements ICitaService {
         );
 
         // 7. Evitar horarios duplicados
+
         validarCitaDuplicada(
                 idMedico,
                 dto.fechaCita(),
@@ -598,16 +709,95 @@ public class CitaServiceImpl implements ICitaService {
                 id
         );
 
-        // 8. Cambiar solo fecha y hora
+        // 8. Cambiar fecha y hora
+
         cita.setFechaCita(dto.fechaCita());
         cita.setHoraCita(dto.horaCita());
 
         // 9. Guardar sin modificar estado ni fondo
-        Cita guardada = citaRepository.save(cita);
 
-        return Optional.of(convertirADTO(guardada));
+        Cita guardada =
+                citaRepository.save(cita);
+
+        return Optional.of(
+                convertirADTO(guardada)
+        );
     }
 
+    // ==========================================
+    // NUEVO: VERIFICAR CITA ASIGNADA AL MEDICO
+    // ==========================================
+
+    private void verificarCitaDelMedico(Cita cita) {
+
+        Authentication auth =
+                SecurityContextHolder
+                        .getContext()
+                        .getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED,
+                    "Debe iniciar sesión"
+            );
+        }
+
+        boolean esMedico =
+                auth.getAuthorities()
+                        .stream()
+                        .anyMatch(a ->
+                                "MEDICO".equals(
+                                        a.getAuthority()
+                                )
+                        );
+
+        // Para ADMIN y TRIAJE se mantiene
+        // el comportamiento previo.
+        if (!esMedico) {
+            return;
+        }
+
+        if (!(auth.getPrincipal() instanceof UsuarioPrincipal principal)
+                || principal.usuario().getPersona() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "No se pudo identificar al médico"
+            );
+        }
+
+        if (cita.getMedico() == null
+                || cita.getMedico().getEmpleado() == null
+                || cita.getMedico().getEmpleado().getPersona() == null) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "La cita no tiene un médico válido asignado"
+            );
+        }
+
+        Long idPersonaAutenticada =
+                principal.usuario()
+                        .getPersona()
+                        .getIdPersona();
+
+        Long idPersonaMedicoAsignado =
+                cita.getMedico()
+                        .getEmpleado()
+                        .getPersona()
+                        .getIdPersona();
+
+        if (!idPersonaAutenticada.equals(
+                idPersonaMedicoAsignado
+        )) {
+
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Esta cita pertenece a otro médico"
+            );
+        }
+    }
 
     // ==================================
     // VALIDAR PACIENTE
@@ -618,13 +808,15 @@ public class CitaServiceImpl implements ICitaService {
         if (paciente.getTipoPersona() == TipoPersona.EMPLEADO) {
 
             throw new RuntimeException(
-                    "La persona seleccionada no está registrada como paciente");
+                    "La persona seleccionada no está registrada como paciente"
+            );
         }
 
         if (paciente.getTipoPaciente() == null) {
 
             throw new RuntimeException(
-                    "Debe registrar el tipo de paciente");
+                    "Debe registrar el tipo de paciente"
+            );
         }
     }
 
@@ -639,23 +831,29 @@ public class CitaServiceImpl implements ICitaService {
         if (fecha.isBefore(LocalDate.now())) {
 
             throw new RuntimeException(
-                    "No se puede reservar una fecha anterior a hoy");
+                    "No se puede reservar una fecha anterior a hoy"
+            );
         }
 
         LocalTime hora;
 
         try {
+
             hora = LocalTime.parse(horaCita);
+
         } catch (Exception e) {
+
             throw new RuntimeException(
-                    "La hora debe tener formato HH:mm");
+                    "La hora debe tener formato HH:mm"
+            );
         }
 
         if (fecha.isEqual(LocalDate.now())
                 && !hora.isAfter(LocalTime.now())) {
 
             throw new RuntimeException(
-                    "La hora de la cita debe ser posterior a la hora actual");
+                    "La hora de la cita debe ser posterior a la hora actual"
+            );
         }
     }
 
@@ -668,33 +866,42 @@ public class CitaServiceImpl implements ICitaService {
             LocalDate fecha,
             String horaCita) {
 
-        String diaNombre = fecha.getDayOfWeek().name();
+        String diaNombre =
+                fecha.getDayOfWeek().name();
 
         switch (diaNombre) {
+
             case "MONDAY":
                 diaNombre = "LUNES";
                 break;
+
             case "TUESDAY":
                 diaNombre = "MARTES";
                 break;
+
             case "WEDNESDAY":
                 diaNombre = "MIERCOLES";
                 break;
+
             case "THURSDAY":
                 diaNombre = "JUEVES";
                 break;
+
             case "FRIDAY":
                 diaNombre = "VIERNES";
                 break;
+
             case "SATURDAY":
                 diaNombre = "SABADO";
                 break;
+
             case "SUNDAY":
                 diaNombre = "DOMINGO";
                 break;
         }
 
-        DiaSemana dia = DiaSemana.valueOf(diaNombre);
+        DiaSemana dia =
+                DiaSemana.valueOf(diaNombre);
 
         List<HorarioMedico> horarios =
                 horarioMedicoRepository
@@ -703,7 +910,8 @@ public class CitaServiceImpl implements ICitaService {
                                 dia
                         );
 
-        LocalTime hora = LocalTime.parse(horaCita);
+        LocalTime hora =
+                LocalTime.parse(horaCita);
 
         boolean horarioValido = false;
 
@@ -730,7 +938,8 @@ public class CitaServiceImpl implements ICitaService {
 
             throw new ResponseStatusException(
                     HttpStatus.CONFLICT,
-                    "El médico no tiene horario disponible para esa fecha y hora");
+                    "El médico no tiene horario disponible para esa fecha y hora"
+            );
         }
     }
 
@@ -760,7 +969,8 @@ public class CitaServiceImpl implements ICitaService {
 
                 throw new ResponseStatusException(
                         HttpStatus.CONFLICT,
-                        "El médico ya tiene una cita reservada en esa fecha y hora");
+                        "El médico ya tiene una cita reservada en esa fecha y hora"
+                );
             }
         }
     }
@@ -774,35 +984,51 @@ public class CitaServiceImpl implements ICitaService {
         String paciente = "";
         String medico = "";
         String empleadoTriaje = "";
+
         Long idPersona = null;
         String dniPaciente = "";
 
         if (c.getPersona() != null) {
-            idPersona = c.getPersona().getIdPersona();
-            dniPaciente = c.getPersona().getDni();
-            paciente = c.getPersona().getNombres()
-                    + " "
-                    + c.getPersona().getApellidos();
+
+            idPersona =
+                    c.getPersona().getIdPersona();
+
+            dniPaciente =
+                    c.getPersona().getDni();
+
+            paciente =
+                    c.getPersona().getNombres()
+                            + " "
+                            + c.getPersona().getApellidos();
         }
 
         if (c.getMedico() != null
                 && c.getMedico().getEmpleado() != null
                 && c.getMedico().getEmpleado().getPersona() != null) {
 
-            medico = c.getMedico().getEmpleado()
-                    .getPersona().getNombres()
-                    + " "
-                    + c.getMedico().getEmpleado()
-                    .getPersona().getApellidos();
+            medico =
+                    c.getMedico()
+                            .getEmpleado()
+                            .getPersona()
+                            .getNombres()
+                            + " "
+                            + c.getMedico()
+                            .getEmpleado()
+                            .getPersona()
+                            .getApellidos();
         }
 
         if (c.getEmpleado() != null
                 && c.getEmpleado().getPersona() != null) {
 
             empleadoTriaje =
-                    c.getEmpleado().getPersona().getNombres()
+                    c.getEmpleado()
+                            .getPersona()
+                            .getNombres()
                             + " "
-                            + c.getEmpleado().getPersona().getApellidos();
+                            + c.getEmpleado()
+                            .getPersona()
+                            .getApellidos();
         }
 
         return new CitaResponseDTO(

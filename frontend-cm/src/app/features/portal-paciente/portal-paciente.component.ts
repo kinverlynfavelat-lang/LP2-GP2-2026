@@ -1,4 +1,3 @@
-
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -26,8 +25,15 @@ export class PortalPaciente implements OnInit {
 
   pestana: 'registrar' | 'mis-citas' = 'registrar';
 
+
   dni = '';
+
+  tipoIdentificacion: 'dni' | 'codigo' = 'dni';
+
+  codigoUniversitarioBuscado = '';
+
   paciente: Paciente | null = null;
+
 
   medicos: Medico[] = [];
   medicoSeleccionado: Medico | null = null;
@@ -103,10 +109,36 @@ export class PortalPaciente implements OnInit {
   }
 
   // ==========================================
-  // BUSCAR PACIENTE POR DNI
+  // CAMBIAR TIPO DE IDENTIFICACION
+  // ==========================================
+
+  cambiarTipoIdentificacion(tipo: 'dni' | 'codigo'): void {
+    if (this.cargando) return;
+
+    this.tipoIdentificacion = tipo;
+    this.dni = '';
+    this.codigoUniversitarioBuscado = '';
+
+    this.paciente = null;
+    this.misCitas = [];
+    this.fondoEstudiantil = null;
+    this.errorFondo = '';
+    this.cargandoFondo = false;
+    this.error = '';
+    this.mensaje = '';
+
+    this.cancelarReprogramacion();
+    this.medicoSeleccionado = null;
+    this.limpiarSeleccion();
+  }
+
+  // ==========================================
+  // BUSCAR PACIENTE POR DNI O CODIGO
   // ==========================================
 
   buscarPaciente(): void {
+
+    if (this.cargando) return;
 
     this.error = '';
     this.mensaje = '';
@@ -121,19 +153,29 @@ export class PortalPaciente implements OnInit {
     this.medicoSeleccionado = null;
     this.limpiarSeleccion();
 
-    const dniBuscado = this.dni.trim();
+    const porDni = this.tipoIdentificacion === 'dni';
+    const valorBuscado = porDni
+      ? this.dni.trim()
+      : this.codigoUniversitarioBuscado.trim();
 
-    if (!/^\d{8}$/.test(dniBuscado)) {
+    if (porDni && !/^\d{8}$/.test(valorBuscado)) {
       this.error = 'Ingresa un DNI válido de 8 dígitos.';
+      return;
+    }
+
+    if (!porDni && !valorBuscado) {
+      this.error = 'Ingresa tu código universitario.';
       return;
     }
 
     this.cargando = true;
 
-    this.portalPacienteService.buscarPaciente(dniBuscado).subscribe({
+    const solicitud = porDni
+      ? this.portalPacienteService.buscarPaciente(valorBuscado)
+      : this.portalPacienteService.buscarPacientePorCodigo(valorBuscado);
 
+    solicitud.subscribe({
       next: paciente => {
-
         this.paciente = paciente;
         this.cargando = false;
 
@@ -142,14 +184,18 @@ export class PortalPaciente implements OnInit {
           this.consultarFondo();
         }
       },
-
       error: (err: HttpErrorResponse) => {
-
         this.cargando = false;
 
-        this.error = err.status === 404
-          ? 'No se encontró un paciente con ese DNI.'
-          : 'No se pudo consultar el paciente. Revisa la conexión con el servidor.';
+        if (err.status === 404) {
+          this.error = porDni
+            ? 'No se encontró un paciente con ese DNI.'
+            : 'No se encontró un paciente con ese código universitario.';
+        } else if (err.status === 403 || err.status === 401) {
+          this.error = 'La búsqueda no está habilitada para el portal. Revisa los permisos en Spring Boot.';
+        } else {
+          this.error = 'No se pudo consultar el paciente. Revisa la conexión con el servidor.';
+        }
       }
     });
   }
@@ -461,7 +507,7 @@ export class PortalPaciente implements OnInit {
     return this.inicioDias > 0;
   }
 
-  get puedeAvanzar(): boolean { 
+  get puedeAvanzar(): boolean {
 
     return (
       this.inicioDias + this.diasPorPagina <
@@ -476,12 +522,12 @@ export class PortalPaciente implements OnInit {
       Math.min(
 
         this.inicioDias +
-          direccion * this.diasPorPagina,
+        direccion * this.diasPorPagina,
 
         Math.max(
           0,
           this.diasDisponibles.length -
-            this.diasPorPagina
+          this.diasPorPagina
         )
       )
     );
@@ -817,7 +863,7 @@ export class PortalPaciente implements OnInit {
   async anularCita(cita: Cita): Promise<void> {
 
     if (this.procesandoCitaId !== null ||
-        !this.puedeGestionarCita(cita)) return;
+      !this.puedeGestionarCita(cita)) return;
 
     const confirmado = await this.alertService.confirm(
       '¿Está seguro de anular esta cita?'
@@ -855,7 +901,7 @@ export class PortalPaciente implements OnInit {
 
     const pacienteActual = this.paciente;
     if (pacienteActual?.tipoPaciente !== 'ESTUDIANTE' ||
-        !pacienteActual.codigoUniversitario) {
+      !pacienteActual.codigoUniversitario) {
       this.cargandoFondo = false;
       return;
     }

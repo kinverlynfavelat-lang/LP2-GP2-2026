@@ -50,6 +50,30 @@ export class TriajeListComponent implements OnInit {
   }
 
   // ==========================================
+  // VERIFICAR SI EL TRIAJE ESTA COMPLETO
+  // ==========================================
+
+  private tieneTriajeCompleto(cita: Cita): boolean {
+
+    const valores = [
+      cita.temperatura,
+      cita.presion,
+      cita.frecuenciaCardiaca,
+      cita.frecuenciaRespiratoria,
+      cita.peso,
+      cita.talla
+    ];
+
+    return valores.every(valor =>
+      valor !== null &&
+      valor !== undefined &&
+      String(valor).trim() !== '' &&
+      Number.isFinite(Number(valor)) &&
+      Number(valor) > 0
+    );
+  }
+
+  // ==========================================
   // CANTIDAD DE ALERTAS EN CITAS DE TRIAJE
   // ==========================================
 
@@ -90,7 +114,7 @@ export class TriajeListComponent implements OnInit {
   }
 
   // ==========================================
-  // LISTAR CITAS EN TRIAJE
+  // LISTAR CITAS PENDIENTES DE TRIAJE
   // ==========================================
 
   listarCitas(): void {
@@ -106,11 +130,20 @@ export class TriajeListComponent implements OnInit {
 
       next: (data) => {
 
-        this.citas = data.filter(cita =>
-          String(cita.estado ?? '')
+        // Mostrar solo las citas que siguen
+        // pendientes de completar el triaje.
+        this.citas = data.filter(cita => {
+
+          const estado = String(cita.estado ?? '')
             .trim()
-            .toUpperCase() === 'TRIAJE'
-        );
+            .toUpperCase();
+
+          return (
+            estado === 'TRIAJE' &&
+            !this.tieneTriajeCompleto(cita)
+          );
+
+        });
 
         this.citas.sort((a, b) => {
 

@@ -34,7 +34,31 @@ export class AtencionListComponent implements OnInit {
   }
 
   // ==========================================
-  // CARGAR CITAS PENDIENTES DE ATENCION
+  // VERIFICAR DATOS COMPLETOS DE TRIAJE
+  // ==========================================
+
+  private tieneTriajeCompleto(cita: Cita): boolean {
+
+    const valores = [
+      cita.temperatura,
+      cita.presion,
+      cita.frecuenciaCardiaca,
+      cita.frecuenciaRespiratoria,
+      cita.peso,
+      cita.talla
+    ];
+
+    return valores.every(valor =>
+      valor !== null &&
+      valor !== undefined &&
+      String(valor).trim() !== '' &&
+      Number.isFinite(Number(valor)) &&
+      Number(valor) > 0
+    );
+  }
+
+  // ==========================================
+  // CARGAR MIS CITAS PENDIENTES DE ATENCION
   // ==========================================
 
   cargarCitas(): void {
@@ -46,15 +70,25 @@ export class AtencionListComponent implements OnInit {
     this.cargando = true;
     this.errorCarga = false;
 
-    this.citaService.getCitas().subscribe({
+    // El backend identifica al medico usando JWT.
+    this.citaService.getMisCitas().subscribe({
 
       next: (data) => {
 
-        this.citas = data.filter(c =>
-          String(c.estado ?? '')
+        // Mostrar solamente las citas del medico
+        // con estado TRIAJE y signos vitales completos.
+        this.citas = data.filter(c => {
+
+          const estado = String(c.estado ?? '')
             .trim()
-            .toUpperCase() === 'TRIAJE'
-        );
+            .toUpperCase();
+
+          return (
+            estado === 'TRIAJE' &&
+            this.tieneTriajeCompleto(c)
+          );
+
+        });
 
         this.filtrarCitas();
         this.cargando = false;
@@ -64,7 +98,7 @@ export class AtencionListComponent implements OnInit {
       error: (err) => {
 
         console.error(
-          'Error al cargar citas médicas:',
+          'Error al cargar mis citas medicas:',
           err
         );
 
@@ -72,7 +106,7 @@ export class AtencionListComponent implements OnInit {
         this.cargando = false;
 
         this.alertService.error(
-          'No se pudieron cargar las citas'
+          'No se pudieron cargar tus citas medicas'
         );
 
       }
@@ -91,10 +125,8 @@ export class AtencionListComponent implements OnInit {
       .toLowerCase();
 
     if (!texto) {
-
       this.citasFiltradas = [...this.citas];
       return;
-
     }
 
     this.citasFiltradas = this.citas.filter(c => {
@@ -112,7 +144,7 @@ export class AtencionListComponent implements OnInit {
         String(c.fechaCita ?? '').toLowerCase();
 
       const fechaFormateada =
-        this.formatearFecha(c.fechaCita);
+        this.formatearFecha(c.fechaCita).toLowerCase();
 
       const hora =
         String(c.horaCita ?? '').toLowerCase();
@@ -164,6 +196,19 @@ export class AtencionListComponent implements OnInit {
   atender(cita: Cita): void {
 
     if (!cita.idCita) {
+      return;
+    }
+
+    // Validacion adicional en el listado.
+    if (
+      String(cita.estado ?? '').toUpperCase() !== 'TRIAJE' ||
+      !this.tieneTriajeCompleto(cita)
+    ) {
+
+      this.alertService.error(
+        'El paciente debe completar Triaje antes de ser atendido'
+      );
+
       return;
     }
 

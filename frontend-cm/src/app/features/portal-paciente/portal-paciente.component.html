@@ -40,22 +40,45 @@
         <span class="numero">1</span>
         <div>
           <h3>Identificación del paciente</h3>
-          <p>Ingresa tu DNI para continuar.</p>
+          <p>Ingresa tu DNI o código universitario para continuar.</p>
         </div>
       </div>
 
       <div class="busqueda">
 
-        <div class="campo">
-          <label for="dni-paciente">
-            DNI del paciente
-          </label>
-
-          <input id="dni-paciente" type="text" [(ngModel)]="dni" maxlength="8" inputmode="numeric"
-            placeholder="Ej. 12345678" (keyup.enter)="buscarPaciente()">
+        <div class="campo tipo-identificacion">
+          <label for="tipo-identificacion">Buscar por</label>
+          <select id="tipo-identificacion"
+            [ngModel]="tipoIdentificacion"
+            (ngModelChange)="cambiarTipoIdentificacion($event)"
+            [disabled]="cargando">
+            <option value="dni">DNI</option>
+            <option value="codigo">Código universitario</option>
+          </select>
         </div>
 
-        <button type="button" class="btn-principal" [disabled]="cargando" (click)="buscarPaciente()">
+        <div class="campo" *ngIf="tipoIdentificacion === 'dni'">
+          <label for="dni-paciente">DNI del paciente</label>
+          <input id="dni-paciente" type="text"
+            [(ngModel)]="dni"
+            maxlength="8"
+            inputmode="numeric"
+            placeholder="Ej. 12345678"
+            (keyup.enter)="buscarPaciente()">
+        </div>
+
+        <div class="campo" *ngIf="tipoIdentificacion === 'codigo'">
+          <label for="codigo-paciente">Código universitario</label>
+          <input id="codigo-paciente" type="text"
+            [(ngModel)]="codigoUniversitarioBuscado"
+            maxlength="30"
+            placeholder="Ej. 202340088"
+            (keyup.enter)="buscarPaciente()">
+        </div>
+
+        <button type="button" class="btn-principal"
+          [disabled]="cargando"
+          (click)="buscarPaciente()">
           {{ cargando ? 'Buscando...' : 'Buscar paciente' }}
         </button>
 
@@ -69,7 +92,10 @@
           <strong>
             {{ paciente.nombres }} {{ paciente.apellidos }}
           </strong>
-          <p>DNI: {{ paciente.dni }}</p>
+          <p *ngIf="paciente.dni">DNI: {{ paciente.dni }}</p>
+          <p *ngIf="!paciente.dni && paciente.codigoUniversitario">
+            Código universitario: {{ paciente.codigoUniversitario }}
+          </p>
         </div>
 
         <span class="estado-ok">Encontrado</span>

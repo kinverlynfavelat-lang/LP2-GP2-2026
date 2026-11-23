@@ -123,7 +123,7 @@ export class RecetaFormComponent implements OnInit {
     this.cargarDatos();
   }
 
-  
+
 
   // CARGAR CITAS Y MEDICAMENTOS
 
@@ -136,12 +136,16 @@ export class RecetaFormComponent implements OnInit {
       return;
     }
 
+
     forkJoin({
-      citas: this.http.get<Cita[]>(`${this.api}/citas`),
+      citas: this.http.get<Cita[]>(
+        `${this.api}/citas/mis-citas`
+      ),
       medicamentos: this.http.get<Medicamento[]>(
         `${this.api}/medicamentos`
       )
     }).subscribe({
+
       next: ({ citas, medicamentos }) => {
         this.citas = citas ?? [];
         this.medicamentos = medicamentos ?? [];

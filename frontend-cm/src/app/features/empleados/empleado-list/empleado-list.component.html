@@ -209,7 +209,29 @@
               <!-- ACCIONES -->
               <td class="text-center">
 
-                <div class="acciones-empleado">
+                <div class="acciones-empleado gap-2">
+
+                  <!-- CREAR ACCESO -->
+
+                  <button
+                    type="button"
+                    class="btn btn-sm btn-editar"
+                    title="Crear acceso al sistema"
+                    [disabled]="creandoAcceso"
+                    [attr.aria-label]="
+                      'Crear acceso para ' +
+                      e.nombres + ' ' + e.apellidos
+                    "
+                    (click)="crearAcceso(e)">
+
+                    <i
+                      class="bi bi-person-plus"
+                      aria-hidden="true">
+                    </i>
+
+                  </button>
+
+                  <!-- EDITAR EMPLEADO -->
 
                   <a
                     [routerLink]="[

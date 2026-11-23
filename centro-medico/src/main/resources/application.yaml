@@ -23,6 +23,6 @@ server:
   port: 8080
 
 security:
-    jwt:
-      secret-key: a2FzbW90aGVvcmVtYW5kcm9tZWRhZ2FsYWN0aWNhcHB1bHNlY3JldGtleQ==
-      expiration-time: 86400000
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expiration-time: 86400000

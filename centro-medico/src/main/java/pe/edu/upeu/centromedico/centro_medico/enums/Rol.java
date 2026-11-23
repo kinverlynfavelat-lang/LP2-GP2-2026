@@ -4,7 +4,6 @@ public enum Rol {
     ADMIN,
     MEDICO,
     TRIAJE,
-    RECEPCION,
     FARMACIA
 }
 
