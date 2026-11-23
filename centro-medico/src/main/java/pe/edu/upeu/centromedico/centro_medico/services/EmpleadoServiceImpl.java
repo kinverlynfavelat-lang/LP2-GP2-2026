@@ -1,4 +1,3 @@
-
 package pe.edu.upeu.centromedico.centro_medico.services;
 
 import org.springframework.http.HttpStatus;
@@ -36,11 +35,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
         List<EmpleadoDTO> respuesta = new ArrayList<>();
 
         for (Empleado e : lista) {
-            respuesta.add(new EmpleadoDTO(
-                    e.getIdPersona(),
-                    e.getFechaIngreso(),
-                    e.getSueldo()
-            ));
+            respuesta.add(convertirDTO(e));
         }
 
         return respuesta;
@@ -50,11 +45,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
     public Optional<EmpleadoDTO> buscarPorId(Long id) {
 
         return empleadoRepository.findById(id)
-                .map(e -> new EmpleadoDTO(
-                        e.getIdPersona(),
-                        e.getFechaIngreso(),
-                        e.getSueldo()
-                ));
+                .map(this::convertirDTO);
     }
 
     @Override
@@ -90,11 +81,7 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
 
         Empleado guardado = empleadoRepository.save(empleado);
 
-        return new EmpleadoDTO(
-                guardado.getIdPersona(),
-                guardado.getFechaIngreso(),
-                guardado.getSueldo()
-        );
+        return convertirDTO(guardado);
     }
 
     @Override
@@ -109,11 +96,22 @@ public class EmpleadoServiceImpl implements IEmpleadoService {
 
             Empleado actualizado = empleadoRepository.save(empleado);
 
-            return new EmpleadoDTO(
-                    actualizado.getIdPersona(),
-                    actualizado.getFechaIngreso(),
-                    actualizado.getSueldo()
-            );
+            return convertirDTO(actualizado);
         });
+    }
+
+    private EmpleadoDTO convertirDTO(Empleado e) {
+        String rol = (e.getPersona() != null
+                && e.getPersona().getUsuario() != null
+                && e.getPersona().getUsuario().getRol() != null)
+                ? e.getPersona().getUsuario().getRol().name()
+                : null;
+
+        return new EmpleadoDTO(
+                e.getIdPersona(),
+                e.getFechaIngreso(),
+                e.getSueldo(),
+                rol
+        );
     }
 }

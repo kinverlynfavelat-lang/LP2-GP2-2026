@@ -20,7 +20,10 @@ public record EmpleadoDTO(
 
         @NotNull(message = "El sueldo es obligatorio")
         @DecimalMin(value = "0.01", message = "El sueldo debe ser mayor que cero")
-        BigDecimal sueldo
+        BigDecimal sueldo,
+
+        @Parameter(hidden = true)
+        String rol
 
 ) {
 }

@@ -126,6 +126,7 @@
             <th>Teléfono</th>
             <th>Fecha de ingreso</th>
             <th>Sueldo</th>
+            <th>Rol</th>
             <th>Estado</th>
             <th class="text-center">Acciones</th>
           </tr>
@@ -189,6 +190,19 @@
                 <span class="sueldo-empleado">
                   S/ {{ e.sueldo | number:'1.2-2' }}
                 </span>
+              </td>
+
+              <!-- ROL -->
+              <td>
+                @if (e.rol) {
+                  <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-2 py-1">
+                    {{ e.rol }}
+                  </span>
+                } @else {
+                  <span class="badge bg-secondary-subtle text-secondary px-2 py-1">
+                    Sin acceso
+                  </span>
+                }
               </td>
 
               <!-- ESTADO -->
